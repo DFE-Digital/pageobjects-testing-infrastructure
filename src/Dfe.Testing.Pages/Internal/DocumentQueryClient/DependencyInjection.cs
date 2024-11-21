@@ -1,4 +1,6 @@
-﻿namespace Dfe.Testing.Pages.Internal.DocumentQueryClient;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages;
+
+namespace Dfe.Testing.Pages.Internal.DocumentQueryClient;
 
 internal static class DependencyInjection
 {
@@ -7,7 +9,16 @@ internal static class DependencyInjection
             .AddScoped<IDocumentQueryClientProvider, TProvider>()
             .AddScoped<IDocumentQueryClientAccessor, DocumentQueryClientAccessor>()
             // Pages
-            .AddScoped<IPageFactory, PageFactory>()
+            .AddScoped<IPageProvider, PageProvider>()
+            .AddSingleton<IPageFactory>((serviceProvider) =>
+            {
+                var scope = serviceProvider.CreateScope();
+                var pageFactoryDelegates = new Dictionary<string, Func<PageBase>>()
+                {
+                    // nameof(TPage) = () => serviceProvider.GetRequiredService<TPage>()
+                };
+                return new PageFactory(pageFactoryDelegates);
+            })
             // Common Components
             .AddTransient<AnchorLinkFactory>()
             .AddTransient<FormFactory>()

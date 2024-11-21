@@ -22,6 +22,7 @@ global using Dfe.Testing.Pages.Public.DocumentQueryClient.Components.Buttons;
 global using Dfe.Testing.Pages.Public.DocumentQueryClient.Components.CheckboxWithLabel;
 global using Dfe.Testing.Pages.Public.DocumentQueryClient.Components.Fieldset;
 global using Dfe.Testing.Pages.Public.DocumentQueryClient.Components.Form;
+global using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages;
 global using Dfe.Testing.Pages.Public.DocumentQueryClient.Selector;
 global using Dfe.Testing.Pages.Public.DocumentQueryClient.Selector.XPath;
 global using Dfe.Testing.Pages.Public.WebApplicationFactory;
