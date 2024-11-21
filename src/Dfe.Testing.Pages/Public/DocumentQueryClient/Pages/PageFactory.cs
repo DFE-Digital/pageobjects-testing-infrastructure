@@ -2,11 +2,11 @@
 
 public sealed class PageFactory : IPageFactory
 {
-    private readonly IDictionary<string, Func<PageBase>> _pageFactory;
+    private readonly IDictionary<string, Func<PageBase>> _pageFactoryDelegates;
     public PageFactory(IDictionary<string, Func<PageBase>> pageFactory)
     {
         ArgumentNullException.ThrowIfNull(pageFactory);
-        _pageFactory = pageFactory;
+        _pageFactoryDelegates = pageFactory;
     }
 
     public PageBase CreatePage<TPage>() => CreatePage(typeof(TPage));
@@ -17,7 +17,7 @@ public sealed class PageFactory : IPageFactory
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(pageName);
 
-        return !_pageFactory
+        return !_pageFactoryDelegates
             .TryGetValue(pageName, out var page) || page is null ?
                 throw new ArgumentOutOfRangeException(
                     $"Page of type {pageName} is not registered.") : page();
