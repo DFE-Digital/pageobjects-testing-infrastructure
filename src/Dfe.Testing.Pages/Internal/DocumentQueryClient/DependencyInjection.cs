@@ -6,10 +6,9 @@ internal static class DependencyInjection
 {
     internal static IServiceCollection AddDocumentQueryClientPublicAPI<TProvider>(this IServiceCollection services) where TProvider : class, IDocumentQueryClientProvider
         => services
-            .AddScoped<IDocumentQueryClientProvider, TProvider>()
+            .AddSingleton<IDocumentQueryClientProvider, TProvider>()
             .AddScoped<IDocumentQueryClientAccessor, DocumentQueryClientAccessor>()
             // Pages
-            .AddScoped<IPageProvider, PageProvider>()
             .AddSingleton<IPageFactory>((serviceProvider) =>
             {
                 var scope = serviceProvider.CreateScope();
@@ -19,6 +18,7 @@ internal static class DependencyInjection
                 };
                 return new PageFactory(pageFactoryDelegates);
             })
+            .AddScoped<IPageProvider, PageProvider>()
             // Common Components
             .AddTransient<AnchorLinkFactory>()
             .AddTransient<FormFactory>()
