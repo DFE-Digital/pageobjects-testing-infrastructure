@@ -1,14 +1,12 @@
 # Who is this library for
 
-This library is targeted to support .NET Developers and Testers
+To support .NET Developers and Testers in building Web application tests.
 
 ## What problems is the library solving
 
-- Removing dependencies on specific test tools in Pages and Tests allowing the library to abstract
+- Removing direct dependencies on specific test tools in PageModels and Tests and depending on this library to abstract common components and common query providers.
 
-- By reducing coupling to test tools in Pages and Tests allows sharing Pages among different types of tests (Presentation layer tests, Integration Tests, EndToEnd tests)
-
-- Demonstrate patterns for reuseable PageModels using PageComponents.
+- Allows sharing components among different types of tests (Presentation layer tests, Integration Tests, EndToEnd UI tests) by substituing querying providers.
 
 ## Common terms and abstractions
 
