@@ -4,4 +4,5 @@ public interface IApplicationNavigator
     Task NavigateToAsync(Uri uri);
     Task BackAsync();
     Task ReloadAsync();
+    Uri CurrentUri();
 }

@@ -95,4 +95,6 @@ internal class LazyWebDriverAdaptor : IWebDriverAdaptor
     public IReadOnlyCollection<IWebElement> FindElements(IElementSelector selector)
         => Driver.FindElements(
             WebDriverByLocatorHelpers.CreateLocator(selector));
+
+    public Uri CurrentUri() => new(Driver.Url);
 }

@@ -7,6 +7,7 @@ internal sealed class ClickElementCommandHandler : ICommandHandler<ClickElementC
 
     public ClickElementCommandHandler(IDocumentQueryClientAccessor documentQueryClientAccessor)
     {
+        ArgumentNullException.ThrowIfNull(documentQueryClientAccessor, nameof(documentQueryClientAccessor));
         _documentQueryClientAccessor = documentQueryClientAccessor;
     }
     public void Handle(ClickElementCommand command)

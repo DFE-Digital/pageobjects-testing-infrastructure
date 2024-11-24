@@ -2,6 +2,7 @@
 using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages;
 using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 using Dfe.Testing.Pages.Public.DocumentQueryClient.Selector;
+using Dfe.Testing.Pages.Public.WebDriver;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using static Dfe.Testing.Pages.IntegrationTests.IntegrationTestDesign;
@@ -22,6 +23,8 @@ public sealed class IntegrationTestDesign
 
         SearchPage page = await collection.ServiceProvider.GetRequiredService<IPageFactory>().CreatePageAsync<SearchPage>(request);
         page.ClickAnchorLink();
+        IApplicationNavigatorAccessor navigatorAccessor = collection.ServiceProvider.GetRequiredService<IApplicationNavigatorAccessor>();
+        navigatorAccessor.Navigator.CurrentUri().Should().Be(new Uri("https://searchprototype.azurewebsites.net/"));
     }
 
     [Fact]
