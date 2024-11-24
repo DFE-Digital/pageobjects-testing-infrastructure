@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Dfe.Testing.Pages.TestWebApp\Dfe.Testing.Pages.TestWebApp.csproj" />
     <ProjectReference Include="..\..\src\Dfe.Testing.Pages\Dfe.Testing.Pages.csproj" />
   </ItemGroup>
 

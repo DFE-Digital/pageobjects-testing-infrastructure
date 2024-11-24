@@ -100,7 +100,7 @@ internal class AngleSharpDocumentQueryClient : IDocumentQueryClient
             set => _element.TextContent = value;
         }
 
-        public string TagName => _element.TagName;
+        public string TagName => _element.TagName.ToLowerInvariant();
 
         public void Click()
         {

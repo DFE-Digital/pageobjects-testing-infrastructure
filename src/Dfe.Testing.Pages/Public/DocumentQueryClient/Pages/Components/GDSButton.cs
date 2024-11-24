@@ -4,7 +4,7 @@ public record GDSButton : IComponent
 {
     public required ButtonStyleType ButtonType { get; init; } = ButtonStyleType.Primary;
     public string TagName { get; init; } = "button";
-    public required string? Type { get; init; }
+    public bool IsSubmit { get; init; } = false;
     public required string Text { get; init; }
     public required bool Disabled { get; init; }
 }

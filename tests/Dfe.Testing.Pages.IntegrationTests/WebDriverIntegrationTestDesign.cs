@@ -5,11 +5,11 @@ using Dfe.Testing.Pages.Public.DocumentQueryClient.Selector;
 using Dfe.Testing.Pages.Public.WebDriver;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using static Dfe.Testing.Pages.IntegrationTests.IntegrationTestDesign;
+using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
 
 namespace Dfe.Testing.Pages.IntegrationTests;
 
-public sealed class IntegrationTestDesign
+public sealed class WebDriverIntegrationTestDesign
 {
 
     [Fact]
@@ -72,6 +72,7 @@ public static class MockServiceCollection
         return new ServiceCollection()
             .AddWebDriver()
             .AddTransient<IPage, SearchPage>()
-            .BuildServiceProvider().CreateScope();
+            .BuildServiceProvider()
+            .CreateScope();
     }
 }

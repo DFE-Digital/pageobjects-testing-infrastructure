@@ -28,7 +28,7 @@ internal sealed class GDSButtonComponentFactory : ComponentFactory<GDSButton>
                     Text = part.Text?.Trim() ?? string.Empty,
                     TagName = part.TagName,
                     Disabled = part.HasAttribute("disabled"),
-                    Type = part.GetAttribute("type") ?? string.Empty
+                    IsSubmit = part.GetAttribute("type") == "submit"
                 };
             }).ToList();
     }

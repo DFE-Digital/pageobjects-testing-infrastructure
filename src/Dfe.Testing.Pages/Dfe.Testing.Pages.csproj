@@ -17,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Dfe.Testing.Pages.IntegrationTests" />
+    <InternalsVisibleTo Include="Dfe.Testing.Pages.UnitTests" />
   </ItemGroup>
 </Project>
