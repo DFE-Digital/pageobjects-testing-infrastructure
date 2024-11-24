@@ -1,7 +1,9 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components.AnchorLink;
-public sealed class AnchorLinkFactory : ComponentFactoryBase<AnchorLink>
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+
+namespace Dfe.Testing.Pages.Internal.ComponentFactory;
+internal sealed class AnchorLinkComponentFactory : ComponentFactory<AnchorLink>
 {
-    public AnchorLinkFactory(IDocumentQueryClientAccessor documentQueryClientAccessor) : base(documentQueryClientAccessor)
+    public AnchorLinkComponentFactory(IDocumentQueryClientAccessor documentQueryClientAccessor) : base(documentQueryClientAccessor)
     {
     }
 
@@ -24,7 +26,6 @@ public sealed class AnchorLinkFactory : ComponentFactoryBase<AnchorLink>
 
         return DocumentQueryClient.QueryMany(
             args: queryRequest,
-            mapper: MapToLink)
-            .ToList();
+            mapper: MapToLink).ToList();
     }
 }

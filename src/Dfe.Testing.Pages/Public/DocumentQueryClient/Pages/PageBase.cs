@@ -2,13 +2,13 @@
 public abstract class PageBase
 {
     private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;
-    protected PageBase(IDocumentQueryClientAccessor documentQueryClientAccessor)
+    internal PageBase(IDocumentQueryClientAccessor documentQueryClientAccessor)
     {
         ArgumentNullException.ThrowIfNull(documentQueryClientAccessor, nameof(documentQueryClientAccessor));
         _documentQueryClientAccessor = documentQueryClientAccessor;
     }
 
-    protected IDocumentQueryClient DocumentQueryClient
+    internal IDocumentQueryClient DocumentQueryClient
     {
         get => _documentQueryClientAccessor.DocumentQueryClient;
     }

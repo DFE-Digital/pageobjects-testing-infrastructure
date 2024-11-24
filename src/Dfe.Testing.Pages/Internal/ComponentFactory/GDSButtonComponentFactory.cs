@@ -1,11 +1,13 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components.Buttons;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
 
-public sealed class GDSButtonFactory : ComponentFactoryBase<GDSButton>
+namespace Dfe.Testing.Pages.Internal.ComponentFactory;
+
+internal sealed class GDSButtonComponentFactory : ComponentFactory<GDSButton>
 {
     internal static IElementSelector ButtonStyle => new CssSelector(".govuk-button");
     internal static IElementSelector SecondaryButtonStyle => new CssSelector("govuk-button--secondary");
     internal static IElementSelector WarningButtonStyle => new CssSelector(".govuk-button--warning");
-    public GDSButtonFactory(IDocumentQueryClientAccessor documentQueryClientAccessor) : base(documentQueryClientAccessor)
+    public GDSButtonComponentFactory(IDocumentQueryClientAccessor documentQueryClientAccessor) : base(documentQueryClientAccessor)
     {
     }
 

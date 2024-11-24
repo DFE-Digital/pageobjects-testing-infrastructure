@@ -1,4 +1,6 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages;
+﻿using Dfe.Testing.Pages.Internal.ComponentFactory;
+using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages;
 
 namespace Dfe.Testing.Pages.Internal.DocumentQueryClient;
 
@@ -14,17 +16,17 @@ internal static class DependencyInjection
                 var scope = serviceProvider.CreateScope();
                 var pageFactoryDelegates = new Dictionary<string, Func<PageBase>>()
                 {
-                    // nameof(TPage) = () => serviceProvider.GetRequiredService<TPage>()
+                    // client registers nameof(TPage) = () => serviceProvider.GetRequiredService<TPage>()
                 };
                 return new PageFactory(pageFactoryDelegates);
             })
             .AddScoped<IPageProvider, PageProvider>()
-            // Common Components
-            .AddTransient<AnchorLinkFactory>()
-            .AddTransient<FormFactory>()
-            .AddTransient<GDSFieldsetFactory>()
-            .AddTransient<GDSCheckboxWithLabelFactory>()
-            .AddTransient<GDSButtonFactory>()
+            // Common Components factories clients call for
+            .AddTransient<ComponentFactory<AnchorLink>, AnchorLinkComponentFactory>()
+            .AddTransient<ComponentFactory<Form>, FormComponentFactory>()
+            .AddTransient<ComponentFactory<GDSFieldset>, GDSFieldsetComponentFactory>()
+            .AddTransient<ComponentFactory<GDSCheckboxWithLabel>, GDSCheckboxWithLabelComponentFactory>()
+            .AddTransient<ComponentFactory<GDSButton>, GDSButtonComponentFactory>()
             // Helpers    
             .AddTransient<IHttpRequestBuilder, HttpRequestBuilder>();
 }

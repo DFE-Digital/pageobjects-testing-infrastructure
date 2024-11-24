@@ -1,18 +1,19 @@
-﻿using HttpMethod = System.Net.Http.HttpMethod;
+﻿using Dfe.Testing.Pages.Internal.ComponentFactory;
+using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components.Form;
+namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
 
-public sealed class FormFactory : ComponentFactoryBase<Form>
+internal sealed class FormComponentFactory : ComponentFactory<Form>
 {
     // may not be appropriate if there are multiple forms on the page
     internal static IElementSelector DefaultFormQuery = new CssSelector("form");
-    private readonly GDSFieldsetFactory _fieldSetFactory;
-    private readonly GDSButtonFactory _buttonFactory;
+    private readonly GDSFieldsetComponentFactory _fieldSetFactory;
+    private readonly GDSButtonComponentFactory _buttonFactory;
 
-    public FormFactory(
+    public FormComponentFactory(
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        GDSFieldsetFactory fieldSetComponent,
-        GDSButtonFactory buttonFactory) : base(documentQueryClientAccessor)
+        GDSFieldsetComponentFactory fieldSetComponent,
+        GDSButtonComponentFactory buttonFactory) : base(documentQueryClientAccessor)
     {
         ArgumentNullException.ThrowIfNull(fieldSetComponent);
         ArgumentNullException.ThrowIfNull(buttonFactory);

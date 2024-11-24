@@ -1,12 +1,14 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components.Fieldset;
+﻿using Dfe.Testing.Pages.Internal.ComponentFactory;
 
-public sealed class GDSFieldsetFactory : ComponentFactoryBase<GDSFieldset>
+namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+
+internal sealed class GDSFieldsetComponentFactory : ComponentFactory<GDSFieldset>
 {
-    private readonly GDSCheckboxWithLabelFactory _checkboxWithLabelComponent;
+    private readonly GDSCheckboxWithLabelComponentFactory _checkboxWithLabelComponent;
 
-    public GDSFieldsetFactory(
+    public GDSFieldsetComponentFactory(
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        GDSCheckboxWithLabelFactory checkboxWithLabelComponent) : base(documentQueryClientAccessor)
+        GDSCheckboxWithLabelComponentFactory checkboxWithLabelComponent) : base(documentQueryClientAccessor)
     {
         _checkboxWithLabelComponent = checkboxWithLabelComponent;
     }
