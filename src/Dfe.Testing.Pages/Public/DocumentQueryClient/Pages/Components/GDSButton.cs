@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components.Buttons;
+﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
 public record GDSButton : IComponent
 {

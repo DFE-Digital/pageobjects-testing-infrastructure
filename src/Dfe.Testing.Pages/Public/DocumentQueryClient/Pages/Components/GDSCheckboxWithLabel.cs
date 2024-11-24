@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components.CheckboxWithLabel;
+﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
 public sealed record GDSCheckboxWithLabel : IComponent
 {

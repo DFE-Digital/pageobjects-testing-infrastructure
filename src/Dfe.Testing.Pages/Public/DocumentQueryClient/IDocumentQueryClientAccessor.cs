@@ -1,5 +1,5 @@
 ﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient;
-public interface IDocumentQueryClientAccessor
+internal interface IDocumentQueryClientAccessor
 {
     IDocumentQueryClient DocumentQueryClient { get; set; }
 }

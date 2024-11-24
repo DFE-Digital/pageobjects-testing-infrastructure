@@ -1,30 +1,34 @@
 ﻿namespace Dfe.Testing.Pages.Internal.DocumentQueryClient;
-// TODO service locator anti-pattern does it corrupt lifecycle management?
+
 internal sealed class PageFactory : IPageFactory
 {
-    private readonly IServiceProvider _provider;
+    private readonly IEnumerable<IPage> _pages;
+    private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;
     private readonly IDocumentQueryClientProvider _documentQueryClientProvider;
 
     public PageFactory(
-        IServiceProvider provider,
-        IDocumentQueryClientProvider documentClientFactory)
+        IEnumerable<IPage> pages,
+        IDocumentQueryClientAccessor documentQueryClientAccessor,
+        IDocumentQueryClientProvider documentClientProvider)
     {
-        ArgumentNullException.ThrowIfNull(provider);
-        ArgumentNullException.ThrowIfNull(documentClientFactory);
-        _provider = provider;
-        _documentQueryClientProvider = documentClientFactory;
+        ArgumentNullException.ThrowIfNull(documentClientProvider);
+        ArgumentNullException.ThrowIfNull(documentQueryClientAccessor);
+        _pages = pages;
+        _documentQueryClientAccessor = documentQueryClientAccessor;
+        _documentQueryClientProvider = documentClientProvider;
     }
 
-    public async Task<TPage> CreatePageAsync<TPage>(HttpRequestMessage httpRequestMessage) where TPage : class
+    public async Task<TPage> CreatePageAsync<TPage>(HttpRequestMessage httpRequestMessage) where TPage : class, IPage
     {
-        var documentClient = await _documentQueryClientProvider.CreateDocumentClientAsync(httpRequestMessage);
-        ArgumentNullException.ThrowIfNull(documentClient);
+        IDocumentQueryClient documentClient = await _documentQueryClientProvider.CreateDocumentClientAsync(httpRequestMessage)
+            ?? throw new InvalidOperationException("Document client is null.");
 
-        // add IDocumentQueryClient into the accessor as components need to be able to resolve the same client within same scope
-        var accessor = _provider.GetRequiredService<IDocumentQueryClientAccessor>();
-        ArgumentNullException.ThrowIfNull(accessor);
-        accessor.DocumentQueryClient = documentClient;
-
-        return _provider.GetRequiredService<TPage>();
+        // componentFactories need to to resolve the created IDocumentQueryClient through proxy object IDocumentQueryClientAccessor in the same scope
+        _documentQueryClientAccessor.DocumentQueryClient = documentClient;
+        return ResolvePage<TPage>();
     }
+
+    private TPage ResolvePage<TPage>() where TPage : class, IPage
+        => (TPage)_pages.Single(
+                (page) => page.GetType().Name == typeof(TPage).Name);
 }
