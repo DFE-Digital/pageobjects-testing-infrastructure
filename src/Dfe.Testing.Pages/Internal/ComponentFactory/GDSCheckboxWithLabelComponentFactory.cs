@@ -1,12 +1,12 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
 namespace Dfe.Testing.Pages.Internal.ComponentFactory;
 
 internal sealed class GDSCheckboxWithLabelComponentFactory : ComponentFactory<GDSCheckboxWithLabel>
 {
-    internal static IElementSelector Checkbox => new CssSelector(".govuk-checkboxes__item");
-    internal static IElementSelector Input => new CssSelector(".govuk-checkboxes__input");
-    internal static IElementSelector Label => new CssSelector(".govuk-checkboxes__label");
+    internal static IElementSelector GDSCheckboxItemStyle => new CssSelector(".govuk-checkboxes__item");
+    internal static IElementSelector GDSCheckboxInputStyle => new CssSelector(".govuk-checkboxes__input");
+    internal static IElementSelector GDSLabelStyle => new CssSelector(".govuk-checkboxes__label");
 
     public GDSCheckboxWithLabelComponentFactory(IDocumentQueryClientAccessor documentQueryClientAccessor) : base(documentQueryClientAccessor)
     {
@@ -17,8 +17,8 @@ internal sealed class GDSCheckboxWithLabelComponentFactory : ComponentFactory<GD
     private static Func<IDocumentPart, GDSCheckboxWithLabel> MapCheckboxes =>
         (checkboxItemWithLabel) =>
         {
-            var checkboxItem = checkboxItemWithLabel.GetChild(Input) ?? throw new ArgumentNullException(nameof(Input));
-            var checkboxLabel = checkboxItemWithLabel.GetChild(Label) ?? throw new ArgumentNullException(nameof(Label));
+            var checkboxItem = checkboxItemWithLabel.GetChild(GDSCheckboxInputStyle) ?? throw new ArgumentNullException(nameof(GDSCheckboxInputStyle));
+            var checkboxLabel = checkboxItemWithLabel.GetChild(GDSLabelStyle) ?? throw new ArgumentNullException(nameof(GDSLabelStyle));
 
             return new GDSCheckboxWithLabel()
             {
@@ -30,13 +30,9 @@ internal sealed class GDSCheckboxWithLabelComponentFactory : ComponentFactory<GD
             };
         };
 
-    public override List<GDSCheckboxWithLabel> GetMany(QueryRequest? request = null)
+    public override List<GDSCheckboxWithLabel> GetMany(QueryRequestArgs? request = null)
     {
-        QueryRequest queryRequest = new()
-        {
-            Query = request?.Query ?? Checkbox,
-            Scope = request?.Scope
-        };
+        QueryRequestArgs queryRequest = MergeRequest(request, GDSCheckboxItemStyle);
 
         return DocumentQueryClient.QueryMany(
                 args: queryRequest,
@@ -46,7 +42,7 @@ internal sealed class GDSCheckboxWithLabelComponentFactory : ComponentFactory<GD
 
     internal List<GDSCheckboxWithLabel> GetCheckboxesFromPart(IDocumentPart? part)
         => part?
-            .GetChildren(Checkbox)?
+            .GetChildren(GDSCheckboxItemStyle)?
             .Select(MapCheckboxes)
             .ToList() ?? throw new ArgumentNullException(nameof(part));
 }

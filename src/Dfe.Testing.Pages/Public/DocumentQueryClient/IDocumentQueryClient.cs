@@ -1,7 +1,7 @@
 ﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient;
 internal interface IDocumentQueryClient
 {
-    void Run(QueryRequest args, Action<IDocumentPart> handler);
-    TResult Query<TResult>(QueryRequest args, Func<IDocumentPart, TResult> mapper);
-    IEnumerable<TResult> QueryMany<TResult>(QueryRequest args, Func<IDocumentPart, TResult> mapper);
+    void Run(QueryRequestArgs args, Action<IDocumentPart> handler);
+    TResult Query<TResult>(QueryRequestArgs args, Func<IDocumentPart, TResult> mapper);
+    IEnumerable<TResult> QueryMany<TResult>(QueryRequestArgs args, Func<IDocumentPart, TResult> mapper);
 }

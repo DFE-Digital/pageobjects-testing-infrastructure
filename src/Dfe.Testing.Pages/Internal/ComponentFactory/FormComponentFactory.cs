@@ -1,14 +1,14 @@
-﻿using Dfe.Testing.Pages.Internal.ComponentFactory;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory;
 
 internal sealed class FormComponentFactory : ComponentFactory<Form>
 {
     // may not be appropriate if there are multiple forms on the page
     internal static IElementSelector DefaultFormQuery = new CssSelector("form");
-    private readonly GDSFieldsetComponentFactory _fieldSetFactory;
-    private readonly GDSButtonComponentFactory _buttonFactory;
+    private readonly ComponentFactory<GDSFieldset> _fieldSetFactory;
+    private readonly ComponentFactory<GDSButton> _buttonFactory;
 
     public FormComponentFactory(
         IDocumentQueryClientAccessor documentQueryClientAccessor,
@@ -21,13 +21,9 @@ internal sealed class FormComponentFactory : ComponentFactory<Form>
         _buttonFactory = buttonFactory;
     }
 
-    public override List<Form> GetMany(QueryRequest? request = null)
+    public override List<Form> GetMany(QueryRequestArgs? request = null)
     {
-        QueryRequest queryRequest = new()
-        {
-            Query = request?.Query ?? DefaultFormQuery,
-            Scope = request?.Scope
-        };
+        QueryRequestArgs queryRequest = MergeRequest(request, DefaultFormQuery);
 
         return DocumentQueryClient.QueryMany(
             queryRequest,

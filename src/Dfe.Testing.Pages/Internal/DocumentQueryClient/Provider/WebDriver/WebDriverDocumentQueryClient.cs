@@ -10,7 +10,7 @@ internal sealed class WebDriverDocumentQueryClient : IDocumentQueryClient
         _webDriverAdaptor = webDriverAdaptor;
     }
 
-    public void Run(QueryRequest args, Action<IDocumentPart> handler)
+    public void Run(QueryRequestArgs args, Action<IDocumentPart> handler)
     {
         ArgumentNullException.ThrowIfNull(args);
         ArgumentNullException.ThrowIfNull(args.Query);
@@ -29,7 +29,7 @@ internal sealed class WebDriverDocumentQueryClient : IDocumentQueryClient
                         WebDriverByLocatorHelpers.CreateLocator(args.Query))));
     }
 
-    public TResult Query<TResult>(QueryRequest queryArgs, Func<IDocumentPart, TResult> mapper)
+    public TResult Query<TResult>(QueryRequestArgs queryArgs, Func<IDocumentPart, TResult> mapper)
     {
         ArgumentNullException.ThrowIfNull(queryArgs);
         ArgumentNullException.ThrowIfNull(queryArgs.Query);
@@ -45,7 +45,7 @@ internal sealed class WebDriverDocumentQueryClient : IDocumentQueryClient
         return mapper(documentPartToMap);
     }
 
-    public IEnumerable<TResult> QueryMany<TResult>(QueryRequest queryArgs, Func<IDocumentPart, TResult> mapper)
+    public IEnumerable<TResult> QueryMany<TResult>(QueryRequestArgs queryArgs, Func<IDocumentPart, TResult> mapper)
     {
         ArgumentNullException.ThrowIfNull(queryArgs);
         ArgumentNullException.ThrowIfNull(queryArgs.Query);

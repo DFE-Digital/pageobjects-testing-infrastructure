@@ -1,6 +1,6 @@
-﻿using Dfe.Testing.Pages.Internal.ComponentFactory;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
-namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory;
 
 internal sealed class GDSFieldsetComponentFactory : ComponentFactory<GDSFieldset>
 {
@@ -13,14 +13,9 @@ internal sealed class GDSFieldsetComponentFactory : ComponentFactory<GDSFieldset
         _checkboxWithLabelComponent = checkboxWithLabelComponent;
     }
 
-    public override List<GDSFieldset> GetMany(QueryRequest? request = null)
+    public override List<GDSFieldset> GetMany(QueryRequestArgs? request = null)
     {
-        QueryRequest queryRequest =
-            new()
-            {
-                Query = request?.Query ?? new CssSelector("fieldset"),
-                Scope = request?.Scope
-            };
+        QueryRequestArgs queryRequest = MergeRequest(request, new CssSelector("fieldset"));
 
         return DocumentQueryClient.QueryMany(
             queryRequest,

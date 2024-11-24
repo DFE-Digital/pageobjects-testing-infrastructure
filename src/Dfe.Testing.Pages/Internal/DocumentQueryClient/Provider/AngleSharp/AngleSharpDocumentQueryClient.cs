@@ -8,7 +8,7 @@ internal class AngleSharpDocumentQueryClient : IDocumentQueryClient
         _htmlDocument = document;
     }
 
-    public void Run(QueryRequest args, Action<IDocumentPart> handler)
+    public void Run(QueryRequestArgs args, Action<IDocumentPart> handler)
     {
         ArgumentNullException.ThrowIfNull(args);
         ArgumentNullException.ThrowIfNull(args.Query);
@@ -26,7 +26,7 @@ internal class AngleSharpDocumentQueryClient : IDocumentQueryClient
                 QueryForElementInScope(scope, args.Query)));
     }
 
-    public TResult Query<TResult>(QueryRequest queryArgs, Func<IDocumentPart, TResult> Mapper)
+    public TResult Query<TResult>(QueryRequestArgs queryArgs, Func<IDocumentPart, TResult> Mapper)
     {
         ArgumentNullException.ThrowIfNull(queryArgs);
         ArgumentNullException.ThrowIfNull(queryArgs.Query);
@@ -42,7 +42,7 @@ internal class AngleSharpDocumentQueryClient : IDocumentQueryClient
     }
 
 
-    public IEnumerable<TResult> QueryMany<TResult>(QueryRequest queryArgs, Func<IDocumentPart, TResult> Mapper)
+    public IEnumerable<TResult> QueryMany<TResult>(QueryRequestArgs queryArgs, Func<IDocumentPart, TResult> Mapper)
     {
         ArgumentNullException.ThrowIfNull(queryArgs);
         ArgumentNullException.ThrowIfNull(queryArgs.Query);

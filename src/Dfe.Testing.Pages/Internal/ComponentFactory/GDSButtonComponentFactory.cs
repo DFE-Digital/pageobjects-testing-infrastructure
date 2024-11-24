@@ -1,23 +1,19 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
 namespace Dfe.Testing.Pages.Internal.ComponentFactory;
 
 internal sealed class GDSButtonComponentFactory : ComponentFactory<GDSButton>
 {
-    internal static IElementSelector ButtonStyle => new CssSelector(".govuk-button");
+    internal static IElementSelector DefaultButtonStyleSelector => new CssSelector(".govuk-button");
     internal static IElementSelector SecondaryButtonStyle => new CssSelector("govuk-button--secondary");
     internal static IElementSelector WarningButtonStyle => new CssSelector(".govuk-button--warning");
     public GDSButtonComponentFactory(IDocumentQueryClientAccessor documentQueryClientAccessor) : base(documentQueryClientAccessor)
     {
     }
 
-    public override List<GDSButton> GetMany(QueryRequest? request = null)
+    public override List<GDSButton> GetMany(QueryRequestArgs? request = null)
     {
-        QueryRequest queryRequest = new()
-        {
-            Query = request?.Query ?? ButtonStyle,
-            Scope = request?.Scope
-        };
+        QueryRequestArgs queryRequest = MergeRequest(request, DefaultButtonStyleSelector);
 
         return DocumentQueryClient.QueryMany(
             args: queryRequest,

@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
 public record GDSFieldset : IComponent
 {

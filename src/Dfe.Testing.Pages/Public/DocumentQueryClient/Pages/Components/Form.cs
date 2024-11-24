@@ -1,6 +1,6 @@
 ﻿using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
 public record Form : IComponent
 {
