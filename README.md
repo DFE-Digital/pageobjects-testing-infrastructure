@@ -1,18 +1,18 @@
 # Who is this library for
 
-To support .NET Developers and Testers in building Web application tests.
+To support .NET Developers and Testers in building Web application tests using composable PageObjects.
 
 ## What problems is the library solving
 
 - Removing direct dependencies on specific test tools in PageModels and Tests and depending on this library to abstract common components and common query providers.
 
-- Allows sharing components among different types of tests (Presentation layer tests, Integration Tests, EndToEnd UI tests) by substituing querying providers.
+- Allows sharing components among different types of tests (Presentation layer tests, Integration Tests, EndToEnd UI tests) by substituting querying providers.
 
 ## Common terms and abstractions
 
-- `IDocumentQueryClient`
-- `PagePartBase`
-- `IPageFactory`
+- `IPage` - *Role:* mark pages with this
+- `IPageFactory` - *Role:* create pages with this
+- `IComponentFactory<IComponent>` *Role:* create components with this
 
 ## Using the library
 
@@ -151,7 +151,7 @@ public sealed class HomePage
 
 ### Create your pages in your tests
 
-When using the PageModels you want to create them using the `IPageFactory` which configures your `IDocumentQueryClient` as part of creating the page
+Create *ALL* of your PageModels using the `IPageFactory`
 
 ```cs
 public sealed class MyTestClass : BaseTest{
@@ -169,7 +169,7 @@ public async Task MyTest()
 
 ```
 
-### Expose the types that your tests need without being coupled to a testing library
+### Expose types for your tests need without being coupled to a testing library
 
 ```cs
 // Basic types example
@@ -244,5 +244,4 @@ public sealed class HomePage
                         FacetValues: fieldSet.Checkboxes.Select(
                          (checkbox) => new FacetValue(checkbox.Label,   checkbox.Value))));
 }
-
 ```
