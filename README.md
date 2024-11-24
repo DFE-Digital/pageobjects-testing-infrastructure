@@ -104,21 +104,29 @@ public sealed class MyTestClass : BaseTest
 }
 ```
 
-## Creating and using an application component
+## Adding your own pages
 
 When building PageModels you want to:
 
-- Add your types into your tests DependencyInjection
+### Mark your pages with `IPage`
+
+```cs
+public sealed class MyPage : IPage
+
+```
+
+### Add your Page types into your tests DI
 
 ```cs
     services....
-    services.AddTransient<HomePage>();
+    services.AddTransient<IPage, HomePage>();
 ```
 
-- Compose your PageModel of other PageComponents
+### Compose your PageModel of other PageComponents
 
 ```cs
 
+// NOTE make sure your register the components!
 services.AddTransient<SearchComponent>();
 services.AddTransient<FilterComponent>();
 
@@ -141,38 +149,41 @@ public sealed class HomePage
 }
 ```
 
-- Expose the types that your tests need, which are not coupled to a testing library e.g
+### Create your pages in your tests
 
+When using the PageModels you want to create them using the `IPageFactory` which configures your `IDocumentQueryClient` as part of creating the page
 
 ```cs
+public sealed class MyTestClass : BaseTest{
+
+[Fact]
+public async Task MyTest()
+{
+    HttpRequestMessage homePageRequest = new()
+    {
+        Uri = new("/")
+    }
+    HomePage homePage = await GetTestService<IPageFactory>().CreatePageAsync<HomePage>(homePageRequest);
+}
+}
+
+```
+
+### Expose the types that your tests need without being coupled to a testing library
+
+```cs
+// Basic types example
 homePage.GetHeading().Should().Be("Heading"); 
 
 public sealed class HomePage
 {
-    public string GetHeading() => ...
+    public string GetHeading() => _headingFactory.GetHeadings().Where(t => t.Type == H1).Text;
 }
 ```
 
-## You could expose a GDSComponent
-
 ```cs
 // GDSComponent provided by the library
-GDSTextInput textInput = new()
-{
-    Name = "searchKeyWord",
-    Value = "",
-    PlaceHolder = "Search by keyword",
-    Type = "text"
-};
-
-homePage.TextInput.Should().Be(textInput);
-
-public sealed class HomePage
-{
-    
-    public GDSTextInput  GetSearchInput() => _textInputFactory.Create();
-}
-
+// Record to give value-object semantics
 public record GDSTextInput
 {
     public required string Name { get; init; }
@@ -181,9 +192,27 @@ public record GDSTextInput
     public required string? Type { get; init; } = null;
 }
 
-```
+GDSTextInput textInput = new()
+{
+    Name = "searchKeyWord",
+    Value = "",
+    PlaceHolder = "Search by keyword",
+    Type = "text"
+};
 
-## or a custom application type
+// Test
+homePage.TextInput.Should().Be(textInput);
+
+// Page
+public sealed class HomePage
+{
+    
+    public GDSTextInput  GetSearchInput() => _factoryForInputs_.Create();
+}
+
+
+
+```
 
 ```cs
 
@@ -214,26 +243,6 @@ public sealed class HomePage
                         Name: fieldSet.Legend,
                         FacetValues: fieldSet.Checkboxes.Select(
                          (checkbox) => new FacetValue(checkbox.Label,   checkbox.Value))));
-}
-
-```
-
-## Using your PageModels
-
-When using the PageModels you want to create them using the `PageFactory` which sets up your pages to use the `IDocumentQueryClient` configured.
-
-```cs
-public sealed class MyTestClass : BaseTest{
-
-[Fact]
-public async Task MyTest()
-{
-    HttpRequestMessage homePageRequest = new()
-    {
-        Uri = new("/")
-    }
-    HomePage homePage = await GetTestService<IPageFactory>().CreatePageAsync<HomePage>(homePageRequest);
-}
 }
 
 ```
