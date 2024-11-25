@@ -10,6 +10,7 @@ internal class GDSTextInputMapper : IComponentMapper<GDSTextInputComponent>
         {
             Label = input.GetChild(new CssSelector("label"))!.Text ?? string.Empty,
             Hint = input.GetChild(new CssSelector(".govuk-hint"))?.Text ?? string.Empty,
+            ErrorMessage = input.GetChild(new CssSelector(".govuk-error-message"))?.Text ?? string.Empty,
             Name = textInput.GetAttribute("name") ?? string.Empty,
             TagName = input.TagName ?? string.Empty,
             AutoComplete = textInput.GetAttribute("autocomplete") ?? string.Empty,
