@@ -1,10 +1,10 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
 namespace Dfe.Testing.Pages.Internal.Components;
-internal sealed class GDSHeaderComponentFactory : ComponentFactory<GDSHeader>
+internal sealed class GDSHeaderFactory : ComponentFactory<GDSHeader>
 {
     private readonly ComponentFactory<AnchorLinkComponent> _linkFactory;
-    public GDSHeaderComponentFactory(
+    public GDSHeaderFactory(
         IDocumentQueryClientAccessor documentQueryClientAccessor,
         ComponentFactory<AnchorLinkComponent> linkFactory) : base(documentQueryClientAccessor)
     {

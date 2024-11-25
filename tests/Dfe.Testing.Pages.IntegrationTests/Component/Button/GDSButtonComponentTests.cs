@@ -9,7 +9,7 @@ public sealed class GDSButtonComponentTests
     {
         var page = await ComponentTestHelper.RequestPage<GDSButtonPage>("/component/button");
 
-        GDSButton expectedDefaultButton = new()
+        GDSButtonComponent expectedDefaultButton = new()
         {
             ButtonType = ButtonStyleType.Primary,
             Text = "Save and continue",
@@ -25,7 +25,7 @@ public sealed class GDSButtonComponentTests
     {
         var page = await ComponentTestHelper.RequestPage<GDSButtonPage>("/component/buttonnested");
 
-        GDSButton expectedDefaultButton = new()
+        GDSButtonComponent expectedDefaultButton = new()
         {
             ButtonType = ButtonStyleType.Primary,
             Text = "Nested save and continue",

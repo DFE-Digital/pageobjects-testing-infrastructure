@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
 namespace Dfe.Testing.Pages.Internal.Components.AnchorLink;
-public sealed class AnchorLinkMapper : IComponentMapper<IDocumentPart, AnchorLinkComponent>
+public sealed class AnchorLinkMapper : IComponentMapper<AnchorLinkComponent>
 {
     public AnchorLinkComponent Map(IDocumentPart input)
     {

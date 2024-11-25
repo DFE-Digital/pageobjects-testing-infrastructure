@@ -2,13 +2,13 @@
 
 namespace Dfe.Testing.Pages.Internal.Components;
 
-internal sealed class GDSCheckboxWithLabelComponentFactory : ComponentFactory<GDSCheckboxWithLabel>
+internal sealed class GDSCheckboxWithLabelFactory : ComponentFactory<GDSCheckboxWithLabel>
 {
     internal static IElementSelector GDSCheckboxItemStyle => new CssSelector(".govuk-checkboxes__item");
     internal static IElementSelector GDSCheckboxInputStyle => new CssSelector(".govuk-checkboxes__input");
     internal static IElementSelector GDSLabelStyle => new CssSelector(".govuk-checkboxes__label");
 
-    public GDSCheckboxWithLabelComponentFactory(IDocumentQueryClientAccessor documentQueryClientAccessor) : base(documentQueryClientAccessor)
+    public GDSCheckboxWithLabelFactory(IDocumentQueryClientAccessor documentQueryClientAccessor) : base(documentQueryClientAccessor)
     {
     }
 

@@ -3,11 +3,11 @@
 namespace Dfe.Testing.Pages.Internal.Components.AnchorLink;
 internal sealed class AnchorLinkComponentFactory : ComponentFactory<AnchorLinkComponent>
 {
-    private readonly IComponentMapper<IDocumentPart, AnchorLinkComponent> _mapper;
+    private readonly IComponentMapper<AnchorLinkComponent> _mapper;
 
     public AnchorLinkComponentFactory(
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        IComponentMapper<IDocumentPart, AnchorLinkComponent> mapper) : base(documentQueryClientAccessor)
+        IComponentMapper<AnchorLinkComponent> mapper) : base(documentQueryClientAccessor)
     {
         ArgumentNullException.ThrowIfNull(mapper);
         _mapper = mapper;

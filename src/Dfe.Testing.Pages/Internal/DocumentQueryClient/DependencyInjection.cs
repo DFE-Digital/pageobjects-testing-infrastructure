@@ -1,5 +1,7 @@
 ﻿using Dfe.Testing.Pages.Internal.Components;
 using Dfe.Testing.Pages.Internal.Components.AnchorLink;
+using Dfe.Testing.Pages.Internal.Components.Button;
+using Dfe.Testing.Pages.Internal.Components.Form;
 using Dfe.Testing.Pages.Internal.DocumentQueryClient.Commands;
 using Dfe.Testing.Pages.Public.Commands;
 using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
@@ -14,15 +16,23 @@ internal static class DependencyInjection
             .AddScoped<IDocumentQueryClientAccessor, DocumentQueryClientAccessor>()
             // Pages
             .AddScoped<IPageFactory, PageFactory>()
-            // Common component factories clients
+
+            // Components
+            // anchor link
             .AddTransient<ComponentFactory<AnchorLinkComponent>, AnchorLinkComponentFactory>()
-            .AddTransient<IComponentMapper<IDocumentPart, AnchorLinkComponent>, AnchorLinkMapper>()
-            .AddTransient<ComponentFactory<Form>, FormComponentFactory>()
-            .AddTransient<ComponentFactory<GDSHeader>, GDSHeaderComponentFactory>()
-            .AddTransient<ComponentFactory<GDSFieldset>, GDSFieldsetComponentFactory>()
-            .AddTransient<ComponentFactory<GDSCheckboxWithLabel>, GDSCheckboxWithLabelComponentFactory>()
-            .AddTransient<ComponentFactory<GDSButton>, GDSButtonComponentFactory>()
-            .AddTransient<ComponentFactory<GDSCookieBanner>, GDSCookieBannerComponentFactory>()
+            .AddTransient<IComponentMapper<AnchorLinkComponent>, AnchorLinkMapper>()
+            // form
+            .AddTransient<ComponentFactory<FormComponent>, FormFactory>()
+            .AddTransient<IComponentMapper<FormComponent>, FormMapper>()
+            // header
+            .AddTransient<ComponentFactory<GDSHeader>, GDSHeaderFactory>()
+            // fieldset
+            .AddTransient<ComponentFactory<GDSFieldsetComponent>, GDSFieldsetFactory>()
+            .AddTransient<ComponentFactory<GDSCheckboxWithLabel>, GDSCheckboxWithLabelFactory>()
+            // button
+            .AddTransient<ComponentFactory<GDSButtonComponent>, GDSButtonFactory>()
+            .AddTransient<IComponentMapper<GDSButtonComponent>, GDSButtonMapper>()
+            .AddTransient<ComponentFactory<GDSCookieBanner>, GDSCookieBannerFactory>()
 
             // Commands
             .AddScoped<ICommandHandler<ClickElementCommand>, ClickElementCommandHandler>()

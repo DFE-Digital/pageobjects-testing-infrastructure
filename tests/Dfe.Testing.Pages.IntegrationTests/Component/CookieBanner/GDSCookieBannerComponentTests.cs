@@ -20,7 +20,7 @@ public sealed class GDSCookieBannerComponentTests
             Heading = "Cookies on [name of service]",
             CookieChoiceButtons =
             [
-                new GDSButton()
+                new GDSButtonComponent()
                 {
                     Text = "Accept additional cookies",
                     ButtonType = ButtonStyleType.Primary,
@@ -28,7 +28,7 @@ public sealed class GDSCookieBannerComponentTests
                     Value = "yes",
                     Name = "cookies[additional]"
                 },
-                new GDSButton()
+                new GDSButtonComponent()
                 {
                     Text = "Reject additional cookies",
                     ButtonType = ButtonStyleType.Primary,

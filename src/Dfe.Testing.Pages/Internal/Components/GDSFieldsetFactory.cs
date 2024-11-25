@@ -2,24 +2,24 @@
 
 namespace Dfe.Testing.Pages.Internal.Components;
 
-internal sealed class GDSFieldsetComponentFactory : ComponentFactory<GDSFieldset>
+internal sealed class GDSFieldsetFactory : ComponentFactory<GDSFieldsetComponent>
 {
-    private readonly GDSCheckboxWithLabelComponentFactory _checkboxWithLabelComponent;
+    private readonly GDSCheckboxWithLabelFactory _checkboxWithLabelComponent;
 
-    public GDSFieldsetComponentFactory(
+    public GDSFieldsetFactory(
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        GDSCheckboxWithLabelComponentFactory checkboxWithLabelComponent) : base(documentQueryClientAccessor)
+        GDSCheckboxWithLabelFactory checkboxWithLabelComponent) : base(documentQueryClientAccessor)
     {
         _checkboxWithLabelComponent = checkboxWithLabelComponent;
     }
 
-    public override List<GDSFieldset> GetMany(QueryRequestArgs? request = null)
+    public override List<GDSFieldsetComponent> GetMany(QueryRequestArgs? request = null)
     {
         var queryRequest = MergeRequest(request, new CssSelector("fieldset"));
 
         return DocumentQueryClient.QueryMany(
             queryRequest,
-            mapper: (part) => new GDSFieldset()
+            mapper: (part) => new GDSFieldsetComponent()
             {
                 TagName = part.TagName,
                 Legend = part.GetChild(new CssSelector("legend"))?.Text ?? throw new ArgumentNullException("legend on fieldset is null"),

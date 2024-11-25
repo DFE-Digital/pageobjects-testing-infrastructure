@@ -1,7 +1,6 @@
 ﻿namespace Dfe.Testing.Pages.Internal.Components;
-public interface IComponentMapper<Tin, TOut>
-    where Tin : IDocumentPart
+public interface IComponentMapper<TOut>
     where TOut : IComponent
 {
-    TOut Map(Tin input);
+    TOut Map(IDocumentPart input);
 }

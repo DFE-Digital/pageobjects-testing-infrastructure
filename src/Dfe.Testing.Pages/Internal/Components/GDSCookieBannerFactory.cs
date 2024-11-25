@@ -1,10 +1,10 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
 namespace Dfe.Testing.Pages.Internal.Components;
-internal sealed class GDSCookieBannerComponentFactory : ComponentFactory<GDSCookieBanner>
+internal sealed class GDSCookieBannerFactory : ComponentFactory<GDSCookieBanner>
 {
     private static readonly CssSelector Container = new(".govuk-cookie-banner");
-    private readonly ComponentFactory<GDSButton> _buttonFactory;
+    private readonly ComponentFactory<GDSButtonComponent> _buttonFactory;
     private readonly ComponentFactory<AnchorLinkComponent> _anchorLinkFactory;
 
     private Func<IDocumentPart, GDSCookieBanner> MapToCookieBanner =>
@@ -23,9 +23,9 @@ internal sealed class GDSCookieBannerComponentFactory : ComponentFactory<GDSCook
                 }),
                 TagName = documentPart.TagName
             };
-    public GDSCookieBannerComponentFactory(
+    public GDSCookieBannerFactory(
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        ComponentFactory<GDSButton> buttonFactory,
+        ComponentFactory<GDSButtonComponent> buttonFactory,
         ComponentFactory<AnchorLinkComponent> anchorLinkFactory) : base(documentQueryClientAccessor)
     {
         ArgumentNullException.ThrowIfNull(buttonFactory);

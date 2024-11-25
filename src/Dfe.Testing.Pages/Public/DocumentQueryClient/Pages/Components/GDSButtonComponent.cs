@@ -1,6 +1,6 @@
 ﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
-public record GDSButton : IComponent
+public record GDSButtonComponent : IComponent
 {
     public required ButtonStyleType ButtonType { get; init; } = ButtonStyleType.Primary;
     public required string Text { get; init; } = string.Empty;
