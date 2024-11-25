@@ -20,6 +20,7 @@ internal static class DependencyInjection
             .AddTransient<ComponentFactory<GDSFieldset>, GDSFieldsetComponentFactory>()
             .AddTransient<ComponentFactory<GDSCheckboxWithLabel>, GDSCheckboxWithLabelComponentFactory>()
             .AddTransient<ComponentFactory<GDSButton>, GDSButtonComponentFactory>()
+            .AddTransient<ComponentFactory<GDSCookieBanner>, GDSCookieBannerComponentFactory>()
 
             // Commands
             .AddScoped<ICommandHandler<ClickElementCommand>, ClickElementCommandHandler>()

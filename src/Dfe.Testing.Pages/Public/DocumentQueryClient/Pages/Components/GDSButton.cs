@@ -3,10 +3,12 @@
 public record GDSButton : IComponent
 {
     public required ButtonStyleType ButtonType { get; init; } = ButtonStyleType.Primary;
-    public string TagName { get; init; } = "button";
+    public required string Text { get; init; } = string.Empty;
+    public bool Disabled { get; init; } = false;
     public bool IsSubmit { get; init; } = false;
-    public required string Text { get; init; }
-    public required bool Disabled { get; init; }
+    public string TagName { get; init; } = "button";
+    public string Value { get; init; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
 }
 
 public enum ButtonStyleType

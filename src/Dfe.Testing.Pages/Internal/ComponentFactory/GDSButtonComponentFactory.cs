@@ -24,11 +24,14 @@ internal sealed class GDSButtonComponentFactory : ComponentFactory<GDSButton>
                 {
                     ButtonType =
                         classStyles.Contains(SecondaryButtonStyle.ToSelector()) ? ButtonStyleType.Secondary :
-                        classStyles.Contains(WarningButtonStyle.ToSelector()) ? ButtonStyleType.Warning : ButtonStyleType.Primary,
+                        classStyles.Contains(WarningButtonStyle.ToSelector()) ? ButtonStyleType.Warning
+                            : ButtonStyleType.Primary,
                     Text = part.Text?.Trim() ?? string.Empty,
                     TagName = part.TagName,
                     Disabled = part.HasAttribute("disabled"),
-                    IsSubmit = part.GetAttribute("type") == "submit"
+                    IsSubmit = part.GetAttribute("type") == "submit",
+                    Name = part.GetAttribute("name") ?? string.Empty,
+                    Value = part.GetAttribute("value") ?? string.Empty
                 };
             }).ToList();
     }
