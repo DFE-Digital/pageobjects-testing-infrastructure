@@ -4,16 +4,8 @@ using Dfe.Testing.Pages.Components.CookieBanner;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
 using Dfe.Testing.Pages.Components.TextInput;
-using Dfe.Testing.Pages.Internal.ComponentFactory.AnchorLink;
-using Dfe.Testing.Pages.Internal.ComponentFactory.Button;
-using Dfe.Testing.Pages.Internal.ComponentFactory.Checkbox;
-using Dfe.Testing.Pages.Internal.ComponentFactory.CookieBanner;
-using Dfe.Testing.Pages.Internal.ComponentFactory.Fieldset;
-using Dfe.Testing.Pages.Internal.ComponentFactory.Form;
-using Dfe.Testing.Pages.Internal.ComponentFactory.Header;
-using Dfe.Testing.Pages.Internal.ComponentFactory.TextInput;
 
-namespace Dfe.Testing.Pages.Internal.ComponentFactory;
+namespace Dfe.Testing.Pages.Internal.Mapper;
 internal static class DependencyInjection
 {
     internal static IServiceCollection AddComponents(this IServiceCollection services)
@@ -25,12 +17,13 @@ internal static class DependencyInjection
                 Dictionary<string, Func<IElementSelector>> componentSelectorMapping = new()
                 {
                     { nameof(AnchorLinkComponent), () => new CssSelector("a")},
-                    { nameof(GDSHeaderComponent), () => new CssSelector("header.govuk-header")},
-                    { nameof(GDSFieldsetComponent), () => new CssSelector("fieldset.govuk-fieldset")},
-                    { nameof(GDSCheckboxWithLabelComponent), () => new CssSelector("input.govuk-checkbox")},
+                    { nameof(GDSHeaderComponent), () => new CssSelector(".govuk-header")},
+                    { nameof(GDSFieldsetComponent), () => new CssSelector("fieldset")},
+                    { nameof(GDSCheckboxComponent), () => new CssSelector(".govuk-checkboxes__item")},
                     { nameof(GDSButtonComponent), () => new CssSelector(".govuk-button")},
-                    { nameof(GDSTextInputComponent), () => new CssSelector("input.govuk-input")},
-                    { nameof(GDSCookieBannerComponent), () => new CssSelector("div.govuk-cookie-banner")},
+                    { nameof(GDSTextInputComponent), () => new CssSelector(".govuk-form-group:has(input[type=text])")},
+                    { nameof(GDSCookieBannerComponent), () => new CssSelector(".govuk-cookie-banner")},
+                    // may not be approp default if multiple forms on page?
                     { nameof(FormComponent), () => new CssSelector("form")},
                 };
 
@@ -42,23 +35,23 @@ internal static class DependencyInjection
         // button
         .AddTransient<ComponentFactory<GDSButtonComponent>>()
         .AddTransient<IComponentMapper<GDSButtonComponent>, GDSButtonMapper>()
+        // text input
+        .AddTransient<ComponentFactory<GDSTextInputComponent>>()
+        .AddTransient<IComponentMapper<GDSTextInputComponent>, GDSTextInputMapper>()
         // form
-        .AddTransient<ComponentFactory<FormComponent>, FormFactory>()
+        .AddTransient<ComponentFactory<FormComponent>>()
         .AddTransient<IComponentMapper<FormComponent>, FormMapper>()
         // header
-        .AddTransient<ComponentFactory<GDSHeaderComponent>, GDSHeaderFactory>()
+        .AddTransient<ComponentFactory<GDSHeaderComponent>>()
         .AddTransient<IComponentMapper<GDSHeaderComponent>, GDSHeaderMapper>()
         // fieldset
-        .AddTransient<ComponentFactory<GDSFieldsetComponent>, GDSFieldsetFactory>()
+        .AddTransient<ComponentFactory<GDSFieldsetComponent>>()
         .AddTransient<IComponentMapper<GDSFieldsetComponent>, GDSFieldsetMapper>()
         // checkboxes
-        .AddTransient<ComponentFactory<GDSCheckboxWithLabelComponent>, GDSCheckboxWithLabelFactory>()
-        .AddTransient<IComponentMapper<GDSCheckboxWithLabelComponent>, GDSCheckboxMapper>()
-        // text input
-        .AddTransient<ComponentFactory<GDSTextInputComponent>, GDSTextInputFactory>()
-        .AddTransient<IComponentMapper<GDSTextInputComponent>, GDSTextInputMapper>()
+        .AddTransient<ComponentFactory<GDSCheckboxComponent>>()
+        .AddTransient<IComponentMapper<GDSCheckboxComponent>, GDSCheckboxMapper>()
         // cookie banner
-        .AddTransient<ComponentFactory<GDSCookieBannerComponent>, GDSCookieBannerFactory>()
+        .AddTransient<ComponentFactory<GDSCookieBannerComponent>>()
         .AddTransient<IComponentMapper<GDSCookieBannerComponent>, GDSCookieBannerMapper>();
         return services;
     }
@@ -89,7 +82,7 @@ internal sealed class ComponentSelectorFactory : IComponentSelectorFactory
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(componentName);
 
-        return (!_mapping.TryGetValue(componentName, out var selector) || selector is null) ?
+        return !_mapping.TryGetValue(componentName, out var selector) || selector is null ?
                 throw new ArgumentOutOfRangeException(
                     $"Selector for {componentName} is not registered.") : selector();
     }

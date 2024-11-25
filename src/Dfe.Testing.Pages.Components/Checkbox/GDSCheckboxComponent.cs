@@ -2,7 +2,7 @@
 
 namespace Dfe.Testing.Pages.Components.Checkbox;
 
-public sealed record GDSCheckboxWithLabelComponent : IComponent
+public sealed record GDSCheckboxComponent : IComponent
 {
     public required string TagName { get; init; }
     public required string Name { get; init; }

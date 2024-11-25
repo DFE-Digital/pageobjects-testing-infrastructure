@@ -7,5 +7,5 @@ public record GDSFieldsetComponent : IComponent
 {
     public required string TagName { get; init; }
     public required string Legend { get; init; }
-    public required IEnumerable<GDSCheckboxWithLabelComponent> Checkboxes { get; init; }
+    public required IEnumerable<GDSCheckboxComponent> Checkboxes { get; init; }
 }

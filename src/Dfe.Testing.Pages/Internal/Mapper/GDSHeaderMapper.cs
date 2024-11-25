@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Internal.ComponentFactory.Header;
+﻿namespace Dfe.Testing.Pages.Internal.Mapper;
 internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>
 {
     private readonly ComponentFactory<AnchorLinkComponent> _linkFactory;

@@ -3,7 +3,7 @@ using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
 using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace Dfe.Testing.Pages.Internal.ComponentFactory.Form;
+namespace Dfe.Testing.Pages.Internal.Mapper;
 internal sealed class FormMapper : IComponentMapper<FormComponent>
 {
     private readonly ComponentFactory<GDSFieldsetComponent> _fieldSetFactory;

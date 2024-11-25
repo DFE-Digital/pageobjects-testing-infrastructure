@@ -1,17 +1,17 @@
 ﻿using Dfe.Testing.Pages.Components.Checkbox;
 
-namespace Dfe.Testing.Pages.Internal.ComponentFactory.Checkbox;
-internal sealed class GDSCheckboxMapper : IComponentMapper<GDSCheckboxWithLabelComponent>
+namespace Dfe.Testing.Pages.Internal.Mapper;
+internal sealed class GDSCheckboxMapper : IComponentMapper<GDSCheckboxComponent>
 {
     internal static IElementSelector GDSCheckboxInputStyle => new CssSelector(".govuk-checkboxes__input");
     internal static IElementSelector GDSLabelStyle => new CssSelector(".govuk-checkboxes__label");
 
-    public GDSCheckboxWithLabelComponent Map(IDocumentPart input)
+    public GDSCheckboxComponent Map(IDocumentPart input)
     {
         var checkboxItem = input.GetChild(GDSCheckboxInputStyle) ?? throw new ArgumentNullException(nameof(GDSCheckboxInputStyle));
         var checkboxLabel = input.GetChild(GDSLabelStyle) ?? throw new ArgumentNullException(nameof(GDSLabelStyle));
 
-        return new GDSCheckboxWithLabelComponent()
+        return new GDSCheckboxComponent()
         {
             TagName = "",
             Name = checkboxItem.GetAttribute("name") ?? throw new ArgumentNullException($"no name of {nameof(checkboxItem)}")!,

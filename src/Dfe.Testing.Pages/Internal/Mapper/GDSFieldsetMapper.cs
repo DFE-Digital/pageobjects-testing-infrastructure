@@ -1,17 +1,16 @@
 ﻿using Dfe.Testing.Pages.Components.Checkbox;
 using Dfe.Testing.Pages.Components.Fieldset;
-using Dfe.Testing.Pages.Internal.ComponentFactory.Checkbox;
 
-namespace Dfe.Testing.Pages.Internal.ComponentFactory.Fieldset;
+namespace Dfe.Testing.Pages.Internal.Mapper;
 internal sealed class GDSFieldsetMapper : IComponentMapper<GDSFieldsetComponent>
 {
-    private readonly GDSCheckboxWithLabelFactory _checkboxFactory;
+    private readonly GDSCheckboxFactory _checkboxFactory;
 
     // TODO hard dependency on checkboxFactory from IDocumentPart - use scope instead or introduce IDocumentPart as part of Componentfactory?
-    public GDSFieldsetMapper(IComponentSelectorFactory componentSelectorFactory, IDocumentQueryClientAccessor accessor, IComponentMapper<GDSCheckboxWithLabelComponent> checkboxMapper)
+    public GDSFieldsetMapper(IComponentSelectorFactory componentSelectorFactory, IDocumentQueryClientAccessor accessor, IComponentMapper<GDSCheckboxComponent> checkboxMapper)
     {
         ArgumentNullException.ThrowIfNull(accessor);
-        _checkboxFactory = new GDSCheckboxWithLabelFactory(componentSelectorFactory, accessor, checkboxMapper);
+        _checkboxFactory = new GDSCheckboxFactory(componentSelectorFactory, accessor, checkboxMapper);
     }
     public GDSFieldsetComponent Map(IDocumentPart input)
     {

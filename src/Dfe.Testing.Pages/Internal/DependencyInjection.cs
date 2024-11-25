@@ -1,5 +1,5 @@
-﻿using Dfe.Testing.Pages.Internal.ComponentFactory;
-using Dfe.Testing.Pages.Internal.DocumentQueryClient.Commands;
+﻿using Dfe.Testing.Pages.Internal.DocumentQueryClient.Commands;
+using Dfe.Testing.Pages.Internal.Mapper;
 using Dfe.Testing.Pages.Public.Commands;
 
 namespace Dfe.Testing.Pages.Internal;

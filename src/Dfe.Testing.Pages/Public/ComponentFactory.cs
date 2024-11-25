@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Internal.ComponentFactory;
+﻿using Dfe.Testing.Pages.Internal.Mapper;
 
 namespace Dfe.Testing.Pages.Public;
 public class ComponentFactory<T> where T : IComponent

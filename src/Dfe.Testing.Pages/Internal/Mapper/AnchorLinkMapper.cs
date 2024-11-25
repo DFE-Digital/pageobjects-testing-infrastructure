@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Internal.ComponentFactory.AnchorLink;
+﻿namespace Dfe.Testing.Pages.Internal.Mapper;
 public sealed class AnchorLinkMapper : IComponentMapper<AnchorLinkComponent>
 {
     public AnchorLinkComponent Map(IDocumentPart input)
