@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dfe.Testing.Pages.Internal.DocumentQueryClient;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
 
 namespace Dfe.Testing.Pages.Internal.Components.CookieBanner;
 internal sealed class GDSCookieBannerMapper : IComponentMapper<GDSCookieBannerComponent>

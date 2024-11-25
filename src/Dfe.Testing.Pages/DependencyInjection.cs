@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Dfe.Testing.Pages.Internal;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Dfe.Testing.Pages.Internal;
 
 namespace Dfe.Testing.Pages;
 

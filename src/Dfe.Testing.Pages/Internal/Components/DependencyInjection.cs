@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dfe.Testing.Pages.Internal.Components.AnchorLink;
+﻿using Dfe.Testing.Pages.Internal.Components.AnchorLink;
 using Dfe.Testing.Pages.Internal.Components.Button;
 using Dfe.Testing.Pages.Internal.Components.Checkbox;
 using Dfe.Testing.Pages.Internal.Components.CookieBanner;
 using Dfe.Testing.Pages.Internal.Components.Fieldset;
 using Dfe.Testing.Pages.Internal.Components.Form;
 using Dfe.Testing.Pages.Internal.Components.Header;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
+using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
 
 namespace Dfe.Testing.Pages.Internal.Components;
 internal static class DependencyInjection

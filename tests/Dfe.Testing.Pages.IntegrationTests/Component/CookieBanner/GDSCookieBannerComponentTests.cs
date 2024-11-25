@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
 using FluentAssertions;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;

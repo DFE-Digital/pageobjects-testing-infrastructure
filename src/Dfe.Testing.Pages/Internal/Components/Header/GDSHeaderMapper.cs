@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dfe.Testing.Pages.Internal.Components.AnchorLink;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
 
 namespace Dfe.Testing.Pages.Internal.Components.Header;
 internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>

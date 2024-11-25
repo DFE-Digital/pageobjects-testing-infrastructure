@@ -1,5 +1,4 @@
-﻿using Dfe.Testing.Pages.IntegrationTests.Component.Button;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component;
