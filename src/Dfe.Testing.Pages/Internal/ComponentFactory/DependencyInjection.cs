@@ -39,7 +39,7 @@ internal static class DependencyInjection
         .AddTransient<IComponentMapper<GDSButtonComponent>, GDSButtonMapper>()
         // text input
         .AddTransient<ComponentFactory<GDSTextInputComponent>, GDSTextInputFactory>()
-        .AddTransient<IComponentMapper<GDSTextInputComponent>, TextInputMapper>()
+        .AddTransient<IComponentMapper<GDSTextInputComponent>, GDSTextInputMapper>()
         // cookie banner
         .AddTransient<ComponentFactory<GDSCookieBannerComponent>, GDSCookieBannerFactory>()
         .AddTransient<IComponentMapper<GDSCookieBannerComponent>, GDSCookieBannerMapper>();
