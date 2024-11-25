@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components.Form;
-using Dfe.Testing.Pages.Internal.Components;
+using Dfe.Testing.Pages.Internal.ComponentFactory;
 
-namespace Dfe.Testing.Pages.Internal.Components.Form;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory.Form;
 
 internal sealed class FormFactory : ComponentFactory<FormComponent>
 {

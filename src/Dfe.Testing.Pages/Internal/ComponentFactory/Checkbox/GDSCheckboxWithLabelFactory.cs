@@ -1,7 +1,6 @@
 ﻿using Dfe.Testing.Pages.Components.Checkbox;
-using Dfe.Testing.Pages.Internal.Components;
 
-namespace Dfe.Testing.Pages.Internal.Components.Checkbox;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory.Checkbox;
 
 internal sealed class GDSCheckboxWithLabelFactory : ComponentFactory<GDSCheckboxWithLabelComponent>
 {

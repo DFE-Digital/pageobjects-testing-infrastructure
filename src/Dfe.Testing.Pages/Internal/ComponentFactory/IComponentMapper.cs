@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Internal.Components;
+﻿namespace Dfe.Testing.Pages.Internal.ComponentFactory;
 public interface IComponentMapper<TOut>
     where TOut : IComponent
 {

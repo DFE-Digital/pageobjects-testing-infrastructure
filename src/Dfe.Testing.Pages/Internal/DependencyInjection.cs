@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Internal.Components;
+﻿using Dfe.Testing.Pages.Internal.ComponentFactory;
 using Dfe.Testing.Pages.Internal.DocumentQueryClient.Commands;
 using Dfe.Testing.Pages.Public.Commands;
 

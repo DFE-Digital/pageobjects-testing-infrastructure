@@ -1,7 +1,6 @@
 ﻿using Dfe.Testing.Pages.Components.Button;
-using Dfe.Testing.Pages.Internal.Components;
 
-namespace Dfe.Testing.Pages.Internal.Components.Button;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory.Button;
 internal class GDSButtonMapper : IComponentMapper<GDSButtonComponent>
 {
     internal static IElementSelector SecondaryButtonStyle => new CssSelector("govuk-button--secondary");

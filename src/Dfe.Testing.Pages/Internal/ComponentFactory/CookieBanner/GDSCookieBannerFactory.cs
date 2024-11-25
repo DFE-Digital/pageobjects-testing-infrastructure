@@ -1,6 +1,6 @@
 ﻿using Dfe.Testing.Pages.Components.CookieBanner;
 
-namespace Dfe.Testing.Pages.Internal.Components.CookieBanner;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory.CookieBanner;
 internal sealed class GDSCookieBannerFactory : ComponentFactory<GDSCookieBannerComponent>
 {
     private readonly IComponentMapper<GDSCookieBannerComponent> _mapper;

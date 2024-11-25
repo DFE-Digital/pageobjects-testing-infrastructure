@@ -5,16 +5,15 @@ using Dfe.Testing.Pages.Components.CookieBanner;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
 using Dfe.Testing.Pages.Components.Header;
-using Dfe.Testing.Pages.Internal.Components.AnchorLink;
-using Dfe.Testing.Pages.Internal.Components.Button;
-using Dfe.Testing.Pages.Internal.Components.Checkbox;
-using Dfe.Testing.Pages.Internal.Components.CookieBanner;
-using Dfe.Testing.Pages.Internal.Components.Fieldset;
-using Dfe.Testing.Pages.Internal.Components.Form;
-using Dfe.Testing.Pages.Internal.Components.Header;
-using Microsoft.Extensions.DependencyInjection;
+using Dfe.Testing.Pages.Internal.ComponentFactory.AnchorLink;
+using Dfe.Testing.Pages.Internal.ComponentFactory.Button;
+using Dfe.Testing.Pages.Internal.ComponentFactory.Checkbox;
+using Dfe.Testing.Pages.Internal.ComponentFactory.CookieBanner;
+using Dfe.Testing.Pages.Internal.ComponentFactory.Fieldset;
+using Dfe.Testing.Pages.Internal.ComponentFactory.Form;
+using Dfe.Testing.Pages.Internal.ComponentFactory.Header;
 
-namespace Dfe.Testing.Pages.Internal.Components;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory;
 internal static class DependencyInjection
 {
     internal static IServiceCollection AddGDSComponents(this IServiceCollection services)

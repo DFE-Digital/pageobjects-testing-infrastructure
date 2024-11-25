@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components.Button;
-using Dfe.Testing.Pages.Internal.Components;
+using Dfe.Testing.Pages.Internal.ComponentFactory;
 
-namespace Dfe.Testing.Pages.Internal.Components.Button;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory.Button;
 
 internal sealed class GDSButtonFactory : ComponentFactory<GDSButtonComponent>
 {

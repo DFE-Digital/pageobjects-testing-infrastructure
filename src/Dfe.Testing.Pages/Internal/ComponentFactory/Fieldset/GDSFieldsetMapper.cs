@@ -1,9 +1,9 @@
 ﻿using Dfe.Testing.Pages.Components.Checkbox;
 using Dfe.Testing.Pages.Components.Fieldset;
-using Dfe.Testing.Pages.Internal.Components;
-using Dfe.Testing.Pages.Internal.Components.Checkbox;
+using Dfe.Testing.Pages.Internal.ComponentFactory;
+using Dfe.Testing.Pages.Internal.ComponentFactory.Checkbox;
 
-namespace Dfe.Testing.Pages.Internal.Components.Fieldset;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory.Fieldset;
 internal sealed class GDSFieldsetMapper : IComponentMapper<GDSFieldsetComponent>
 {
     private readonly GDSCheckboxWithLabelFactory _checkboxFactory;

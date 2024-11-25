@@ -1,10 +1,10 @@
 ﻿using Dfe.Testing.Pages.Components.Button;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
-using Dfe.Testing.Pages.Internal.Components;
+using Dfe.Testing.Pages.Internal.ComponentFactory;
 using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace Dfe.Testing.Pages.Internal.Components.Form;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory.Form;
 internal sealed class FormMapper : IComponentMapper<FormComponent>
 {
     private readonly ComponentFactory<GDSFieldsetComponent> _fieldSetFactory;

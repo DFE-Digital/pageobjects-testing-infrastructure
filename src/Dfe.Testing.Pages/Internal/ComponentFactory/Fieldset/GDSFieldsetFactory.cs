@@ -1,7 +1,6 @@
 ﻿using Dfe.Testing.Pages.Components.Fieldset;
-using Dfe.Testing.Pages.Internal.Components;
 
-namespace Dfe.Testing.Pages.Internal.Components.Fieldset;
+namespace Dfe.Testing.Pages.Internal.ComponentFactory.Fieldset;
 
 internal sealed class GDSFieldsetFactory : ComponentFactory<GDSFieldsetComponent>
 {
