@@ -9,7 +9,8 @@ internal sealed class AnchorLinkComponentFactory : ComponentFactory<AnchorLinkCo
         IDocumentQueryClientAccessor documentQueryClientAccessor,
         IComponentMapper<IDocumentPart, AnchorLinkComponent> mapper) : base(documentQueryClientAccessor)
     {
-        this._mapper = mapper;
+        ArgumentNullException.ThrowIfNull(mapper);
+        _mapper = mapper;
     }
 
     public override List<AnchorLinkComponent> GetMany(QueryRequestArgs? request = null)
