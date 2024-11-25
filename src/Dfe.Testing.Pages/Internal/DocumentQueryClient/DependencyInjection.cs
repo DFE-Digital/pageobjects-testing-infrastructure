@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Internal.ComponentFactory;
+﻿using Dfe.Testing.Pages.Internal.Components;
+using Dfe.Testing.Pages.Internal.Components.AnchorLink;
 using Dfe.Testing.Pages.Internal.DocumentQueryClient.Commands;
 using Dfe.Testing.Pages.Public.Commands;
 using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
@@ -14,7 +15,8 @@ internal static class DependencyInjection
             // Pages
             .AddScoped<IPageFactory, PageFactory>()
             // Common component factories clients
-            .AddTransient<ComponentFactory<AnchorLink>, AnchorLinkComponentFactory>()
+            .AddTransient<ComponentFactory<AnchorLinkComponent>, AnchorLinkComponentFactory>()
+            .AddTransient<IComponentMapper<IDocumentPart, AnchorLinkComponent>, AnchorLinkMapper>()
             .AddTransient<ComponentFactory<Form>, FormComponentFactory>()
             .AddTransient<ComponentFactory<GDSHeader>, GDSHeaderComponentFactory>()
             .AddTransient<ComponentFactory<GDSFieldset>, GDSFieldsetComponentFactory>()

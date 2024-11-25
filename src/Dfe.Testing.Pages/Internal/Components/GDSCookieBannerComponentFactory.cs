@@ -1,11 +1,11 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
-namespace Dfe.Testing.Pages.Internal.ComponentFactory;
+namespace Dfe.Testing.Pages.Internal.Components;
 internal sealed class GDSCookieBannerComponentFactory : ComponentFactory<GDSCookieBanner>
 {
     private static readonly CssSelector Container = new(".govuk-cookie-banner");
     private readonly ComponentFactory<GDSButton> _buttonFactory;
-    private readonly ComponentFactory<AnchorLink> _anchorLinkFactory;
+    private readonly ComponentFactory<AnchorLinkComponent> _anchorLinkFactory;
 
     private Func<IDocumentPart, GDSCookieBanner> MapToCookieBanner =>
         (documentPart)
@@ -26,7 +26,7 @@ internal sealed class GDSCookieBannerComponentFactory : ComponentFactory<GDSCook
     public GDSCookieBannerComponentFactory(
         IDocumentQueryClientAccessor documentQueryClientAccessor,
         ComponentFactory<GDSButton> buttonFactory,
-        ComponentFactory<AnchorLink> anchorLinkFactory) : base(documentQueryClientAccessor)
+        ComponentFactory<AnchorLinkComponent> anchorLinkFactory) : base(documentQueryClientAccessor)
     {
         ArgumentNullException.ThrowIfNull(buttonFactory);
         ArgumentNullException.ThrowIfNull(anchorLinkFactory);
@@ -35,7 +35,7 @@ internal sealed class GDSCookieBannerComponentFactory : ComponentFactory<GDSCook
     }
 
     public override List<GDSCookieBanner> GetMany(QueryRequestArgs? request = null)
-        => DocumentQueryClient.QueryMany<GDSCookieBanner>(
+        => DocumentQueryClient.QueryMany(
                 args: MergeRequest(request, Container),
                 mapper: MapToCookieBanner)
             .ToList();

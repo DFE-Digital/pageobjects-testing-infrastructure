@@ -1,6 +1,6 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
-namespace Dfe.Testing.Pages.Internal.ComponentFactory;
+namespace Dfe.Testing.Pages.Internal.Components;
 
 internal sealed class GDSButtonComponentFactory : ComponentFactory<GDSButton>
 {
@@ -13,7 +13,7 @@ internal sealed class GDSButtonComponentFactory : ComponentFactory<GDSButton>
 
     public override List<GDSButton> GetMany(QueryRequestArgs? request = null)
     {
-        QueryRequestArgs queryRequest = MergeRequest(request, DefaultButtonStyleSelector);
+        var queryRequest = MergeRequest(request, DefaultButtonStyleSelector);
 
         return DocumentQueryClient.QueryMany(
             args: queryRequest,

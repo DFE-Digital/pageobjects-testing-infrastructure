@@ -1,6 +1,6 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
-namespace Dfe.Testing.Pages.Internal.ComponentFactory;
+namespace Dfe.Testing.Pages.Internal.Components;
 
 internal sealed class GDSFieldsetComponentFactory : ComponentFactory<GDSFieldset>
 {
@@ -15,7 +15,7 @@ internal sealed class GDSFieldsetComponentFactory : ComponentFactory<GDSFieldset
 
     public override List<GDSFieldset> GetMany(QueryRequestArgs? request = null)
     {
-        QueryRequestArgs queryRequest = MergeRequest(request, new CssSelector("fieldset"));
+        var queryRequest = MergeRequest(request, new CssSelector("fieldset"));
 
         return DocumentQueryClient.QueryMany(
             queryRequest,

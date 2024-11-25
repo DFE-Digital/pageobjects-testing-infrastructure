@@ -1,5 +1,5 @@
 ﻿namespace Dfe.Testing.Pages.Internal.DocumentQueryClient;
-internal interface IDocumentPart
+public interface IDocumentPart
 {
     string Text { get; set; }
     string TagName { get; }

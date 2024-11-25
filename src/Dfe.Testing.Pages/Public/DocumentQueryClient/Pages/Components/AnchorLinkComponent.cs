@@ -1,5 +1,5 @@
 ﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
-public record AnchorLink : IComponent
+public record AnchorLinkComponent : IComponent
 {
     public string TagName { get; } = "a";
     public required string LinkValue { get; init; }

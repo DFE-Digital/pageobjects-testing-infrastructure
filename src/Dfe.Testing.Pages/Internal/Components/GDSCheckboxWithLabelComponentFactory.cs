@@ -1,6 +1,6 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
-namespace Dfe.Testing.Pages.Internal.ComponentFactory;
+namespace Dfe.Testing.Pages.Internal.Components;
 
 internal sealed class GDSCheckboxWithLabelComponentFactory : ComponentFactory<GDSCheckboxWithLabel>
 {
@@ -32,7 +32,7 @@ internal sealed class GDSCheckboxWithLabelComponentFactory : ComponentFactory<GD
 
     public override List<GDSCheckboxWithLabel> GetMany(QueryRequestArgs? request = null)
     {
-        QueryRequestArgs queryRequest = MergeRequest(request, GDSCheckboxItemStyle);
+        var queryRequest = MergeRequest(request, GDSCheckboxItemStyle);
 
         return DocumentQueryClient.QueryMany(
                 args: queryRequest,

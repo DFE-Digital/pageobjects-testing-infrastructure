@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace Dfe.Testing.Pages.Internal.ComponentFactory;
+namespace Dfe.Testing.Pages.Internal.Components;
 
 internal sealed class FormComponentFactory : ComponentFactory<Form>
 {
@@ -23,7 +23,7 @@ internal sealed class FormComponentFactory : ComponentFactory<Form>
 
     public override List<Form> GetMany(QueryRequestArgs? request = null)
     {
-        QueryRequestArgs queryRequest = MergeRequest(request, DefaultFormQuery);
+        var queryRequest = MergeRequest(request, DefaultFormQuery);
 
         return DocumentQueryClient.QueryMany(
             queryRequest,

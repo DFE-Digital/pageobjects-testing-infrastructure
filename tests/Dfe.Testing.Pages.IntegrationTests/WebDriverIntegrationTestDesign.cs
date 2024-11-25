@@ -43,11 +43,11 @@ public sealed class WebDriverIntegrationTestDesign
     public sealed class SearchPage : IPage
     {
         private readonly ICommandHandler<ClickElementCommand> _clickElementHandler;
-        private readonly ComponentFactory<AnchorLink> _anchorLink;
+        private readonly ComponentFactory<AnchorLinkComponent> _anchorLink;
 
         public SearchPage(
             ICommandHandler<ClickElementCommand> clickElementHandler,
-            ComponentFactory<AnchorLink> anchorLink)
+            ComponentFactory<AnchorLinkComponent> anchorLink)
         {
             _clickElementHandler = clickElementHandler;
             _anchorLink = anchorLink;
@@ -58,7 +58,7 @@ public sealed class WebDriverIntegrationTestDesign
             FindWith = new CssSelector("#home-link")
         });
 
-        public IEnumerable<AnchorLink> GetLinks() => _anchorLink.GetMany(new()
+        public IEnumerable<AnchorLinkComponent> GetLinks() => _anchorLink.GetMany(new()
         {
             Scope = new CssSelector(".govuk-header")
         });

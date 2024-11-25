@@ -1,17 +1,17 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
-namespace Dfe.Testing.Pages.Internal.ComponentFactory;
+namespace Dfe.Testing.Pages.Internal.Components;
 internal sealed class GDSHeaderComponentFactory : ComponentFactory<GDSHeader>
 {
-    private readonly ComponentFactory<AnchorLink> _linkFactory;
+    private readonly ComponentFactory<AnchorLinkComponent> _linkFactory;
     public GDSHeaderComponentFactory(
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        ComponentFactory<AnchorLink> linkFactory) : base(documentQueryClientAccessor)
+        ComponentFactory<AnchorLinkComponent> linkFactory) : base(documentQueryClientAccessor)
     {
         _linkFactory = linkFactory;
     }
 
-    private Func<IDocumentPart, GDSHeader> Map => (IDocumentPart part) =>
+    private Func<IDocumentPart, GDSHeader> Map => (part) =>
     {
         return new GDSHeader()
         {
@@ -29,8 +29,8 @@ internal sealed class GDSHeaderComponentFactory : ComponentFactory<GDSHeader>
 
     public override List<GDSHeader> GetMany(QueryRequestArgs? request = null)
     {
-        QueryRequestArgs queryRequest = MergeRequest(request, new CssSelector(".govuk-header"));
-        return DocumentQueryClient.QueryMany<GDSHeader>(queryRequest, Map)
+        var queryRequest = MergeRequest(request, new CssSelector(".govuk-header"));
+        return DocumentQueryClient.QueryMany(queryRequest, Map)
             .ToList();
     }
 
