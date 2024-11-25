@@ -1,10 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.AnchorLink;
-using Dfe.Testing.Pages.Public.Commands;
-using Dfe.Testing.Pages.Public.DocumentQueryClient;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Selector;
-using Dfe.Testing.Pages.Public.WebDriver;
-using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
+﻿
 using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
 
 namespace Dfe.Testing.Pages.IntegrationTests;

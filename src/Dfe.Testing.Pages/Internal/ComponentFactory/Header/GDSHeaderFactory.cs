@@ -1,7 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.Header;
-using Dfe.Testing.Pages.Internal.ComponentFactory;
-
-namespace Dfe.Testing.Pages.Internal.ComponentFactory.Header;
+﻿namespace Dfe.Testing.Pages.Internal.ComponentFactory.Header;
 internal sealed class GDSHeaderFactory : ComponentFactory<GDSHeaderComponent>
 {
     private readonly IComponentMapper<GDSHeaderComponent> _mapper;

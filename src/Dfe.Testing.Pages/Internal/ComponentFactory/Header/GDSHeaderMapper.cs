@@ -1,7 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.AnchorLink;
-using Dfe.Testing.Pages.Components.Header;
-
-namespace Dfe.Testing.Pages.Internal.ComponentFactory.Header;
+﻿namespace Dfe.Testing.Pages.Internal.ComponentFactory.Header;
 internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>
 {
     private readonly ComponentFactory<AnchorLinkComponent> _linkFactory;

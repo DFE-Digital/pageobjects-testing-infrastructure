@@ -1,6 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.AnchorLink;
-
-namespace Dfe.Testing.Pages.Internal.ComponentFactory.AnchorLink;
+﻿namespace Dfe.Testing.Pages.Internal.ComponentFactory.AnchorLink;
 internal sealed class AnchorLinkComponentFactory : ComponentFactory<AnchorLinkComponent>
 {
     private readonly IComponentMapper<AnchorLinkComponent> _mapper;

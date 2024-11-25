@@ -1,6 +1,5 @@
 ﻿using Dfe.Testing.Pages.Components.Checkbox;
 using Dfe.Testing.Pages.Components.Fieldset;
-using Dfe.Testing.Pages.Internal.ComponentFactory;
 using Dfe.Testing.Pages.Internal.ComponentFactory.Checkbox;
 
 namespace Dfe.Testing.Pages.Internal.ComponentFactory.Fieldset;

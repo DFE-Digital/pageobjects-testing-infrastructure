@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient;
+﻿namespace Dfe.Testing.Pages.Public;
 public abstract class ComponentFactory<T> where T : IComponent
 {
     private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;

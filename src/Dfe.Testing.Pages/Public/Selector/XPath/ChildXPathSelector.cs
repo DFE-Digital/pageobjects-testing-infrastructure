@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Selector.XPath;
+﻿namespace Dfe.Testing.Pages.Public.Selector.XPath;
 
 public sealed class ChildXPathSelector : IElementSelector
 {

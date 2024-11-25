@@ -1,5 +1,4 @@
 ﻿using Dfe.Testing.Pages.Components.Form;
-using Dfe.Testing.Pages.Internal.ComponentFactory;
 
 namespace Dfe.Testing.Pages.Internal.ComponentFactory.Form;
 

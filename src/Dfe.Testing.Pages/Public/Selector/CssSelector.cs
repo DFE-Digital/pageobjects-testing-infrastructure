@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Selector;
+﻿namespace Dfe.Testing.Pages.Public.Selector;
 public sealed class CssSelector : IElementSelector
 {
     private readonly string _locator;

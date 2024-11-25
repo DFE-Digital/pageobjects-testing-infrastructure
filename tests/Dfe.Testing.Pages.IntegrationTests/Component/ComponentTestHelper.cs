@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient;
+﻿using Dfe.Testing.Pages.Public;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component;

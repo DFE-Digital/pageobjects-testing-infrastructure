@@ -1,10 +1,8 @@
-﻿using Dfe.Testing.Pages.Components.AnchorLink;
-using Dfe.Testing.Pages.Components.Button;
+﻿using Dfe.Testing.Pages.Components.Button;
 using Dfe.Testing.Pages.Components.Checkbox;
 using Dfe.Testing.Pages.Components.CookieBanner;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
-using Dfe.Testing.Pages.Components.Header;
 using Dfe.Testing.Pages.Internal.ComponentFactory.AnchorLink;
 using Dfe.Testing.Pages.Internal.ComponentFactory.Button;
 using Dfe.Testing.Pages.Internal.ComponentFactory.Checkbox;

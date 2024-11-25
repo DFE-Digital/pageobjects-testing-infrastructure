@@ -1,5 +1,4 @@
-﻿
-namespace Dfe.Testing.Pages.Public.Commands;
+﻿namespace Dfe.Testing.Pages.Public.Commands;
 public sealed class UpdateElementTextCommand : ICommand
 {
     public required string Text { get; set; } = string.Empty;

@@ -1,8 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.Button;
-using Dfe.Testing.Pages.Public.DocumentQueryClient;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Selector;
-
-namespace Dfe.Testing.Pages.IntegrationTests.Component.Button;
+﻿namespace Dfe.Testing.Pages.IntegrationTests.Component.Button;
 internal sealed class GDSButtonPage : IPage
 {
     private readonly ComponentFactory<GDSButtonComponent> _buttonFactory;
