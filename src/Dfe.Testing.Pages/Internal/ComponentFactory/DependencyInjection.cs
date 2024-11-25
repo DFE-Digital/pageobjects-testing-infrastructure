@@ -24,13 +24,24 @@ internal static class DependencyInjection
             {
                 Dictionary<string, Func<IElementSelector>> componentSelectorMapping = new()
                 {
-                    { nameof(AnchorLinkComponent), () => new CssSelector("a")}
+                    { nameof(AnchorLinkComponent), () => new CssSelector("a")},
+                    { nameof(GDSHeaderComponent), () => new CssSelector("header.govuk-header")},
+                    { nameof(GDSFieldsetComponent), () => new CssSelector("fieldset.govuk-fieldset")},
+                    { nameof(GDSCheckboxWithLabelComponent), () => new CssSelector("input.govuk-checkbox")},
+                    { nameof(GDSButtonComponent), () => new CssSelector(".govuk-button")},
+                    { nameof(GDSTextInputComponent), () => new CssSelector("input.govuk-input")},
+                    { nameof(GDSCookieBannerComponent), () => new CssSelector("div.govuk-cookie-banner")},
+                    { nameof(FormComponent), () => new CssSelector("form")},
                 };
 
                 return new ComponentSelectorFactory(componentSelectorMapping);
             })
-        .AddTransient<ComponentFactory<AnchorLinkComponent>, AnchorLinkComponentFactory>()
+        // anchor link
+        .AddTransient<ComponentFactory<AnchorLinkComponent>>()
         .AddTransient<IComponentMapper<AnchorLinkComponent>, AnchorLinkMapper>()
+        // button
+        .AddTransient<ComponentFactory<GDSButtonComponent>>()
+        .AddTransient<IComponentMapper<GDSButtonComponent>, GDSButtonMapper>()
         // form
         .AddTransient<ComponentFactory<FormComponent>, FormFactory>()
         .AddTransient<IComponentMapper<FormComponent>, FormMapper>()
@@ -43,9 +54,6 @@ internal static class DependencyInjection
         // checkboxes
         .AddTransient<ComponentFactory<GDSCheckboxWithLabelComponent>, GDSCheckboxWithLabelFactory>()
         .AddTransient<IComponentMapper<GDSCheckboxWithLabelComponent>, GDSCheckboxMapper>()
-        // button
-        .AddTransient<ComponentFactory<GDSButtonComponent>, GDSButtonFactory>()
-        .AddTransient<IComponentMapper<GDSButtonComponent>, GDSButtonMapper>()
         // text input
         .AddTransient<ComponentFactory<GDSTextInputComponent>, GDSTextInputFactory>()
         .AddTransient<IComponentMapper<GDSTextInputComponent>, GDSTextInputMapper>()
@@ -56,7 +64,7 @@ internal static class DependencyInjection
     }
 }
 
-internal interface IComponentSelectorFactory
+public interface IComponentSelectorFactory
 {
     IElementSelector GetSelector<TComponent>() where TComponent : IComponent;
     IElementSelector GetSelector(Type component);

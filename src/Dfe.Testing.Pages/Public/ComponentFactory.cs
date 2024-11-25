@@ -1,13 +1,13 @@
 ﻿using Dfe.Testing.Pages.Internal.ComponentFactory;
 
 namespace Dfe.Testing.Pages.Public;
-public abstract class ComponentFactory<T> where T : IComponent
+public class ComponentFactory<T> where T : IComponent
 {
     private readonly IComponentSelectorFactory _componentSelectorFactory;
     private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;
     private readonly IComponentMapper<T> _mapper;
 
-    internal ComponentFactory(
+    public ComponentFactory(
         IComponentSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
         IComponentMapper<T> mapper)
