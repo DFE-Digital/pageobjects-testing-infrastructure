@@ -13,7 +13,7 @@ internal static class DependencyInjection
             // Pages
             .AddScoped<IPageFactory, PageFactory>()
             // Components
-            .AddGDSComponents()
+            .AddComponents()
             // Commands
             .AddScoped<ICommandHandler<ClickElementCommand>, ClickElementCommandHandler>()
             .AddScoped<ICommandHandler<UpdateElementTextCommand>, UpdateElementTextCommandHandler>()

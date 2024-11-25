@@ -3,6 +3,7 @@ using Dfe.Testing.Pages.Components.Checkbox;
 using Dfe.Testing.Pages.Components.CookieBanner;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
+using Dfe.Testing.Pages.Components.TextInput;
 using Dfe.Testing.Pages.Internal.ComponentFactory.AnchorLink;
 using Dfe.Testing.Pages.Internal.ComponentFactory.Button;
 using Dfe.Testing.Pages.Internal.ComponentFactory.Checkbox;
@@ -10,11 +11,12 @@ using Dfe.Testing.Pages.Internal.ComponentFactory.CookieBanner;
 using Dfe.Testing.Pages.Internal.ComponentFactory.Fieldset;
 using Dfe.Testing.Pages.Internal.ComponentFactory.Form;
 using Dfe.Testing.Pages.Internal.ComponentFactory.Header;
+using Dfe.Testing.Pages.Internal.ComponentFactory.TextInput;
 
 namespace Dfe.Testing.Pages.Internal.ComponentFactory;
 internal static class DependencyInjection
 {
-    internal static IServiceCollection AddGDSComponents(this IServiceCollection services)
+    internal static IServiceCollection AddComponents(this IServiceCollection services)
     {
         // anchor link
         services
@@ -35,6 +37,9 @@ internal static class DependencyInjection
         // button
         .AddTransient<ComponentFactory<GDSButtonComponent>, GDSButtonFactory>()
         .AddTransient<IComponentMapper<GDSButtonComponent>, GDSButtonMapper>()
+        // text input
+        .AddTransient<ComponentFactory<GDSTextInputComponent>, GDSTextInputFactory>()
+        .AddTransient<IComponentMapper<GDSTextInputComponent>, TextInputMapper>()
         // cookie banner
         .AddTransient<ComponentFactory<GDSCookieBannerComponent>, GDSCookieBannerFactory>()
         .AddTransient<IComponentMapper<GDSCookieBannerComponent>, GDSCookieBannerMapper>();
