@@ -2,7 +2,7 @@
 using Dfe.Testing.Pages.Internal.DocumentQueryClient.Commands;
 using Dfe.Testing.Pages.Public.Commands;
 
-namespace Dfe.Testing.Pages.Internal.DocumentQueryClient;
+namespace Dfe.Testing.Pages.Internal;
 
 internal static class DependencyInjection
 {
@@ -13,7 +13,7 @@ internal static class DependencyInjection
             // Pages
             .AddScoped<IPageFactory, PageFactory>()
             // Components
-            .AddComponents()
+            .AddGDSComponents()
             // Commands
             .AddScoped<ICommandHandler<ClickElementCommand>, ClickElementCommandHandler>()
             .AddScoped<ICommandHandler<UpdateElementTextCommand>, UpdateElementTextCommandHandler>()

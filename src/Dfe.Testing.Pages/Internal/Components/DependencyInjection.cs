@@ -15,7 +15,7 @@ using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 namespace Dfe.Testing.Pages.Internal.Components;
 internal static class DependencyInjection
 {
-    internal static IServiceCollection AddComponents(this IServiceCollection services)
+    internal static IServiceCollection AddGDSComponents(this IServiceCollection services)
     {
         // anchor link
         services
