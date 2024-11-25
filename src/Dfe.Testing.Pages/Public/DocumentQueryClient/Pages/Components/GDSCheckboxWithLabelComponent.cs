@@ -1,6 +1,6 @@
 ﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
-public sealed record GDSCheckboxWithLabel : IComponent
+public sealed record GDSCheckboxWithLabelComponent : IComponent
 {
     public required string TagName { get; init; }
     public required string Name { get; init; }
