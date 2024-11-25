@@ -6,9 +6,9 @@ internal sealed class GDSTextInputFactory : ComponentFactory<GDSTextInputCompone
     private static readonly CssSelector _defaultContainerQuery = new(".govuk-form-group:has(input[type=text])");
     private readonly IComponentMapper<GDSTextInputComponent> _mapper;
 
-    public GDSTextInputFactory(
+    public GDSTextInputFactory(IComponentSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        IComponentMapper<GDSTextInputComponent> mapper) : base(documentQueryClientAccessor)
+        IComponentMapper<GDSTextInputComponent> mapper) : base(componentSelectorFactory, documentQueryClientAccessor, mapper)
     {
         _mapper = mapper;
     }

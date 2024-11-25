@@ -9,8 +9,9 @@ internal sealed class FormFactory : ComponentFactory<FormComponent>
     private readonly IComponentMapper<FormComponent> _mapper;
 
     public FormFactory(
+        IComponentSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        IComponentMapper<FormComponent> mapper) : base(documentQueryClientAccessor)
+        IComponentMapper<FormComponent> mapper) : base(componentSelectorFactory, documentQueryClientAccessor, mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
         _mapper = mapper;

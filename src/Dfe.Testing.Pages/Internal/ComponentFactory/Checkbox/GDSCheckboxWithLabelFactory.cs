@@ -10,9 +10,10 @@ internal sealed class GDSCheckboxWithLabelFactory : ComponentFactory<GDSCheckbox
 
 
     public GDSCheckboxWithLabelFactory(
+        IComponentSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
         IComponentMapper<GDSCheckboxWithLabelComponent> mapper
-        ) : base(documentQueryClientAccessor)
+        ) : base(componentSelectorFactory, documentQueryClientAccessor, mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
         _mapper = mapper;

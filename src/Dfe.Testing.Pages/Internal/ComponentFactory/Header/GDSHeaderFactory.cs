@@ -2,9 +2,9 @@
 internal sealed class GDSHeaderFactory : ComponentFactory<GDSHeaderComponent>
 {
     private readonly IComponentMapper<GDSHeaderComponent> _mapper;
-    public GDSHeaderFactory(
+    public GDSHeaderFactory(IComponentSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        IComponentMapper<GDSHeaderComponent> mapper) : base(documentQueryClientAccessor)
+        IComponentMapper<GDSHeaderComponent> mapper) : base(componentSelectorFactory, documentQueryClientAccessor, mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
         _mapper = mapper;

@@ -20,6 +20,15 @@ internal static class DependencyInjection
     {
         // anchor link
         services
+            .AddSingleton<IComponentSelectorFactory, ComponentSelectorFactory>((sp) =>
+            {
+                Dictionary<string, Func<IElementSelector>> componentSelectorMapping = new()
+                {
+                    { nameof(AnchorLinkComponent), () => new CssSelector("a")}
+                };
+
+                return new ComponentSelectorFactory(componentSelectorMapping);
+            })
         .AddTransient<ComponentFactory<AnchorLinkComponent>, AnchorLinkComponentFactory>()
         .AddTransient<IComponentMapper<AnchorLinkComponent>, AnchorLinkMapper>()
         // form
@@ -44,5 +53,36 @@ internal static class DependencyInjection
         .AddTransient<ComponentFactory<GDSCookieBannerComponent>, GDSCookieBannerFactory>()
         .AddTransient<IComponentMapper<GDSCookieBannerComponent>, GDSCookieBannerMapper>();
         return services;
+    }
+}
+
+internal interface IComponentSelectorFactory
+{
+    IElementSelector GetSelector<TComponent>() where TComponent : IComponent;
+    IElementSelector GetSelector(Type component);
+    IElementSelector GetSelector(string pageName);
+}
+
+internal sealed class ComponentSelectorFactory : IComponentSelectorFactory
+{
+    private readonly IDictionary<string, Func<IElementSelector>> _mapping;
+
+    public ComponentSelectorFactory(IDictionary<string, Func<IElementSelector>> mapping)
+    {
+        ArgumentNullException.ThrowIfNull(mapping);
+        _mapping = mapping;
+    }
+
+    public IElementSelector GetSelector<TComponent>() where TComponent : IComponent => GetSelector(typeof(TComponent));
+
+    public IElementSelector GetSelector(Type component) => GetSelector(component.Name);
+
+    public IElementSelector GetSelector(string componentName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(componentName);
+
+        return (!_mapping.TryGetValue(componentName, out var selector) || selector is null) ?
+                throw new ArgumentOutOfRangeException(
+                    $"Selector for {componentName} is not registered.") : selector();
     }
 }

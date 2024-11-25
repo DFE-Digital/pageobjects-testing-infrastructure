@@ -7,9 +7,10 @@ internal sealed class GDSFieldsetFactory : ComponentFactory<GDSFieldsetComponent
     private readonly IComponentMapper<GDSFieldsetComponent> _mapper;
 
     public GDSFieldsetFactory(
+        IComponentSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
         IComponentMapper<GDSFieldsetComponent> mapper
-        ) : base(documentQueryClientAccessor)
+        ) : base(componentSelectorFactory, documentQueryClientAccessor, mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
         _mapper = mapper;

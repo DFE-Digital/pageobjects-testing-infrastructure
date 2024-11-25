@@ -6,8 +6,9 @@ internal sealed class GDSCookieBannerFactory : ComponentFactory<GDSCookieBannerC
     private readonly IComponentMapper<GDSCookieBannerComponent> _mapper;
 
     public GDSCookieBannerFactory(
+        IComponentSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        IComponentMapper<GDSCookieBannerComponent> mapper) : base(documentQueryClientAccessor)
+        IComponentMapper<GDSCookieBannerComponent> mapper) : base(componentSelectorFactory, documentQueryClientAccessor, mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
         _mapper = mapper;

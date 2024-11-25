@@ -9,8 +9,9 @@ internal sealed class GDSButtonFactory : ComponentFactory<GDSButtonComponent>
     internal static IElementSelector DefaultButtonStyleSelector => new CssSelector(".govuk-button");
 
     public GDSButtonFactory(
+        IComponentSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        IComponentMapper<GDSButtonComponent> mapper) : base(documentQueryClientAccessor)
+        IComponentMapper<GDSButtonComponent> mapper) : base(componentSelectorFactory, documentQueryClientAccessor, mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
         _mapper = mapper;

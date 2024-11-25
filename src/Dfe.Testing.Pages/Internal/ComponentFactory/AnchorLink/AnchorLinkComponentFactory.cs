@@ -4,8 +4,9 @@ internal sealed class AnchorLinkComponentFactory : ComponentFactory<AnchorLinkCo
     private readonly IComponentMapper<AnchorLinkComponent> _mapper;
 
     public AnchorLinkComponentFactory(
+        IComponentSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        IComponentMapper<AnchorLinkComponent> mapper) : base(documentQueryClientAccessor)
+        IComponentMapper<AnchorLinkComponent> mapper) : base(componentSelectorFactory, documentQueryClientAccessor, mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
         _mapper = mapper;
