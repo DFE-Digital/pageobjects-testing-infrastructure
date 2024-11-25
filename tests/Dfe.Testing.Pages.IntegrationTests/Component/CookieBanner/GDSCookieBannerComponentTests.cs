@@ -15,7 +15,7 @@ public sealed class GDSCookieBannerComponentTests
     {
         var page = await ComponentTestHelper.RequestPage<GDSCookieBannerPage>("/component/cookiebanner");
 
-        GDSCookieBanner expectedDefaultCookieBanner = new()
+        GDSCookieBannerComponent expectedDefaultCookieBanner = new()
         {
             Heading = "Cookies on [name of service]",
             CookieChoiceButtons =

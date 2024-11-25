@@ -1,6 +1,6 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
-namespace Dfe.Testing.Pages.Internal.Components;
+namespace Dfe.Testing.Pages.Internal.Components.Header;
 internal sealed class GDSHeaderFactory : ComponentFactory<GDSHeader>
 {
     private readonly ComponentFactory<AnchorLinkComponent> _linkFactory;

@@ -1,5 +1,5 @@
 ﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
-public record GDSCookieBanner : IComponent
+public record GDSCookieBannerComponent : IComponent
 {
     public required string Heading { get; init; }
     //public required string Content { get; init; }
