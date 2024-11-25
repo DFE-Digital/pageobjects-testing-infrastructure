@@ -16,9 +16,11 @@ internal static class DependencyInjection
             // Common component factories clients
             .AddTransient<ComponentFactory<AnchorLink>, AnchorLinkComponentFactory>()
             .AddTransient<ComponentFactory<Form>, FormComponentFactory>()
+            .AddTransient<ComponentFactory<GDSHeader>, GDSHeaderComponentFactory>()
             .AddTransient<ComponentFactory<GDSFieldset>, GDSFieldsetComponentFactory>()
             .AddTransient<ComponentFactory<GDSCheckboxWithLabel>, GDSCheckboxWithLabelComponentFactory>()
             .AddTransient<ComponentFactory<GDSButton>, GDSButtonComponentFactory>()
+
             // Commands
             .AddScoped<ICommandHandler<ClickElementCommand>, ClickElementCommandHandler>()
             .AddScoped<ICommandHandler<UpdateElementTextCommand>, UpdateElementTextCommandHandler>()
