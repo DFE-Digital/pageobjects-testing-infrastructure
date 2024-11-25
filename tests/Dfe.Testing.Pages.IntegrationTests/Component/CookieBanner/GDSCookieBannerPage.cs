@@ -1,5 +1,5 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿using Dfe.Testing.Pages.Components.CookieBanner;
+using Dfe.Testing.Pages.Public.DocumentQueryClient;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;
 internal sealed class GDSCookieBannerPage : IPage

@@ -1,11 +1,18 @@
-﻿using Dfe.Testing.Pages.Internal.Components.AnchorLink;
+﻿using Dfe.Testing.Pages.Components.AnchorLink;
+using Dfe.Testing.Pages.Components.Button;
+using Dfe.Testing.Pages.Components.Checkbox;
+using Dfe.Testing.Pages.Components.CookieBanner;
+using Dfe.Testing.Pages.Components.Fieldset;
+using Dfe.Testing.Pages.Components.Form;
+using Dfe.Testing.Pages.Components.Header;
+using Dfe.Testing.Pages.Internal.Components.AnchorLink;
 using Dfe.Testing.Pages.Internal.Components.Button;
 using Dfe.Testing.Pages.Internal.Components.Checkbox;
 using Dfe.Testing.Pages.Internal.Components.CookieBanner;
 using Dfe.Testing.Pages.Internal.Components.Fieldset;
 using Dfe.Testing.Pages.Internal.Components.Form;
 using Dfe.Testing.Pages.Internal.Components.Header;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfe.Testing.Pages.Internal.Components;
 internal static class DependencyInjection

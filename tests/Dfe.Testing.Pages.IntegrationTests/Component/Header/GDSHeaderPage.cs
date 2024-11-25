@@ -1,5 +1,5 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿using Dfe.Testing.Pages.Components.Header;
+using Dfe.Testing.Pages.Public.DocumentQueryClient;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.Header;
 internal sealed class GDSHeaderPage : IPage

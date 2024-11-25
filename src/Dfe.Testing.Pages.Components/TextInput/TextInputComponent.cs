@@ -1,5 +1,5 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
-public record TextInput
+﻿namespace Dfe.Testing.Pages.Components.TextInput;
+public record TextInputComponent
 {
     public required string Name { get; init; }
     public required string Value { get; init; }

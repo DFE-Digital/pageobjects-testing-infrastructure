@@ -1,5 +1,7 @@
-﻿using Dfe.Testing.Pages.Internal.Components.Checkbox;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿using Dfe.Testing.Pages.Components.Checkbox;
+using Dfe.Testing.Pages.Components.Fieldset;
+using Dfe.Testing.Pages.Internal.Components;
+using Dfe.Testing.Pages.Internal.Components.Checkbox;
 
 namespace Dfe.Testing.Pages.Internal.Components.Fieldset;
 internal sealed class GDSFieldsetMapper : IComponentMapper<GDSFieldsetComponent>

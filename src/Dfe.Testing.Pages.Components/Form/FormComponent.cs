@@ -1,6 +1,9 @@
-﻿using HttpMethod = System.Net.Http.HttpMethod;
+﻿using Dfe.Testing.Pages.Components.Button;
+using Dfe.Testing.Pages.Components.Fieldset;
+using Dfe.Testing.Pages.Public.DocumentQueryClient;
+using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+namespace Dfe.Testing.Pages.Components.Form;
 
 public record FormComponent : IComponent
 {

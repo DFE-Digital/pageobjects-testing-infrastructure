@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿using Dfe.Testing.Pages.Components.Button;
+using Dfe.Testing.Pages.Internal.Components;
 
 namespace Dfe.Testing.Pages.Internal.Components.Button;
 internal class GDSButtonMapper : IComponentMapper<GDSButtonComponent>

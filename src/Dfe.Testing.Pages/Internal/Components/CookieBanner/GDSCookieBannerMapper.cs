@@ -1,4 +1,7 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿using Dfe.Testing.Pages.Components.AnchorLink;
+using Dfe.Testing.Pages.Components.Button;
+using Dfe.Testing.Pages.Components.CookieBanner;
+using Dfe.Testing.Pages.Internal.Components;
 
 namespace Dfe.Testing.Pages.Internal.Components.CookieBanner;
 internal sealed class GDSCookieBannerMapper : IComponentMapper<GDSCookieBannerComponent>

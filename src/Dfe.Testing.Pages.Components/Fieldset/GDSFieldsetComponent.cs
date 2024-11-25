@@ -1,4 +1,7 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿using Dfe.Testing.Pages.Components.Checkbox;
+using Dfe.Testing.Pages.Public.DocumentQueryClient;
+
+namespace Dfe.Testing.Pages.Components.Fieldset;
 
 public record GDSFieldsetComponent : IComponent
 {

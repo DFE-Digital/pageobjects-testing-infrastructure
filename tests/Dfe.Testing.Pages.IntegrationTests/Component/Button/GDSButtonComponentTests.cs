@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿using Dfe.Testing.Pages.Components.Button;
 using FluentAssertions;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.Button;

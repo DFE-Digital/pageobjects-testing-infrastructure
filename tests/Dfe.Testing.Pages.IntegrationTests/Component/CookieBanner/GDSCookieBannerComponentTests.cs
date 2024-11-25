@@ -1,4 +1,6 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
+﻿using Dfe.Testing.Pages.Components.AnchorLink;
+using Dfe.Testing.Pages.Components.Button;
+using Dfe.Testing.Pages.Components.CookieBanner;
 using FluentAssertions;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;

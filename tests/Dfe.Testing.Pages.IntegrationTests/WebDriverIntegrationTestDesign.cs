@@ -1,6 +1,6 @@
-﻿using Dfe.Testing.Pages.Public.Commands;
+﻿using Dfe.Testing.Pages.Components.AnchorLink;
+using Dfe.Testing.Pages.Public.Commands;
 using Dfe.Testing.Pages.Public.DocumentQueryClient;
-using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
 using Dfe.Testing.Pages.Public.DocumentQueryClient.Selector;
 using Dfe.Testing.Pages.Public.WebDriver;
 using FluentAssertions;
