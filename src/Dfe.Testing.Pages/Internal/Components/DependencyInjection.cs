@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dfe.Testing.Pages.Internal.Components.AnchorLink;
 using Dfe.Testing.Pages.Internal.Components.Button;
 using Dfe.Testing.Pages.Internal.Components.Checkbox;
+using Dfe.Testing.Pages.Internal.Components.Fieldset;
 using Dfe.Testing.Pages.Internal.Components.Form;
 using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
@@ -25,6 +26,7 @@ internal static class DependencyInjection
         .AddTransient<ComponentFactory<GDSHeader>, GDSHeaderFactory>()
         // fieldset
         .AddTransient<ComponentFactory<GDSFieldsetComponent>, GDSFieldsetFactory>()
+        .AddTransient<IComponentMapper<GDSFieldsetComponent>, GDSFieldsetMapper>()
         // checkboxes
         .AddTransient<ComponentFactory<GDSCheckboxWithLabelComponent>, GDSCheckboxWithLabelFactory>()
         .AddTransient<IComponentMapper<GDSCheckboxWithLabelComponent>, GDSCheckboxMapper>()
