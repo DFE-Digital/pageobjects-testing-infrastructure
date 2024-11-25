@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
 using FluentAssertions;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.Header;

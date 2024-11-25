@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace Dfe.Testing.Pages.Internal.Components.Form;

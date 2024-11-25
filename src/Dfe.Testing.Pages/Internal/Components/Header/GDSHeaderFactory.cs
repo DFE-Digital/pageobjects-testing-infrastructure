@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
+﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Components;
 
 namespace Dfe.Testing.Pages.Internal.Components.Header;
 internal sealed class GDSHeaderFactory : ComponentFactory<GDSHeaderComponent>
