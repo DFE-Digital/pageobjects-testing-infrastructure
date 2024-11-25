@@ -9,7 +9,7 @@ public sealed class GDSHeaderTests
     {
         var page = await ComponentTestHelper.RequestPage<GDSHeaderPage>("/component/header");
 
-        GDSHeader expectedHeader = new()
+        GDSHeaderComponent expectedHeader = new()
         {
             GovUKLink = new()
             {

@@ -25,7 +25,8 @@ internal static class DependencyInjection
         .AddTransient<ComponentFactory<FormComponent>, FormFactory>()
         .AddTransient<IComponentMapper<FormComponent>, FormMapper>()
         // header
-        .AddTransient<ComponentFactory<GDSHeader>, GDSHeaderFactory>()
+        .AddTransient<ComponentFactory<GDSHeaderComponent>, GDSHeaderFactory>()
+        .AddTransient<IComponentMapper<GDSHeaderComponent>, GDSHeaderMapper>()
         // fieldset
         .AddTransient<ComponentFactory<GDSFieldsetComponent>, GDSFieldsetFactory>()
         .AddTransient<IComponentMapper<GDSFieldsetComponent>, GDSFieldsetMapper>()

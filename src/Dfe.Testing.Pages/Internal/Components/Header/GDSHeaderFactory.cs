@@ -1,38 +1,22 @@
 ﻿using Dfe.Testing.Pages.Public.DocumentQueryClient.Pages.Components;
 
 namespace Dfe.Testing.Pages.Internal.Components.Header;
-internal sealed class GDSHeaderFactory : ComponentFactory<GDSHeader>
+internal sealed class GDSHeaderFactory : ComponentFactory<GDSHeaderComponent>
 {
-    private readonly ComponentFactory<AnchorLinkComponent> _linkFactory;
+    private readonly IComponentMapper<GDSHeaderComponent> _mapper;
     public GDSHeaderFactory(
         IDocumentQueryClientAccessor documentQueryClientAccessor,
-        ComponentFactory<AnchorLinkComponent> linkFactory) : base(documentQueryClientAccessor)
+        IComponentMapper<GDSHeaderComponent> mapper) : base(documentQueryClientAccessor)
     {
-        _linkFactory = linkFactory;
+        ArgumentNullException.ThrowIfNull(mapper);
+        _mapper = mapper;
     }
 
-    private Func<IDocumentPart, GDSHeader> Map => (part) =>
+    public override List<GDSHeaderComponent> GetMany(QueryRequestArgs? request = null)
     {
-        return new GDSHeader()
-        {
-            GovUKLink = _linkFactory.Get(new QueryRequestArgs()
-            {
-                Query = new CssSelector(".govuk-header__link--homepage"),
-            }),
-            ServiceName = _linkFactory.Get(new QueryRequestArgs()
-            {
-                Query = new CssSelector(".govuk-header__service-name"),
-            }),
-            TagName = part.TagName
-        };
-    };
-
-    public override List<GDSHeader> GetMany(QueryRequestArgs? request = null)
-    {
-        var queryRequest = MergeRequest(request, new CssSelector(".govuk-header"));
-        return DocumentQueryClient.QueryMany(queryRequest, Map)
+        return DocumentQueryClient.QueryMany(
+                args: MergeRequest(request, new CssSelector(".govuk-header")),
+                mapper: _mapper.Map)
             .ToList();
     }
-
-
 }
