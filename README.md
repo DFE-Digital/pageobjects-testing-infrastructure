@@ -4,27 +4,161 @@ To support .NET Developers and Testers in building Web application tests using c
 
 ## What problems is the library solving
 
-- Removing direct dependencies on specific test tools in PageModels and Tests and depending on this library to abstract common components and common query providers.
+- Remove dependencies on specific test tools in PageObjects and Tests and depend on this library to 
+  - abstract common GDS and generic components
+  - abstract query providers.
 
-- Allows sharing components among different types of tests (Presentation layer tests, Integration Tests, EndToEnd UI tests) by substituting querying providers.
+- Allows sharing components among different types of tests
+  - Presentation layer tests
+  - Integration Tests
+  - EndToEnd UI tests by substituting querying providers.
 
-## Common terms and abstractions
+## Components available to use
+
+`ComponentFactory<IComponent>` *Role:* create components with this
+
+`IComponent` *Role:* mark components with this
+
+### GDS components
+
+- [GDS Header](https://design-system.service.gov.uk/components/header/)
+- [GDS Button](https://design-system.service.gov.uk/components/button/)
+- [GDS Checkboxes](https://design-system.service.gov.uk/components/checkboxes/)
+- [GDS Fieldset](https://design-system.service.gov.uk/components/fieldset/)
+- [GDS CookieBanner](https://design-system.service.gov.uk/components/cookie-banner/)
+
+### Generic components
+
+```sh
+# TODO LINKS
+```
+
+- Anchor Link
+- Form // TODO LINK
+
+## Adding your own pages
+
+When building PageModels you want to:
 
 - `IPage` - *Role:* mark pages with this
 - `IPageFactory` - *Role:* create pages with this
-- `IComponentFactory<IComponent>` *Role:* create components with this
 
-## Using the library
+### Mark your pages with `IPage`
 
-The Dfe.Testing.Pages library supports the below providers
+```cs
+public sealed class MyPage : IPage
 
-- `AngleSharp`
+```
+
+### Add your Page types into your test dependency injection
+
+```cs
+    testServices...
+    testServices.AddTransient<IPage, HomePage>();
+```
+
+### Compose your PageComponents of other PageComponents
+
+```cs
+
+// NOTE make sure your register the components!
+services.AddTransient<SearchComponent>();
+services.AddTransient<FilterComponent>();
+
+public sealed class HomePage
+{
+    public HomePage(
+        NavigationBarComponent navBar,
+        SearchComponent search, 
+        FilterComponent filter)
+    {
+        Search = search ?? throw new ArgumentNullException(nameof(search));
+        Filter = filter ?? throw new ArgumentNullException(nameof(filter));
+        NavBar = navBar ?? throw new ArgumentNullException(nameof(navBar));
+    }
+
+    // Can reuse these across PageComponents
+    public NavigationBarComponent NavBar { get; }
+    public SearchComponent Search { get; }
+    public FilterComponent Filter { get; }
+}
+```
+
+### Create and use your pages in tests with `IPageFactory`
+
+```cs
+public sealed class MyTestClass : BaseTest
+{
+
+    [Fact]
+    public async Task MyTest()
+    {
+        HttpRequestMessage homePageRequest = new()
+        {
+            Uri = new("/")
+        }
+        HomePage homePage = await GetTestService<IPageFactory>().CreatePageAsync<HomePage>(homePageRequest);
+    }
+}
+
+```
+
+### Expose types for your tests need without being coupled to a testing library
+
+```cs
+// Basic types example
+homePage.GetHeading().Should().Be("Heading"); 
+
+public sealed class HomePage
+{
+    public string GetHeading() => _headingFactory.GetHeadings().Where(t => t.Type == H1).Text;
+}
+```
+
+```cs
+// GDSComponent provided by the library
+// record to give value-object semantics
+public record GDSTextInput
+{
+    public required string Name { get; init; }
+    public required string Value { get; init; }
+    public required string? PlaceHolder { get; init; } = null;
+    public required string? Type { get; init; } = null;
+}
+
+GDSTextInput expectedTextInput = new()
+{
+    Name = "searchKeyWord",
+    Value = "",
+    PlaceHolder = "Search by keyword",
+    Type = "text"
+};
+
+// Test
+homePage.GetSearchInput().Should().Be(expectedTextInput);
+
+// Page
+public sealed class HomePage
+{
+    
+    public GDSTextInput GetSearchInput() => _factoryForInputs_.Create();
+}
+
+
+
+```
+
+## Choosing a library to query for you
+
+The library supports the below providers
+
+### AngleSharp
 
 ```cs
 services.AddAngleSharp<TApplicationProgram>(); // TApplicationProgram is your .NET Program class for your Web Application
 ```
 
-- `Selenium.WebDriver`
+### WebDriver
 
 ```cs
 services.AddWebDriver();
@@ -101,147 +235,5 @@ public sealed class MyTestClass : BaseTest
   {
     IPageFactory pageFactory = GetTestService<IPageFactory>(); // is available
   }
-}
-```
-
-## Adding your own pages
-
-When building PageModels you want to:
-
-### Mark your pages with `IPage`
-
-```cs
-public sealed class MyPage : IPage
-
-```
-
-### Add your Page types into your tests DI
-
-```cs
-    services....
-    services.AddTransient<IPage, HomePage>();
-```
-
-### Compose your PageModel of other PageComponents
-
-```cs
-
-// NOTE make sure your register the components!
-services.AddTransient<SearchComponent>();
-services.AddTransient<FilterComponent>();
-
-public sealed class HomePage
-{
-    public HomePage(
-        NavigationBarComponent navBar,
-        SearchComponent search, 
-        FilterComponent filter)
-    {
-        Search = search ?? throw new ArgumentNullException(nameof(search));
-        Filter = filter ?? throw new ArgumentNullException(nameof(filter));
-        NavBar = navBar ?? throw new ArgumentNullException(nameof(navBar));
-    }
-
-    // Can reuse these across PageModels
-    public NavigationBarComponent NavBar { get; }
-    public SearchComponent Search { get; }
-    public FilterComponent Filter { get; }
-}
-```
-
-### Create your pages in your tests
-
-Create *ALL* of your PageModels using the `IPageFactory`
-
-```cs
-public sealed class MyTestClass : BaseTest{
-
-[Fact]
-public async Task MyTest()
-{
-    HttpRequestMessage homePageRequest = new()
-    {
-        Uri = new("/")
-    }
-    HomePage homePage = await GetTestService<IPageFactory>().CreatePageAsync<HomePage>(homePageRequest);
-}
-}
-
-```
-
-### Expose types for your tests need without being coupled to a testing library
-
-```cs
-// Basic types example
-homePage.GetHeading().Should().Be("Heading"); 
-
-public sealed class HomePage
-{
-    public string GetHeading() => _headingFactory.GetHeadings().Where(t => t.Type == H1).Text;
-}
-```
-
-```cs
-// GDSComponent provided by the library
-// Record to give value-object semantics
-public record GDSTextInput
-{
-    public required string Name { get; init; }
-    public required string Value { get; init; }
-    public required string? PlaceHolder { get; init; } = null;
-    public required string? Type { get; init; } = null;
-}
-
-GDSTextInput textInput = new()
-{
-    Name = "searchKeyWord",
-    Value = "",
-    PlaceHolder = "Search by keyword",
-    Type = "text"
-};
-
-// Test
-homePage.TextInput.Should().Be(textInput);
-
-// Page
-public sealed class HomePage
-{
-    
-    public GDSTextInput  GetSearchInput() => _factoryForInputs_.Create();
-}
-
-
-
-```
-
-```cs
-
-// CUSTOM COMPLEX APPLICATION TYPE
-public record Facet(string Name, IEnumerable<FacetValue> FacetValues);
-public record FacetValue(string Label, string Value);
-
-homePage.GetDisplayedFacets().Should().Be(new[]
-{
-    new Facet
-    (
-        Name: "Facet name",
-        FacetValues: []
-    ),
-    new Facet
-    (
-        Name: "Facet name",
-        FacetValues: []
-    )
-})
-
-public sealed class HomePage
-{
-    public IEnumerable<Facet> GetDisplayedFacets()
-        => _formFactory.Get().FieldSets
-                .Select(
-                    (fieldSet) => new Facet(
-                        Name: fieldSet.Legend,
-                        FacetValues: fieldSet.Checkboxes.Select(
-                         (checkbox) => new FacetValue(checkbox.Label,   checkbox.Value))));
 }
 ```
