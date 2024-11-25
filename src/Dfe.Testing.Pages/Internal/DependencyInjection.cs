@@ -1,5 +1,4 @@
-﻿using Dfe.Testing.Pages.Internal.DocumentQueryClient.Commands;
-using Dfe.Testing.Pages.Internal.Mapper;
+﻿using Dfe.Testing.Pages.Internal.Commands;
 using Dfe.Testing.Pages.Public.Commands;
 
 namespace Dfe.Testing.Pages.Internal;
@@ -10,13 +9,11 @@ internal static class DependencyInjection
         => services
             .AddScoped<IDocumentQueryClientProvider, TProvider>()
             .AddScoped<IDocumentQueryClientAccessor, DocumentQueryClientAccessor>()
-            // Pages
+            // Page
             .AddScoped<IPageFactory, PageFactory>()
-            // Components
-            .AddComponents()
             // Commands
             .AddScoped<ICommandHandler<ClickElementCommand>, ClickElementCommandHandler>()
             .AddScoped<ICommandHandler<UpdateElementTextCommand>, UpdateElementTextCommandHandler>()
-            // Helpers    
+            // Helpers
             .AddTransient<IHttpRequestBuilder, HttpRequestBuilder>();
 }

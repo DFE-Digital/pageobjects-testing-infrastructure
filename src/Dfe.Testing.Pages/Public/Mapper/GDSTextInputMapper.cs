@@ -1,6 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components.TextInput;
+using Dfe.Testing.Pages.Public.Mapper.Interface;
 
-namespace Dfe.Testing.Pages.Internal.Mapper;
+namespace Dfe.Testing.Pages.Public.Mapper;
 internal class GDSTextInputMapper : IComponentMapper<GDSTextInputComponent>
 {
     public GDSTextInputComponent Map(IDocumentPart input)

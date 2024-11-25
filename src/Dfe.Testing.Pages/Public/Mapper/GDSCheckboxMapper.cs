@@ -1,6 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components.Checkbox;
+using Dfe.Testing.Pages.Public.Mapper.Interface;
 
-namespace Dfe.Testing.Pages.Internal.Mapper;
+namespace Dfe.Testing.Pages.Public.Mapper;
 internal sealed class GDSCheckboxMapper : IComponentMapper<GDSCheckboxComponent>
 {
     internal static IElementSelector GDSCheckboxInputStyle => new CssSelector(".govuk-checkboxes__input");

@@ -1,7 +1,8 @@
 ﻿using Dfe.Testing.Pages.Components.Button;
 using Dfe.Testing.Pages.Components.CookieBanner;
+using Dfe.Testing.Pages.Public.Mapper.Interface;
 
-namespace Dfe.Testing.Pages.Internal.Mapper;
+namespace Dfe.Testing.Pages.Public.Mapper;
 internal sealed class GDSCookieBannerMapper : IComponentMapper<GDSCookieBannerComponent>
 {
     private static readonly CssSelector Container = new(".govuk-cookie-banner");

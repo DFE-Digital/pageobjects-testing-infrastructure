@@ -1,6 +1,6 @@
 ﻿using Dfe.Testing.Pages.Public.Commands;
 
-namespace Dfe.Testing.Pages.Internal.DocumentQueryClient.Commands;
+namespace Dfe.Testing.Pages.Internal.Commands;
 internal sealed class UpdateElementTextCommandHandler : ICommandHandler<UpdateElementTextCommand>
 {
     private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;

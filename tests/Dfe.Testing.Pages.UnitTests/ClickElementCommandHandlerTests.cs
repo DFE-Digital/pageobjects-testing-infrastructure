@@ -1,8 +1,4 @@
-﻿using Dfe.Testing.Pages.Internal.DocumentQueryClient;
-using Dfe.Testing.Pages.Internal.DocumentQueryClient.Commands;
-using NSubstitute;
-
-namespace Dfe.Testing.Pages.IntegrationTests;
+﻿namespace Dfe.Testing.Pages.IntegrationTests;
 public sealed class ClickElementCommandHandlerTests
 {
 

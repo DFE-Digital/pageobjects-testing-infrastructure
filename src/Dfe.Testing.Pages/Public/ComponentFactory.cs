@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Internal.Mapper;
+﻿using Dfe.Testing.Pages.Public.Mapper.Interface;
 
 namespace Dfe.Testing.Pages.Public;
 public class ComponentFactory<T> where T : IComponent
@@ -29,7 +29,7 @@ public class ComponentFactory<T> where T : IComponent
         };
     }
     public virtual T Get(QueryRequestArgs? request = null) => GetMany(request).Single();
-    public virtual List<T> GetMany(QueryRequestArgs? request = null)
+    public virtual IList<T> GetMany(QueryRequestArgs? request = null)
     {
         return DocumentQueryClient.QueryMany(
             MergeRequest(

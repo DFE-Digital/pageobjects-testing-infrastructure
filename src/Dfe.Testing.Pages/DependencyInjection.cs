@@ -1,4 +1,12 @@
-﻿using Dfe.Testing.Pages.Internal;
+﻿using Dfe.Testing.Pages.Components.Button;
+using Dfe.Testing.Pages.Components.Checkbox;
+using Dfe.Testing.Pages.Components.CookieBanner;
+using Dfe.Testing.Pages.Components.Fieldset;
+using Dfe.Testing.Pages.Components.Form;
+using Dfe.Testing.Pages.Components.TextInput;
+using Dfe.Testing.Pages.Internal;
+using Dfe.Testing.Pages.Public.Mapper;
+using Dfe.Testing.Pages.Public.Mapper.Interface;
 
 namespace Dfe.Testing.Pages;
 
@@ -7,10 +15,60 @@ public static class DependencyInjection
     public static IServiceCollection AddAngleSharp<TApplicationProgram>(this IServiceCollection services) where TApplicationProgram : class
         => services
             .AddDocumentQueryClient<AngleSharpDocumentQueryClientProvider>()
-            .AddWebApplicationFactory<TApplicationProgram>();
+            .AddWebApplicationFactory<TApplicationProgram>()
+            .AddComponentMapping();
 
     public static IServiceCollection AddWebDriver(this IServiceCollection services)
         => services
             .AddDocumentQueryClient<WebDriverDocumentQueryClientProvider>()
-            .AddWebDriverServices();
+            .AddWebDriverServices()
+            .AddComponentMapping();
+
+    internal static IServiceCollection AddComponentMapping(this IServiceCollection services)
+    {
+        // anchor link
+        services
+            .AddSingleton<IComponentSelectorFactory, ComponentSelectorFactory>((sp) =>
+            {
+                Dictionary<string, Func<IElementSelector>> componentSelectorMapping = new()
+                {
+                    { nameof(AnchorLinkComponent), () => new CssSelector("a")},
+                    { nameof(GDSHeaderComponent), () => new CssSelector(".govuk-header")},
+                    { nameof(GDSFieldsetComponent), () => new CssSelector("fieldset")},
+                    { nameof(GDSCheckboxComponent), () => new CssSelector(".govuk-checkboxes__item")},
+                    { nameof(GDSButtonComponent), () => new CssSelector(".govuk-button")},
+                    { nameof(GDSTextInputComponent), () => new CssSelector(".govuk-form-group:has(input[type=text])")},
+                    { nameof(GDSCookieBannerComponent), () => new CssSelector(".govuk-cookie-banner")},
+                    // may not be approp default if multiple forms on page?
+                    { nameof(FormComponent), () => new CssSelector("form")},
+                };
+
+                return new ComponentSelectorFactory(componentSelectorMapping);
+            })
+        // anchor link
+        .AddTransient<ComponentFactory<AnchorLinkComponent>>()
+        .AddTransient<IComponentMapper<AnchorLinkComponent>, AnchorLinkMapper>()
+        // button
+        .AddTransient<ComponentFactory<GDSButtonComponent>>()
+        .AddTransient<IComponentMapper<GDSButtonComponent>, GDSButtonMapper>()
+        // text input
+        .AddTransient<ComponentFactory<GDSTextInputComponent>>()
+        .AddTransient<IComponentMapper<GDSTextInputComponent>, GDSTextInputMapper>()
+        // form
+        .AddTransient<ComponentFactory<FormComponent>>()
+        .AddTransient<IComponentMapper<FormComponent>, FormMapper>()
+        // header
+        .AddTransient<ComponentFactory<GDSHeaderComponent>>()
+        .AddTransient<IComponentMapper<GDSHeaderComponent>, GDSHeaderMapper>()
+        // fieldset
+        .AddTransient<ComponentFactory<GDSFieldsetComponent>>()
+        .AddTransient<IComponentMapper<GDSFieldsetComponent>, GDSFieldsetMapper>()
+        // checkboxes
+        .AddTransient<ComponentFactory<GDSCheckboxComponent>>()
+        .AddTransient<IComponentMapper<GDSCheckboxComponent>, GDSCheckboxMapper>()
+        // cookie banner
+        .AddTransient<ComponentFactory<GDSCookieBannerComponent>>()
+        .AddTransient<IComponentMapper<GDSCookieBannerComponent>, GDSCookieBannerMapper>();
+        return services;
+    }
 }
