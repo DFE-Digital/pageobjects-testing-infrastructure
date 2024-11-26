@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Public.Mapper.Interface;
+﻿using Dfe.Testing.Pages.Components.Checkbox;
+using Dfe.Testing.Pages.Public.Mapper.Interface;
 
 namespace Dfe.Testing.Pages.Public;
 public class ComponentFactory<T> where T : IComponent
@@ -28,6 +29,7 @@ public class ComponentFactory<T> where T : IComponent
             Scope = request?.Scope
         };
     }
+
     public virtual T Get(QueryRequestArgs? request = null) => GetMany(request).Single();
     public virtual IList<T> GetMany(QueryRequestArgs? request = null)
     {
@@ -36,4 +38,11 @@ public class ComponentFactory<T> where T : IComponent
                 request, _componentSelectorFactory.GetSelector<T>()),
             mapper: _mapper.Map).ToList();
     }
+
+    internal IList<T> GetManyFromPart(IDocumentPart? part)
+        => part?
+            .GetChildren(_componentSelectorFactory.GetSelector<T>())?
+            .Select(_mapper.Map)
+            .ToList() ?? throw new ArgumentNullException(nameof(part));
+
 }

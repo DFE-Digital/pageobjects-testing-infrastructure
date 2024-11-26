@@ -2,5 +2,4 @@
 
 public interface IComponent
 {
-    string TagName { get; }
 }

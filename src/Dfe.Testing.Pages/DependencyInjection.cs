@@ -1,6 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components.Button;
 using Dfe.Testing.Pages.Components.Checkbox;
 using Dfe.Testing.Pages.Components.CookieBanner;
+using Dfe.Testing.Pages.Components.Date;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
 using Dfe.Testing.Pages.Components.Tabs;
@@ -72,7 +73,10 @@ public static class DependencyInjection
         .AddTransient<IComponentMapper<GDSCookieBannerComponent>, GDSCookieBannerMapper>()
         // tabs
         .AddTransient<ComponentFactory<GDSTabsComponent>>()
-        .AddTransient<IComponentMapper<GDSTabsComponent>, GDSTabsMapper>();
+        .AddTransient<IComponentMapper<GDSTabsComponent>, GDSTabsMapper>()
+        // date
+        .AddTransient<IComponentMapper<GDSDateComponent>, GDSDateMapper>()
+        .AddTransient<ComponentFactory<GDSTabsComponent>>();
         return services;
     }
 }

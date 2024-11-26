@@ -23,9 +23,5 @@ internal sealed class GDSCheckboxFactory : ComponentFactory<GDSCheckboxComponent
     // TODO Checkbox component
     // TODO label component
 
-    internal List<GDSCheckboxComponent> GetCheckboxesFromPart(IDocumentPart? part)
-        => part?
-            .GetChildren(GDSCheckboxItemStyle)?
-            .Select(_mapper.Map)
-            .ToList() ?? throw new ArgumentNullException(nameof(part));
+
 }
