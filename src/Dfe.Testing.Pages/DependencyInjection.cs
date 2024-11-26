@@ -3,6 +3,7 @@ using Dfe.Testing.Pages.Components.Checkbox;
 using Dfe.Testing.Pages.Components.CookieBanner;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
+using Dfe.Testing.Pages.Components.Tabs;
 using Dfe.Testing.Pages.Components.TextInput;
 using Dfe.Testing.Pages.Internal;
 using Dfe.Testing.Pages.Public.Mapper;
@@ -26,7 +27,6 @@ public static class DependencyInjection
 
     internal static IServiceCollection AddComponentMapping(this IServiceCollection services)
     {
-        // anchor link
         services
             .AddSingleton<IComponentSelectorFactory, ComponentSelectorFactory>((sp) =>
             {
@@ -41,6 +41,7 @@ public static class DependencyInjection
                     { nameof(GDSCookieBannerComponent), () => new CssSelector(".govuk-cookie-banner")},
                     // may not be approp default if multiple forms on page?
                     { nameof(FormComponent), () => new CssSelector("form")},
+                    { nameof(GDSTabsComponent), () => new CssSelector(".govuk-tabs")}
                 };
 
                 return new ComponentSelectorFactory(componentSelectorMapping);
@@ -68,7 +69,10 @@ public static class DependencyInjection
         .AddTransient<IComponentMapper<GDSCheckboxComponent>, GDSCheckboxMapper>()
         // cookie banner
         .AddTransient<ComponentFactory<GDSCookieBannerComponent>>()
-        .AddTransient<IComponentMapper<GDSCookieBannerComponent>, GDSCookieBannerMapper>();
+        .AddTransient<IComponentMapper<GDSCookieBannerComponent>, GDSCookieBannerMapper>()
+        // tabs
+        .AddTransient<ComponentFactory<GDSTabsComponent>>()
+        .AddTransient<IComponentMapper<GDSTabsComponent>, GDSTabsMapper>();
         return services;
     }
 }
