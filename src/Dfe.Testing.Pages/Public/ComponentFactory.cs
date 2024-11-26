@@ -31,6 +31,7 @@ public class ComponentFactory<T> where T : IComponent
     }
 
     public virtual T Get(QueryRequestArgs? request = null) => GetMany(request).Single();
+    
     public virtual IList<T> GetMany(QueryRequestArgs? request = null)
     {
         return DocumentQueryClient.QueryMany(
@@ -39,7 +40,9 @@ public class ComponentFactory<T> where T : IComponent
             mapper: _mapper.Map).ToList();
     }
 
-    internal IList<T> GetManyFromPart(IDocumentPart? part)
+    internal virtual T GetFromPart(IDocumentPart? part) => _mapper.Map(part ?? throw new ArgumentNullException(nameof(part)));
+
+    internal virtual IList<T> GetManyFromPart(IDocumentPart? part)
         => part?
             .GetChildren(_componentSelectorFactory.GetSelector<T>())?
             .Select(_mapper.Map)
