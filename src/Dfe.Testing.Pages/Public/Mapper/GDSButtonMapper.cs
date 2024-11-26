@@ -1,5 +1,5 @@
 ﻿using Dfe.Testing.Pages.Components.Button;
-using Dfe.Testing.Pages.Public.Mapper.Interface;
+using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
 namespace Dfe.Testing.Pages.Public.Mapper;
 internal class GDSButtonMapper : IComponentMapper<GDSButtonComponent>

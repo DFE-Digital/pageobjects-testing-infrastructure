@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components.Button;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
-using Dfe.Testing.Pages.Public.Mapper.Interface;
+using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace Dfe.Testing.Pages.Public.Mapper;

@@ -1,14 +1,14 @@
 ﻿using Dfe.Testing.Pages.Components.Button;
 using Dfe.Testing.Pages.Components.Checkbox;
 using Dfe.Testing.Pages.Components.CookieBanner;
-using Dfe.Testing.Pages.Components.Date;
+using Dfe.Testing.Pages.Components.Details;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
 using Dfe.Testing.Pages.Components.Tabs;
 using Dfe.Testing.Pages.Components.TextInput;
 using Dfe.Testing.Pages.Internal;
 using Dfe.Testing.Pages.Public.Mapper;
-using Dfe.Testing.Pages.Public.Mapper.Interface;
+using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
 namespace Dfe.Testing.Pages;
 
@@ -42,7 +42,8 @@ public static class DependencyInjection
                     { nameof(GDSCookieBannerComponent), () => new CssSelector(".govuk-cookie-banner")},
                     // may not be approp default if multiple forms on page?
                     { nameof(FormComponent), () => new CssSelector("form")},
-                    { nameof(GDSTabsComponent), () => new CssSelector(".govuk-tabs")}
+                    { nameof(GDSTabsComponent), () => new CssSelector(".govuk-tabs")},
+                    { nameof(GDSDetailsComponent), () => new CssSelector(".govuk-details") }
                 };
 
                 return new ComponentSelectorFactory(componentSelectorMapping);
@@ -74,9 +75,9 @@ public static class DependencyInjection
         // tabs
         .AddTransient<ComponentFactory<GDSTabsComponent>>()
         .AddTransient<IComponentMapper<GDSTabsComponent>, GDSTabsMapper>()
-        // date
-        .AddTransient<IComponentMapper<GDSDateComponent>, GDSDateMapper>()
-        .AddTransient<ComponentFactory<GDSTabsComponent>>();
+        // details
+        .AddTransient<IComponentMapper<GDSDetailsComponent>, GDSDetailsMapper>()
+        .AddTransient<ComponentFactory<GDSDetailsComponent>>();
         return services;
     }
 }
