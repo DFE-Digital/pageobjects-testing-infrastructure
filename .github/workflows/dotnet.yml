@@ -5,9 +5,13 @@ name: .NET
 
 on:
   push:
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  
 
 jobs:
   build:
