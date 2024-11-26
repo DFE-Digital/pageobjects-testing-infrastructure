@@ -21,17 +21,14 @@ To support .NET Developers and Testers in building Web application tests using c
 
 ### GDS components
 
-- [GDS Header](https://design-system.service.gov.uk/components/header/)
-- [GDS Button](https://design-system.service.gov.uk/components/button/)
-- [GDS Checkboxes](https://design-system.service.gov.uk/components/checkboxes/)
-- [GDS Fieldset](https://design-system.service.gov.uk/components/fieldset/)
-- [GDS CookieBanner](https://design-system.service.gov.uk/components/cookie-banner/)
+- [Header](https://design-system.service.gov.uk/components/header/)
+- [Button](https://design-system.service.gov.uk/components/button/)
+- [Checkboxes](https://design-system.service.gov.uk/components/checkboxes/)
+- [Fieldset](https://design-system.service.gov.uk/components/fieldset/)
+- [CookieBanner](https://design-system.service.gov.uk/components/cookie-banner/)
+- [TextInput](https://design-system.service.gov.uk/components/text-input)
 
 ### Generic components
-
-```sh
-# TODO LINKS
-```
 
 - Anchor Link
 - Form // TODO LINK
