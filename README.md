@@ -28,6 +28,7 @@ To support .NET Developers and Testers in building Web application tests using c
 - [CookieBanner](https://design-system.service.gov.uk/components/cookie-banner/)
 - [TextInput](https://design-system.service.gov.uk/components/text-input)
 - [DateInput](https://design-system.service.gov.uk/components/date-input)
+- [Tabs](https://design-system.service.gov.uk/components/tabs/)
 
 ### Generic components
 
