@@ -100,7 +100,7 @@ public sealed class MyTestClass : BaseTest
 
 ```
 
-### Expose types for your tests need without being coupled to a testing library
+### Expose types from Pages without being coupled to a testing library
 
 ```cs
 // Basic types example
