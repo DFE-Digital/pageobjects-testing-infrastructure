@@ -7,6 +7,7 @@ using Dfe.Testing.Pages.Components.ErrorSummary;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Footer;
 using Dfe.Testing.Pages.Components.Form;
+using Dfe.Testing.Pages.Components.NotificationBanner;
 using Dfe.Testing.Pages.Components.Tabs;
 using Dfe.Testing.Pages.Components.TextInput;
 using Dfe.Testing.Pages.Internal;
@@ -50,6 +51,7 @@ public static class DependencyInjection
                     { nameof(GDSErrorSummaryComponent), () => new CssSelector(".govuk-error-summary") },
                     { nameof(GDSErrorMessageComponent), () => new CssSelector(".govuk-error-message") },
                     { nameof(GDSFooterComponent), () => new CssSelector(".govuk-footer") },
+                    { nameof(GDSNotificationBannerComponent), () => new CssSelector(".govuk-notification-banner") },
                 };
 
                 return new ComponentSelectorFactory(componentSelectorMapping);
@@ -92,7 +94,10 @@ public static class DependencyInjection
         .AddTransient<ComponentFactory<GDSErrorSummaryComponent>>()
         // footer
         .AddTransient<IComponentMapper<GDSFooterComponent>, GDSFooterMapper>()
-        .AddTransient<ComponentFactory<GDSFooterComponent>>();
+        .AddTransient<ComponentFactory<GDSFooterComponent>>()
+        // notification banner
+        .AddTransient<IComponentMapper<GDSNotificationBannerComponent>, GDSNotificationBannerMapper>()
+        .AddTransient<ComponentFactory<GDSNotificationBannerComponent>>();
         return services;
     }
 }
