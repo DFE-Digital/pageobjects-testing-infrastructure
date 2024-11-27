@@ -22,6 +22,7 @@ To support .NET Developers and Testers in building Web application tests using c
 ### GDS components
 
 - [Header](https://design-system.service.gov.uk/components/header/)
+- [Footer](https://design-system.service.gov.uk/components/footer/)
 - [Button](https://design-system.service.gov.uk/components/button/)
 - [Checkboxes](https://design-system.service.gov.uk/components/checkboxes/)
 - [Fieldset](https://design-system.service.gov.uk/components/fieldset/)
