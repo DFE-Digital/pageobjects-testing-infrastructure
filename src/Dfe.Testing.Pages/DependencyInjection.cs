@@ -3,6 +3,7 @@ using Dfe.Testing.Pages.Components.Checkbox;
 using Dfe.Testing.Pages.Components.CookieBanner;
 using Dfe.Testing.Pages.Components.Details;
 using Dfe.Testing.Pages.Components.ErrorMessage;
+using Dfe.Testing.Pages.Components.ErrorSummary;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Form;
 using Dfe.Testing.Pages.Components.Tabs;
@@ -44,7 +45,9 @@ public static class DependencyInjection
                     // may not be approp default if multiple forms on page?
                     { nameof(FormComponent), () => new CssSelector("form")},
                     { nameof(GDSTabsComponent), () => new CssSelector(".govuk-tabs")},
-                    { nameof(GDSDetailsComponent), () => new CssSelector(".govuk-details") }
+                    { nameof(GDSDetailsComponent), () => new CssSelector(".govuk-details") },
+                    { nameof(GDSErrorSummaryComponent), () => new CssSelector(".govuk-error-summary") },
+                    { nameof(GDSErrorMessageComponent), () => new CssSelector(".govuk-error-message") }
                 };
 
                 return new ComponentSelectorFactory(componentSelectorMapping);
@@ -81,7 +84,10 @@ public static class DependencyInjection
         .AddTransient<ComponentFactory<GDSDetailsComponent>>()
         // error message
         .AddTransient<IComponentMapper<GDSErrorMessageComponent>, GDSErrorMessageMapper>()
-        .AddTransient<ComponentFactory<GDSErrorMessageComponent>>();
+        .AddTransient<ComponentFactory<GDSErrorMessageComponent>>()
+        // error summary
+        .AddTransient<IComponentMapper<GDSErrorSummaryComponent>, GDSErrorSummaryMapper>()
+        .AddTransient<ComponentFactory<GDSErrorSummaryComponent>>();
         return services;
     }
 }
