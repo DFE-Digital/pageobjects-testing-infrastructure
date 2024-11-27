@@ -1,5 +1,4 @@
 ﻿using Dfe.Testing.Pages.Components.AnchorLink;
-using Dfe.Testing.Pages.Public.DocumentQueryClient;
 
 namespace Dfe.Testing.Pages.Components.Header;
 public record GDSHeaderComponent : IComponent

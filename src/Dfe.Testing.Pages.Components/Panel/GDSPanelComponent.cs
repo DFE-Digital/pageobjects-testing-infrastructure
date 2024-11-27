@@ -1,6 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient;
-
-namespace Dfe.Testing.Pages.Components.Panel;
+﻿namespace Dfe.Testing.Pages.Components.Panel;
 public record GDSPanelComponent : IComponent
 {
     public required string Heading { get; init; }

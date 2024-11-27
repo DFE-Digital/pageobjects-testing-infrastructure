@@ -19,7 +19,6 @@ global using Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;
 global using Dfe.Testing.Pages.Internal.WebDriver.Provider.WebDriverFactory;
 global using Dfe.Testing.Pages.Internal.WebDriver.SessionOptions;
 global using Dfe.Testing.Pages.Public;
-global using Dfe.Testing.Pages.Public.DocumentQueryClient;
 global using Dfe.Testing.Pages.Public.Selector;
 global using Dfe.Testing.Pages.Public.Selector.XPath;
 global using Dfe.Testing.Pages.Public.WebApplicationFactory;

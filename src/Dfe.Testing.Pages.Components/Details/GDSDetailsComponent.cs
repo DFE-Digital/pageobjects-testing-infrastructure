@@ -1,6 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient;
-
-namespace Dfe.Testing.Pages.Components.Details;
+﻿namespace Dfe.Testing.Pages.Components.Details;
 public record GDSDetailsComponent : IComponent
 {
     public required string Summary { get; init; }

@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.Checkbox;
+﻿using Dfe.Testing.Pages.Components;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
 namespace Dfe.Testing.Pages.Public;
@@ -31,7 +31,7 @@ public class ComponentFactory<T> where T : IComponent
     }
 
     public virtual T Get(QueryRequestArgs? request = null) => GetMany(request).Single();
-    
+
     public virtual IList<T> GetMany(QueryRequestArgs? request = null)
     {
         return DocumentQueryClient.QueryMany(

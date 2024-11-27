@@ -1,31 +1,30 @@
 ﻿using Dfe.Testing.Pages.Components.Input;
-using Dfe.Testing.Pages.Components.Inputs.Checkbox;
+using Dfe.Testing.Pages.Components.Inputs.Radio;
 using Dfe.Testing.Pages.Components.Label;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
 namespace Dfe.Testing.Pages.Public.Mapper;
-internal sealed class GDSCheckboxMapper : IComponentMapper<GDSCheckboxComponent>
+internal sealed class GDSRadioMapper : IComponentMapper<GDSRadioComponent>
 {
-    private readonly ComponentFactory<InputComponent> _inputFactory;
     private readonly ComponentFactory<LabelComponent> _labelFactory;
+    private readonly ComponentFactory<InputComponent> _inputFactory;
 
-    public GDSCheckboxMapper(
-        ComponentFactory<InputComponent> inputFactory,
-        ComponentFactory<LabelComponent> labelFactory)
+    public GDSRadioMapper(
+        ComponentFactory<LabelComponent> labelFactory,
+        ComponentFactory<InputComponent> inputComponent)
     {
-        _inputFactory = inputFactory;
+        ArgumentNullException.ThrowIfNull(labelFactory);
         _labelFactory = labelFactory;
+        _inputFactory = inputComponent;
     }
-
-    public GDSCheckboxComponent Map(IDocumentPart input)
+    public GDSRadioComponent Map(IDocumentPart input)
     {
         InputComponent inputComponent = _inputFactory.GetFromPart(input);
-        return new GDSCheckboxComponent()
+        return new()
         {
             Label = _labelFactory.GetFromPart(input),
             Name = inputComponent.Name,
             Value = inputComponent.Value,
-            Checked = inputComponent.IsChecked,
         };
     }
 }

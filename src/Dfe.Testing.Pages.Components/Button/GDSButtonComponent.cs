@@ -1,6 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient;
-
-namespace Dfe.Testing.Pages.Components.Button;
+﻿namespace Dfe.Testing.Pages.Components.Button;
 
 public record GDSButtonComponent : IComponent
 {

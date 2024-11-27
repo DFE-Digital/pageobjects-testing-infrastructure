@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public.DocumentQueryClient;
+﻿namespace Dfe.Testing.Pages.Components;
 
 public interface IComponent
 {

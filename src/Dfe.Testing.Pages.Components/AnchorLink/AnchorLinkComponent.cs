@@ -1,6 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.DocumentQueryClient;
-
-namespace Dfe.Testing.Pages.Components.AnchorLink;
+﻿namespace Dfe.Testing.Pages.Components.AnchorLink;
 public record AnchorLinkComponent : IComponent
 {
     public string TagName { get; } = "a";
