@@ -31,6 +31,7 @@ To support .NET Developers and Testers in building Web application tests using c
 - [Tabs](https://design-system.service.gov.uk/components/tabs/)
 - [Details](https://design-system.service.gov.uk/components/details/)
 - [ErrorMessage](https://design-system.service.gov.uk/components/error-message/)
+- [ErrorSummary](https://design-system.service.gov.uk/components/error-summary/)
 
 ### Generic components
 
