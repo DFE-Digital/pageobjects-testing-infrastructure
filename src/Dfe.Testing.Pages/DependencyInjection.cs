@@ -5,6 +5,7 @@ using Dfe.Testing.Pages.Components.Details;
 using Dfe.Testing.Pages.Components.ErrorMessage;
 using Dfe.Testing.Pages.Components.ErrorSummary;
 using Dfe.Testing.Pages.Components.Fieldset;
+using Dfe.Testing.Pages.Components.Footer;
 using Dfe.Testing.Pages.Components.Form;
 using Dfe.Testing.Pages.Components.Tabs;
 using Dfe.Testing.Pages.Components.TextInput;
@@ -31,7 +32,7 @@ public static class DependencyInjection
     internal static IServiceCollection AddComponentMapping(this IServiceCollection services)
     {
         services
-            .AddSingleton<IComponentSelectorFactory, ComponentSelectorFactory>((sp) =>
+            .AddSingleton<IComponentDefaultSelectorFactory, ComponentSelectorFactory>((sp) =>
             {
                 Dictionary<string, Func<IElementSelector>> componentSelectorMapping = new()
                 {
@@ -47,7 +48,8 @@ public static class DependencyInjection
                     { nameof(GDSTabsComponent), () => new CssSelector(".govuk-tabs")},
                     { nameof(GDSDetailsComponent), () => new CssSelector(".govuk-details") },
                     { nameof(GDSErrorSummaryComponent), () => new CssSelector(".govuk-error-summary") },
-                    { nameof(GDSErrorMessageComponent), () => new CssSelector(".govuk-error-message") }
+                    { nameof(GDSErrorMessageComponent), () => new CssSelector(".govuk-error-message") },
+                    { nameof(GDSFooterComponent), () => new CssSelector(".govuk-footer") },
                 };
 
                 return new ComponentSelectorFactory(componentSelectorMapping);
@@ -87,7 +89,10 @@ public static class DependencyInjection
         .AddTransient<ComponentFactory<GDSErrorMessageComponent>>()
         // error summary
         .AddTransient<IComponentMapper<GDSErrorSummaryComponent>, GDSErrorSummaryMapper>()
-        .AddTransient<ComponentFactory<GDSErrorSummaryComponent>>();
+        .AddTransient<ComponentFactory<GDSErrorSummaryComponent>>()
+        // footer
+        .AddTransient<IComponentMapper<GDSFooterComponent>, GDSFooterMapper>()
+        .AddTransient<ComponentFactory<GDSFooterComponent>>();
         return services;
     }
 }

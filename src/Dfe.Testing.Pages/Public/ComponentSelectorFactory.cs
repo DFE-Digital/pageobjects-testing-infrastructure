@@ -1,5 +1,5 @@
 ﻿namespace Dfe.Testing.Pages.Public;
-public sealed class ComponentSelectorFactory : IComponentSelectorFactory
+public sealed class ComponentSelectorFactory : IComponentDefaultSelectorFactory
 {
     private readonly IDictionary<string, Func<IElementSelector>> _mapping;
 

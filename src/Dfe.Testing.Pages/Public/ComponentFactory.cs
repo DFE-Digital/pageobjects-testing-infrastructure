@@ -4,12 +4,12 @@ using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 namespace Dfe.Testing.Pages.Public;
 public class ComponentFactory<T> where T : IComponent
 {
-    private readonly IComponentSelectorFactory _componentSelectorFactory;
+    private readonly IComponentDefaultSelectorFactory _componentSelectorFactory;
     private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;
     private readonly IComponentMapper<T> _mapper;
 
     public ComponentFactory(
-        IComponentSelectorFactory componentSelectorFactory,
+        IComponentDefaultSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
         IComponentMapper<T> mapper)
     {

@@ -1,5 +1,5 @@
 ﻿namespace Dfe.Testing.Pages.Public;
-public interface IComponentSelectorFactory
+public interface IComponentDefaultSelectorFactory
 {
     IElementSelector GetSelector<TComponent>() where TComponent : IComponent;
     IElementSelector GetSelector(Type component);
