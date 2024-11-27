@@ -34,6 +34,7 @@ To support .NET Developers and Testers in building Web application tests using c
 - [ErrorMessage](https://design-system.service.gov.uk/components/error-message/)
 - [ErrorSummary](https://design-system.service.gov.uk/components/error-summary/)
 - [Pagination](https://design-system.service.gov.uk/components/pagination/) - Use anchor link
+- [Panel](https://design-system.service.gov.uk/components/panel/)
 
 ### Generic components
 
