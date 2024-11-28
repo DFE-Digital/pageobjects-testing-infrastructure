@@ -14,11 +14,13 @@ using Dfe.Testing.Pages.Components.Label;
 using Dfe.Testing.Pages.Components.NotificationBanner;
 using Dfe.Testing.Pages.Components.Panel;
 using Dfe.Testing.Pages.Components.Select;
+using Dfe.Testing.Pages.Components.Table;
 using Dfe.Testing.Pages.Components.Tabs;
 using Dfe.Testing.Pages.Internal;
 using Dfe.Testing.Pages.Public.Mapper;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 using Dfe.Testing.Pages.Public.Mapper.GDS;
+using Dfe.Testing.Pages.Public.Mapper.GDS.Table;
 
 namespace Dfe.Testing.Pages;
 
@@ -64,6 +66,12 @@ public static class DependencyInjection
                     { nameof(GDSPanelComponent), () => new CssSelector(".govuk-panel") },
                     { nameof(GDSSelectComponent), () => new CssSelector(".govuk-form-group:has(select)") },
                     { nameof(OptionComponent), () => new CssSelector("option") },
+                    { nameof(GDSTableComponent), () => new CssSelector(".govuk-table") },
+                    { nameof(TableHead), () => new CssSelector("thead") },
+                    { nameof(TableBody), () => new CssSelector("tbody") },
+                    { nameof(TableRow), () => new CssSelector("tr") },
+                    { nameof(TableHeading), () => new CssSelector("th") },
+                    { nameof(TableDataItem), () => new CssSelector("td") },
                 };
                 return new ComponentSelectorFactory(componentSelectorMapping);
             })
@@ -76,12 +84,30 @@ public static class DependencyInjection
         // input
         .AddTransient<ComponentFactory<InputComponent>>()
         .AddTransient<IComponentMapper<InputComponent>, InputMapper>()
-        // button
-        .AddTransient<ComponentFactory<GDSButtonComponent>>()
-        .AddTransient<IComponentMapper<GDSButtonComponent>, GDSButtonMapper>()
         // form
         .AddTransient<ComponentFactory<FormComponent>>()
         .AddTransient<IComponentMapper<FormComponent>, FormMapper>()
+        // table
+        .AddTransient<ComponentFactory<GDSTableComponent>>()
+        .AddTransient<IComponentMapper<GDSTableComponent>, GDSTableMapper>()
+        // thead
+        .AddTransient<ComponentFactory<TableHead>>()
+        .AddTransient<IComponentMapper<TableHead>, TableHeadMapper>()
+        // tbody
+        .AddTransient<ComponentFactory<TableBody>>()
+        .AddTransient<IComponentMapper<TableBody>, TableBodyMapper>()
+        // table row
+        .AddTransient<ComponentFactory<TableRow>>()
+        .AddTransient<IComponentMapper<TableRow>, TableRowMapper>()
+        // th
+        .AddTransient<ComponentFactory<TableHeading>>()
+        .AddTransient<IComponentMapper<TableHeading>, TableHeadingMapper>()
+        // td
+        .AddTransient<ComponentFactory<TableDataItem>>()
+        .AddTransient<IComponentMapper<TableDataItem>, TableDataItemMapper>()
+        // button
+        .AddTransient<ComponentFactory<GDSButtonComponent>>()
+        .AddTransient<IComponentMapper<GDSButtonComponent>, GDSButtonMapper>()
         // header
         .AddTransient<ComponentFactory<GDSHeaderComponent>>()
         .AddTransient<IComponentMapper<GDSHeaderComponent>, GDSHeaderMapper>()
