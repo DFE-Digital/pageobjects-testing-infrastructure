@@ -3,7 +3,7 @@ using Dfe.Testing.Pages.Components.Inputs.Radio;
 using Dfe.Testing.Pages.Components.Label;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
-namespace Dfe.Testing.Pages.Public.Mapper;
+namespace Dfe.Testing.Pages.Public.Mapper.GDS;
 internal sealed class GDSRadioMapper : IComponentMapper<GDSRadioComponent>
 {
     private readonly ComponentFactory<LabelComponent> _labelFactory;
@@ -19,7 +19,7 @@ internal sealed class GDSRadioMapper : IComponentMapper<GDSRadioComponent>
     }
     public GDSRadioComponent Map(IDocumentPart input)
     {
-        InputComponent inputComponent = _inputFactory.GetFromPart(input);
+        var inputComponent = _inputFactory.GetFromPart(input);
         return new()
         {
             Label = _labelFactory.GetFromPart(input),

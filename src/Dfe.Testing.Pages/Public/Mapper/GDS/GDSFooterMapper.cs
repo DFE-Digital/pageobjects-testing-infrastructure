@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components.Footer;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
-namespace Dfe.Testing.Pages.Public.Mapper;
+namespace Dfe.Testing.Pages.Public.Mapper.GDS;
 internal sealed class GDSFooterMapper : IComponentMapper<GDSFooterComponent>
 {
     private readonly ComponentFactory<AnchorLinkComponent> _anchorLinKFactory;

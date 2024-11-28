@@ -1,5 +1,4 @@
 ﻿using Dfe.Testing.Pages.Components.ErrorMessage;
-using Dfe.Testing.Pages.Components.Inputs;
 using Dfe.Testing.Pages.Components.Label;
 namespace Dfe.Testing.Pages.Components.Inputs.Radio;
 public record GDSRadioComponent : IInputComponent

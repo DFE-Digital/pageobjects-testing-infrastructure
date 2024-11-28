@@ -1,6 +1,6 @@
 ﻿using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
-namespace Dfe.Testing.Pages.Public.Mapper;
+namespace Dfe.Testing.Pages.Public.Mapper.GDS;
 internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>
 {
     private readonly ComponentFactory<AnchorLinkComponent> _linkFactory;

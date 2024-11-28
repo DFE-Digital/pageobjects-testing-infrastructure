@@ -13,10 +13,12 @@ using Dfe.Testing.Pages.Components.Inputs.TextInput;
 using Dfe.Testing.Pages.Components.Label;
 using Dfe.Testing.Pages.Components.NotificationBanner;
 using Dfe.Testing.Pages.Components.Panel;
+using Dfe.Testing.Pages.Components.Select;
 using Dfe.Testing.Pages.Components.Tabs;
 using Dfe.Testing.Pages.Internal;
 using Dfe.Testing.Pages.Public.Mapper;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
+using Dfe.Testing.Pages.Public.Mapper.GDS;
 
 namespace Dfe.Testing.Pages;
 
@@ -60,6 +62,8 @@ public static class DependencyInjection
                     { nameof(GDSFooterComponent), () => new CssSelector(".govuk-footer") },
                     { nameof(GDSNotificationBannerComponent), () => new CssSelector(".govuk-notification-banner") },
                     { nameof(GDSPanelComponent), () => new CssSelector(".govuk-panel") },
+                    { nameof(GDSSelectComponent), () => new CssSelector(".govuk-form-group:has(select)") },
+                    { nameof(OptionComponent), () => new CssSelector("option") },
                 };
                 return new ComponentSelectorFactory(componentSelectorMapping);
             })
@@ -116,7 +120,13 @@ public static class DependencyInjection
         .AddTransient<ComponentFactory<GDSNotificationBannerComponent>>()
         // panel
         .AddTransient<IComponentMapper<GDSPanelComponent>, GDSPanelMapper>()
-        .AddTransient<ComponentFactory<GDSPanelComponent>>();
+        .AddTransient<ComponentFactory<GDSPanelComponent>>()
+        // select
+        .AddTransient<IComponentMapper<GDSSelectComponent>, GDSSelectMapper>()
+        .AddTransient<ComponentFactory<GDSSelectComponent>>()
+        // option
+        .AddTransient<IComponentMapper<OptionComponent>, OptionsMapper>()
+        .AddTransient<ComponentFactory<OptionComponent>>();
         return services;
     }
 }

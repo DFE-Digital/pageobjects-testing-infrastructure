@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components.ErrorSummary;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
-namespace Dfe.Testing.Pages.Public.Mapper;
+namespace Dfe.Testing.Pages.Public.Mapper.GDS;
 internal sealed class GDSErrorSummaryMapper : IComponentMapper<GDSErrorSummaryComponent>
 {
     private readonly ComponentFactory<AnchorLinkComponent> _anchorLinkFactory;

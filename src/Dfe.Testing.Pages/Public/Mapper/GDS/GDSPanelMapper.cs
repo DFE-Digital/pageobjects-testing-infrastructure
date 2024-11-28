@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components.Panel;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
-namespace Dfe.Testing.Pages.Public.Mapper;
+namespace Dfe.Testing.Pages.Public.Mapper.GDS;
 internal sealed class GDSPanelMapper : IComponentMapper<GDSPanelComponent>
 {
     public GDSPanelComponent Map(IDocumentPart input)

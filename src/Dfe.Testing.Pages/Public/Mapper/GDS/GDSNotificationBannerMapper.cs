@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components.NotificationBanner;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
-namespace Dfe.Testing.Pages.Public.Mapper;
+namespace Dfe.Testing.Pages.Public.Mapper.GDS;
 internal sealed class GDSNotificationBannerMapper : IComponentMapper<GDSNotificationBannerComponent>
 {
     public GDSNotificationBannerComponent Map(IDocumentPart input)
