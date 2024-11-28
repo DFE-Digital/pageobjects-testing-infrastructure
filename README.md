@@ -36,6 +36,7 @@ To support .NET Developers and Testers in building Web application tests using c
 - [ErrorSummary](https://design-system.service.gov.uk/components/error-summary/)
 - [Pagination](https://design-system.service.gov.uk/components/pagination/) - Use anchor link
 - [Panel](https://design-system.service.gov.uk/components/panel/)
+- [Select](https://design-system.service.gov.uk/components/select/)
 
 ### Generic components
 
@@ -43,6 +44,7 @@ To support .NET Developers and Testers in building Web application tests using c
 - Form
 - Input
 - Label
+- Option
 
 ## Adding your own pages
 
