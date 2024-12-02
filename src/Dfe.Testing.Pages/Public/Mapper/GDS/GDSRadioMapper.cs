@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.Inputs;
+﻿using Dfe.Testing.Pages.Components.ErrorMessage;
 using Dfe.Testing.Pages.Components.Inputs.Radio;
 using Dfe.Testing.Pages.Components.Label;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
@@ -7,24 +7,27 @@ namespace Dfe.Testing.Pages.Public.Mapper.GDS;
 internal sealed class GDSRadioMapper : IComponentMapper<GDSRadioComponent>
 {
     private readonly ComponentFactory<LabelComponent> _labelFactory;
-    private readonly ComponentFactory<InputComponent> _inputFactory;
+    private readonly ComponentFactory<RadioComponent> _radioFactory;
+    private readonly ComponentFactory<GDSErrorMessageComponent> _errorMessageFactory;
 
     public GDSRadioMapper(
         ComponentFactory<LabelComponent> labelFactory,
-        ComponentFactory<InputComponent> inputComponent)
+        ComponentFactory<RadioComponent> radioFactory,
+        ComponentFactory<GDSErrorMessageComponent> errorMessageFactory)
     {
-        ArgumentNullException.ThrowIfNull(labelFactory);
         _labelFactory = labelFactory;
-        _inputFactory = inputComponent;
+        _radioFactory = radioFactory;
+        _errorMessageFactory = errorMessageFactory;
     }
     public GDSRadioComponent Map(IDocumentPart input)
     {
-        var inputComponent = _inputFactory.GetManyFromPart(input).Single();
+        RadioComponent radio = _radioFactory.GetManyFromPart(input).Single();
         return new()
         {
             Label = _labelFactory.GetManyFromPart(input).Single(),
-            Name = inputComponent.Name,
-            Value = inputComponent.Value,
+            Radio = radio,
+            ErrorMessage = _errorMessageFactory.GetManyFromPart(input).FirstOrDefault()
+                ?? new GDSErrorMessageComponent() { ErrorMessage = string.Empty }
         };
     }
 }

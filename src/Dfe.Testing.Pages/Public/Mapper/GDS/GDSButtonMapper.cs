@@ -16,7 +16,6 @@ internal class GDSButtonMapper : IComponentMapper<GDSButtonComponent>
                 classStyles.Contains(WarningButtonStyle.ToSelector()) ? ButtonStyleType.Warning
                     : ButtonStyleType.Primary,
             Text = part.Text?.Trim() ?? string.Empty,
-            TagName = part.TagName,
             Disabled = part.HasAttribute("disabled"),
             IsSubmit = part.GetAttribute("type") == "submit",
             Name = part.GetAttribute("name") ?? string.Empty,

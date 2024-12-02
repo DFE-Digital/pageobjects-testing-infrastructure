@@ -36,7 +36,7 @@ public sealed class GDSCookieBannerComponentTests
             ],
             ViewCookiesLink = new AnchorLinkComponent()
             {
-                LinkValue = "#",
+                LinkedTo = "#",
                 Text = "View cookies",
                 OpensInNewTab = false
             }

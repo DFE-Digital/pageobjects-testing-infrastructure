@@ -77,6 +77,7 @@ public static class DependencyInjection
                     { nameof(TextComponent), () => new CssElementSelector("*") },
                     { nameof(TextInputComponent), () => new CssElementSelector("input[type=text]") },
                     { nameof(HiddenInputComponent), () => new CssElementSelector("input[type=hidden]") },
+                    { nameof(RadioComponent), () => new CssElementSelector("input[type=radio]") },
                 };
                 return new ComponentSelectorFactory(componentSelectorMapping);
             })
@@ -166,7 +167,10 @@ public static class DependencyInjection
         .AddTransient<ComponentFactory<TextInputComponent>>()
         // hidden input
         .AddTransient<IComponentMapper<HiddenInputComponent>, HiddenInputMapper>()
-        .AddTransient<ComponentFactory<HiddenInputComponent>>();
+        .AddTransient<ComponentFactory<HiddenInputComponent>>()
+        // radio
+        .AddTransient<IComponentMapper<RadioComponent>, RadioMapper>()
+        .AddTransient<ComponentFactory<RadioComponent>>();
         return services;
     }
 }

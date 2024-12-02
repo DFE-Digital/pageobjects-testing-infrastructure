@@ -13,13 +13,13 @@ public sealed class GDSHeaderTests
         {
             GovUKLink = new()
             {
-                LinkValue = "#",
+                LinkedTo = "#",
                 Text = "GOV.UK",
                 OpensInNewTab = false
             },
             ServiceName = new()
             {
-                LinkValue = "#",
+                LinkedTo = "#",
                 Text = "Service name",
                 OpensInNewTab = false
             },

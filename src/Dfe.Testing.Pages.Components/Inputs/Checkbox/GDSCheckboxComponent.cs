@@ -13,3 +13,12 @@ public sealed record GDSCheckboxComponent : IInputComponent
     public GDSErrorMessageComponent ErrorMessage { get; init; } = new() { ErrorMessage = string.Empty };
     public bool IsRequired { get; init; } = false;
 }
+
+internal interface IInputComponent : IComponent
+{
+    string Name { get; init; }
+    string Value { get; init; }
+    string Type { get; init; }
+    bool IsRequired { get; init; }
+    GDSErrorMessageComponent ErrorMessage { get; init; }
+}

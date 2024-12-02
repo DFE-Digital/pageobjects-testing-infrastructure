@@ -7,8 +7,8 @@ public sealed class AnchorLinkMapper : IComponentMapper<AnchorLinkComponent>
     {
         return new()
         {
-            LinkValue = input.GetAttribute("href")!,
-            Text = input.Text.Trim(),
+            LinkedTo = input.GetAttribute("href")! ?? string.Empty,
+            Text = input.Text.Trim() ?? string.Empty,
             OpensInNewTab = input.GetAttribute("target") == "_blank"
         };
     }
