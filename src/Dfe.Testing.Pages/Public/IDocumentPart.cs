@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Internal.DocumentQueryClient;
+﻿namespace Dfe.Testing.Pages.Public;
 public interface IDocumentPart
 {
     string Text { get; set; }

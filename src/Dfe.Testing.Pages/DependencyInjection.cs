@@ -31,6 +31,7 @@ public static class DependencyInjection
     public static IServiceCollection AddAngleSharp<TApplicationProgram>(this IServiceCollection services) where TApplicationProgram : class
         => services
             .AddDocumentQueryClient<AngleSharpDocumentQueryClientProvider>()
+            .AddTransient<IHtmlDocumentProvider, HtmlDocumentProvider>()
             .AddWebApplicationFactory<TApplicationProgram>()
             .AddComponentMapping();
 

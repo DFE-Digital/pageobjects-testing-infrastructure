@@ -9,13 +9,17 @@ public sealed class WebDriverIntegrationTestDesign
     public async Task WebDriver_Click_Handler_Works()
     {
         using var collection = MockServiceCollection.WithWebDriver();
-        HttpRequestMessage request = new()
-        {
-            RequestUri = new("https://searchprototype.azurewebsites.net/?searchKeyWord=Col")
-        };
 
-        SearchPage page = await collection.ServiceProvider.GetRequiredService<IPageFactory>().CreatePageAsync<SearchPage>(request);
-        page.ClickAnchorLink();
+        IDocumentClientSession session = collection.ServiceProvider.GetRequiredService<IDocumentClientSession>();
+        await session.RequestDocumentAsync(
+            (t) =>
+                t.SetDomain("searchprototype.azurewebsites.net")
+                    .SetPath("/")
+                    .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
+
+        SearchPage searchPage = session.GetPage<SearchPage>();
+
+        searchPage.ClickAnchorLink();
         IApplicationNavigatorAccessor navigatorAccessor = collection.ServiceProvider.GetRequiredService<IApplicationNavigatorAccessor>();
         navigatorAccessor.Navigator.CurrentUri().Should().Be(new Uri("https://searchprototype.azurewebsites.net/"));
     }
@@ -24,12 +28,15 @@ public sealed class WebDriverIntegrationTestDesign
     public async Task WebDriver_AnchorLink_Factory_Works()
     {
         using var collection = MockServiceCollection.WithWebDriver();
-        HttpRequestMessage request = new()
-        {
-            RequestUri = new("https://searchprototype.azurewebsites.net/?searchKeyWord=Col")
-        };
 
-        SearchPage page = await collection.ServiceProvider.GetRequiredService<IPageFactory>().CreatePageAsync<SearchPage>(request);
+        IDocumentClientSession session = collection.ServiceProvider.GetRequiredService<IDocumentClientSession>();
+        await session.RequestDocumentAsync(
+            (t) =>
+                t.SetDomain("searchprototype.azurewebsites.net")
+                    .SetPath("/")
+                    .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
+
+        SearchPage page = session.GetPage<SearchPage>();
         page.GetLinks().Should().HaveCount(3);
     }
 

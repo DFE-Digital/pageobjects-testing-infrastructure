@@ -20,7 +20,6 @@ public class ComponentFactory<T> where T : IComponent
         _mapper = mapper;
     }
 
-    internal IDocumentQueryClient DocumentQueryClient => _documentQueryClientAccessor.DocumentQueryClient;
     internal virtual QueryOptions MergeRequest(QueryOptions? request)
     {
         return new()
@@ -37,7 +36,7 @@ public class ComponentFactory<T> where T : IComponent
 
     public virtual IList<T> GetMany(QueryOptions? request = null)
     {
-        return DocumentQueryClient.QueryMany(args: MergeRequest(request))
+        return _documentQueryClientAccessor.DocumentQueryClient.QueryMany(args: MergeRequest(request))
                 .Select(_mapper.Map)
                 .ToList();
     }
