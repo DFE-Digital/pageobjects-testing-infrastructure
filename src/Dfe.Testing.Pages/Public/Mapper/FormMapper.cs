@@ -50,7 +50,7 @@ internal sealed class FormMapper : IComponentMapper<FormComponent>
             Method = HttpMethod.Parse(
                 input.GetAttribute("method") ?? throw new ArgumentNullException(nameof(FormComponent.Method), "method on form is null")),
             Action = input.GetAttribute("action") ?? string.Empty,
-            IsFormValidatedWithHTML = input.HasAttribute("novalidate"),
+            IsFormValidated = !input.HasAttribute("novalidate"),
             FieldSets = _fieldSetFactory.GetManyFromPart(input) ?? [],
             Buttons = _buttonFactory.GetManyFromPart(input) ?? [],
             HiddenInputs = _hiddenInputFactory.GetManyFromPart(input) ?? [],

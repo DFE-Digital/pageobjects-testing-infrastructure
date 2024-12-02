@@ -57,7 +57,7 @@ public static class DependencyInjection
                     { nameof(GDSCheckboxComponent), () => new CssElementSelector(".govuk-checkboxes__item")},
                     { nameof(GDSRadioComponent), () => new CssElementSelector(".govuk-radios__item") },
                     { nameof(GDSTextInputComponent), () => new CssElementSelector(".govuk-form-group:has(input[type=text])")},
-                    { nameof(GDSButtonComponent), () => new CssElementSelector(".govuk-button")},
+                    { nameof(GDSButtonComponent), () => new CssElementSelector("button")},
                     { nameof(GDSCookieBannerComponent), () => new CssElementSelector(".govuk-cookie-banner")},
                     { nameof(GDSTabsComponent), () => new CssElementSelector(".govuk-tabs")},
                     { nameof(GDSDetailsComponent), () => new CssElementSelector(".govuk-details") },

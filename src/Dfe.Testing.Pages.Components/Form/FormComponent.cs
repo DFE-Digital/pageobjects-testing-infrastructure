@@ -20,5 +20,5 @@ public record FormComponent : IComponent
     public IEnumerable<GDSTextInputComponent> TextInputs { get; init; } = [];
     public IEnumerable<GDSSelectComponent> Selects { get; init; } = [];
     public IEnumerable<HiddenInputComponent> HiddenInputs { get; init; } = [];
-    public required bool IsFormValidatedWithHTML { get; init; }
+    public bool IsFormValidated { get; init; } = true;
 }
