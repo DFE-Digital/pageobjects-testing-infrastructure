@@ -6,7 +6,7 @@ using Dfe.Testing.Pages.Components.ErrorSummary;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Footer;
 using Dfe.Testing.Pages.Components.Form;
-using Dfe.Testing.Pages.Components.Input;
+using Dfe.Testing.Pages.Components.Inputs;
 using Dfe.Testing.Pages.Components.Inputs.Checkbox;
 using Dfe.Testing.Pages.Components.Inputs.Radio;
 using Dfe.Testing.Pages.Components.Inputs.TextInput;
@@ -16,11 +16,13 @@ using Dfe.Testing.Pages.Components.Panel;
 using Dfe.Testing.Pages.Components.Select;
 using Dfe.Testing.Pages.Components.Table;
 using Dfe.Testing.Pages.Components.Tabs;
+using Dfe.Testing.Pages.Components.Text;
 using Dfe.Testing.Pages.Internal;
 using Dfe.Testing.Pages.Public.Mapper;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 using Dfe.Testing.Pages.Public.Mapper.GDS;
 using Dfe.Testing.Pages.Public.Mapper.GDS.Table;
+using Dfe.Testing.Pages.Public.Selector.Factory;
 
 namespace Dfe.Testing.Pages;
 
@@ -41,37 +43,40 @@ public static class DependencyInjection
     internal static IServiceCollection AddComponentMapping(this IServiceCollection services)
     {
         services
-            .AddSingleton<IComponentDefaultSelectorFactory, ComponentSelectorFactory>((sp) =>
+            .AddSingleton<IComponentSelectorFactory, ComponentSelectorFactory>((sp) =>
             {
                 Dictionary<string, Func<IElementSelector>> componentSelectorMapping = new()
                 {
-                    { nameof(AnchorLinkComponent), () => new CssSelector("a")},
+                    { nameof(AnchorLinkComponent), () => new CssElementSelector("a")},
                     // may not be approp default if multiple forms on page?
-                    { nameof(FormComponent), () => new CssSelector("form")},
-                    { nameof(LabelComponent), () => new CssSelector("label") },
-                    { nameof(InputComponent), () => new CssSelector("input") },
-                    { nameof(GDSHeaderComponent), () => new CssSelector(".govuk-header")},
-                    { nameof(GDSFieldsetComponent), () => new CssSelector("fieldset")},
-                    { nameof(GDSCheckboxComponent), () => new CssSelector(".govuk-checkboxes__item")},
-                    { nameof(GDSRadioComponent), () => new CssSelector(".govuk-radios__item") },
-                    { nameof(GDSTextInputComponent), () => new CssSelector(".govuk-form-group:has(input[type=text])")},
-                    { nameof(GDSButtonComponent), () => new CssSelector(".govuk-button")},
-                    { nameof(GDSCookieBannerComponent), () => new CssSelector(".govuk-cookie-banner")},
-                    { nameof(GDSTabsComponent), () => new CssSelector(".govuk-tabs")},
-                    { nameof(GDSDetailsComponent), () => new CssSelector(".govuk-details") },
-                    { nameof(GDSErrorSummaryComponent), () => new CssSelector(".govuk-error-summary") },
-                    { nameof(GDSErrorMessageComponent), () => new CssSelector(".govuk-error-message") },
-                    { nameof(GDSFooterComponent), () => new CssSelector(".govuk-footer") },
-                    { nameof(GDSNotificationBannerComponent), () => new CssSelector(".govuk-notification-banner") },
-                    { nameof(GDSPanelComponent), () => new CssSelector(".govuk-panel") },
-                    { nameof(GDSSelectComponent), () => new CssSelector(".govuk-form-group:has(select)") },
-                    { nameof(OptionComponent), () => new CssSelector("option") },
-                    { nameof(GDSTableComponent), () => new CssSelector(".govuk-table") },
-                    { nameof(TableHead), () => new CssSelector("thead") },
-                    { nameof(TableBody), () => new CssSelector("tbody") },
-                    { nameof(TableRow), () => new CssSelector("tr") },
-                    { nameof(TableHeading), () => new CssSelector("th") },
-                    { nameof(TableDataItem), () => new CssSelector("td") },
+                    { nameof(FormComponent), () => new CssElementSelector("form")},
+                    { nameof(LabelComponent), () => new CssElementSelector("label") },
+                    { nameof(InputComponent), () => new CssElementSelector("input") },
+                    { nameof(GDSHeaderComponent), () => new CssElementSelector(".govuk-header")},
+                    { nameof(GDSFieldsetComponent), () => new CssElementSelector("fieldset")},
+                    { nameof(GDSCheckboxComponent), () => new CssElementSelector(".govuk-checkboxes__item")},
+                    { nameof(GDSRadioComponent), () => new CssElementSelector(".govuk-radios__item") },
+                    { nameof(GDSTextInputComponent), () => new CssElementSelector(".govuk-form-group:has(input[type=text])")},
+                    { nameof(GDSButtonComponent), () => new CssElementSelector(".govuk-button")},
+                    { nameof(GDSCookieBannerComponent), () => new CssElementSelector(".govuk-cookie-banner")},
+                    { nameof(GDSTabsComponent), () => new CssElementSelector(".govuk-tabs")},
+                    { nameof(GDSDetailsComponent), () => new CssElementSelector(".govuk-details") },
+                    { nameof(GDSErrorSummaryComponent), () => new CssElementSelector(".govuk-error-summary") },
+                    { nameof(GDSErrorMessageComponent), () => new CssElementSelector(".govuk-error-message") },
+                    { nameof(GDSFooterComponent), () => new CssElementSelector(".govuk-footer") },
+                    { nameof(GDSNotificationBannerComponent), () => new CssElementSelector(".govuk-notification-banner") },
+                    { nameof(GDSPanelComponent), () => new CssElementSelector(".govuk-panel") },
+                    { nameof(GDSSelectComponent), () => new CssElementSelector(".govuk-form-group:has(select)") },
+                    { nameof(OptionComponent), () => new CssElementSelector("option") },
+                    { nameof(GDSTableComponent), () => new CssElementSelector(".govuk-table") },
+                    { nameof(TableHead), () => new CssElementSelector("thead") },
+                    { nameof(TableBody), () => new CssElementSelector("tbody") },
+                    { nameof(TableRow), () => new CssElementSelector("tr") },
+                    { nameof(TableHeading), () => new CssElementSelector("th") },
+                    { nameof(TableDataItem), () => new CssElementSelector("td") },
+                    { nameof(TextComponent), () => new CssElementSelector("*") },
+                    { nameof(TextInputComponent), () => new CssElementSelector("input[type=text]") },
+                    { nameof(HiddenInputComponent), () => new CssElementSelector("input[type=hidden]") },
                 };
                 return new ComponentSelectorFactory(componentSelectorMapping);
             })
@@ -152,7 +157,16 @@ public static class DependencyInjection
         .AddTransient<ComponentFactory<GDSSelectComponent>>()
         // option
         .AddTransient<IComponentMapper<OptionComponent>, OptionsMapper>()
-        .AddTransient<ComponentFactory<OptionComponent>>();
+        .AddTransient<ComponentFactory<OptionComponent>>()
+        // text
+        .AddTransient<IComponentMapper<TextComponent>, TextMapper>()
+        .AddTransient<ComponentFactory<TextComponent>>()
+        // text input
+        .AddTransient<IComponentMapper<TextInputComponent>, TextInputMapper>()
+        .AddTransient<ComponentFactory<TextInputComponent>>()
+        // hidden input
+        .AddTransient<IComponentMapper<HiddenInputComponent>, HiddenInputMapper>()
+        .AddTransient<ComponentFactory<HiddenInputComponent>>();
         return services;
     }
 }

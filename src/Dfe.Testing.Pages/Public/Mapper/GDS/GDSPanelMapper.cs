@@ -8,8 +8,8 @@ internal sealed class GDSPanelMapper : IComponentMapper<GDSPanelComponent>
     {
         return new()
         {
-            Heading = input.GetChild(new CssSelector(".govuk-panel__title"))?.Text ?? throw new ArgumentNullException("panel has no heading"),
-            Content = input.GetChild(new CssSelector(".govuk-panel__body"))?.Text ?? throw new ArgumentNullException("panel has no content")
+            Heading = input.GetChild(new CssElementSelector(".govuk-panel__title"))?.Text ?? throw new ArgumentNullException("panel has no heading"),
+            Content = input.GetChild(new CssElementSelector(".govuk-panel__body"))?.Text ?? throw new ArgumentNullException("panel has no content")
         };
     }
 }

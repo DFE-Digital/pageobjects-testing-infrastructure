@@ -1,5 +1,4 @@
 ﻿using Dfe.Testing.Pages.Components.Header;
-using Dfe.Testing.Pages.Public;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.Header;
 internal sealed class GDSHeaderPage : IPage

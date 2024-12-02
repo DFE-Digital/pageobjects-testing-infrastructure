@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.Input;
+﻿using Dfe.Testing.Pages.Components.Inputs;
 using Dfe.Testing.Pages.Components.Inputs.Checkbox;
 using Dfe.Testing.Pages.Components.Label;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
@@ -19,10 +19,10 @@ internal sealed class GDSCheckboxMapper : IComponentMapper<GDSCheckboxComponent>
 
     public GDSCheckboxComponent Map(IDocumentPart input)
     {
-        var inputComponent = _inputFactory.GetFromPart(input);
+        var inputComponent = _inputFactory.GetManyFromPart(input).Single();
         return new GDSCheckboxComponent()
         {
-            Label = _labelFactory.GetFromPart(input),
+            Label = _labelFactory.GetManyFromPart(input).Single(),
             Name = inputComponent.Name,
             Value = inputComponent.Value,
             Checked = inputComponent.IsChecked,

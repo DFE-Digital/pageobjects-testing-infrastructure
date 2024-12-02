@@ -15,7 +15,7 @@ internal sealed class GDSErrorSummaryMapper : IComponentMapper<GDSErrorSummaryCo
     {
         return new()
         {
-            Heading = input.GetChild(new CssSelector(".govuk-error-summary__title"))?.Text ?? throw new ArgumentNullException("heading on error summary is null"),
+            Heading = input.GetChild(new CssElementSelector(".govuk-error-summary__title"))?.Text ?? throw new ArgumentNullException("heading on error summary is null"),
             Errors = _anchorLinkFactory.GetManyFromPart(input)
         };
     }

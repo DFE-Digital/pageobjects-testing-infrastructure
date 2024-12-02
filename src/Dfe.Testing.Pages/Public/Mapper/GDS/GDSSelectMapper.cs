@@ -19,7 +19,7 @@ internal sealed class GDSSelectMapper : IComponentMapper<GDSSelectComponent>
     {
         return new GDSSelectComponent()
         {
-            Label = _labelFactory.GetFromPart(input),
+            Label = _labelFactory.GetManyFromPart(input).Single(),
             Options = _optionFactory.GetManyFromPart(input)
         };
     }

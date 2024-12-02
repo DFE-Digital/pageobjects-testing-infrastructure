@@ -1,15 +1,16 @@
 ﻿using Dfe.Testing.Pages.Components;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
+using Dfe.Testing.Pages.Public.Selector.Factory;
 
 namespace Dfe.Testing.Pages.Public;
 public class ComponentFactory<T> where T : IComponent
 {
-    private readonly IComponentDefaultSelectorFactory _componentSelectorFactory;
+    private readonly IComponentSelectorFactory _componentSelectorFactory;
     private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;
     private readonly IComponentMapper<T> _mapper;
 
     public ComponentFactory(
-        IComponentDefaultSelectorFactory componentSelectorFactory,
+        IComponentSelectorFactory componentSelectorFactory,
         IDocumentQueryClientAccessor documentQueryClientAccessor,
         IComponentMapper<T> mapper)
     {
@@ -20,27 +21,28 @@ public class ComponentFactory<T> where T : IComponent
     }
 
     internal IDocumentQueryClient DocumentQueryClient => _documentQueryClientAccessor.DocumentQueryClient;
-    internal virtual QueryRequestArgs MergeRequest(QueryRequestArgs? request, IElementSelector defaultFindBySelector)
+    internal virtual QueryOptions MergeRequest(QueryOptions? request)
     {
-        ArgumentNullException.ThrowIfNull(defaultFindBySelector);
         return new()
         {
-            Query = request?.Query ?? defaultFindBySelector,
-            Scope = request?.Scope
+            // fall back to using the default selector for the component if no query is provided
+            // Entrypoint for the top-level component
+            Query = request?.Query ?? _componentSelectorFactory.GetSelector<T>(), // KeyValuePair <this, T>
+            // Inside of this area , we're looking for this component
+            InScope = request?.InScope
         };
     }
 
-    public virtual T Get(QueryRequestArgs? request = null) => GetMany(request).Single();
+    public virtual T Get(QueryOptions? request = null) => GetMany(request).Single();
 
-    public virtual IList<T> GetMany(QueryRequestArgs? request = null)
+    public virtual IList<T> GetMany(QueryOptions? request = null)
     {
-        return DocumentQueryClient.QueryMany(
-            MergeRequest(
-                request, _componentSelectorFactory.GetSelector<T>()),
-            mapper: _mapper.Map).ToList();
+        return DocumentQueryClient.QueryMany(args: MergeRequest(request))
+                .Select(_mapper.Map)
+                .ToList();
     }
 
-    internal virtual T GetFromPart(IDocumentPart? part) => _mapper.Map(part ?? throw new ArgumentNullException(nameof(part)));
+    //TODO consider removing below - enforcing client to pass QueryOptions mappings
 
     internal virtual IList<T> GetManyFromPart(IDocumentPart? part)
         => part?

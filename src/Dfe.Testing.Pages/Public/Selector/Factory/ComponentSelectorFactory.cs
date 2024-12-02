@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components;
 
-namespace Dfe.Testing.Pages.Public;
-public sealed class ComponentSelectorFactory : IComponentDefaultSelectorFactory
+namespace Dfe.Testing.Pages.Public.Selector.Factory;
+public sealed class ComponentSelectorFactory : IComponentSelectorFactory
 {
     private readonly IDictionary<string, Func<IElementSelector>> _mapping;
 

@@ -4,8 +4,8 @@ using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 namespace Dfe.Testing.Pages.Public.Mapper.GDS;
 internal class GDSButtonMapper : IComponentMapper<GDSButtonComponent>
 {
-    internal static IElementSelector SecondaryButtonStyle => new CssSelector("govuk-button--secondary");
-    internal static IElementSelector WarningButtonStyle => new CssSelector(".govuk-button--warning");
+    internal static IElementSelector SecondaryButtonStyle => new CssElementSelector("govuk-button--secondary");
+    internal static IElementSelector WarningButtonStyle => new CssElementSelector(".govuk-button--warning");
     public GDSButtonComponent Map(IDocumentPart part)
     {
         var classStyles = part.GetAttribute("class") ?? string.Empty;

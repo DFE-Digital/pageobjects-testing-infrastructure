@@ -10,11 +10,11 @@ internal sealed class WebDriverDocumentQueryClient : IDocumentQueryClient
         _webDriverAdaptor = webDriverAdaptor;
     }
 
-    public void Run(QueryRequestArgs args, Action<IDocumentPart> handler)
+    public void Run(QueryOptions args, Action<IDocumentPart> handler)
     {
         ArgumentNullException.ThrowIfNull(args);
         ArgumentNullException.ThrowIfNull(args.Query);
-        if (args.Scope == null)
+        if (args.InScope == null)
         {
             handler(
                 WebDriverDocumentPart.Create(
@@ -24,44 +24,39 @@ internal sealed class WebDriverDocumentQueryClient : IDocumentQueryClient
 
         handler(
             WebDriverDocumentPart.Create(
-                Find(args.Scope)
+                Find(args.InScope)
                     .FindElement(
                         WebDriverByLocatorHelpers.CreateLocator(args.Query))));
     }
 
-    public TResult Query<TResult>(QueryRequestArgs queryArgs, Func<IDocumentPart, TResult> mapper)
+    public IDocumentPart Query(QueryOptions queryArgs)
     {
         ArgumentNullException.ThrowIfNull(queryArgs);
         ArgumentNullException.ThrowIfNull(queryArgs.Query);
-        ArgumentNullException.ThrowIfNull(mapper);
-        IDocumentPart? documentPartToMap =
+        return
             WebDriverDocumentPart.Create(
-                queryArgs.Scope == null ?
+                queryArgs.InScope == null ?
                     _webDriverAdaptor.FindElement(queryArgs.Query!) :
-                    _webDriverAdaptor.FindElement(queryArgs.Scope!)
+                    _webDriverAdaptor.FindElement(queryArgs.InScope!)
                         .FindElement(
                             WebDriverByLocatorHelpers.CreateLocator(queryArgs.Query)));
-
-        return mapper(documentPartToMap);
     }
 
-    public IEnumerable<TResult> QueryMany<TResult>(QueryRequestArgs queryArgs, Func<IDocumentPart, TResult> mapper)
+    public IEnumerable<IDocumentPart> QueryMany(QueryOptions queryArgs)
     {
         ArgumentNullException.ThrowIfNull(queryArgs);
         ArgumentNullException.ThrowIfNull(queryArgs.Query);
-        ArgumentNullException.ThrowIfNull(mapper);
         IEnumerable<IWebElement>? elements =
-                queryArgs.Scope == null ?
+                queryArgs.InScope == null ?
                     _webDriverAdaptor.FindElements(queryArgs.Query!) :
-                    _webDriverAdaptor.FindElement(queryArgs.Scope!)
+                    _webDriverAdaptor.FindElement(queryArgs.InScope!)
                         .FindElements(
                             WebDriverByLocatorHelpers.CreateLocator(queryArgs.Query));
 
         return elements
             .Select(WebDriverDocumentPart.Create)
-            .Select(mapper)
             // TODO expression is evaluated immediately on IEnumerable<T> because otherwise stale references to elements that have changed...
-            // Could improve design by capturing scope inside of DocumentPart so it's retryable? Come back to
+            // Could improve design by capturing queryscope inside of DocumentPart so it's retryable? Come back to
             .ToList();
     }
 

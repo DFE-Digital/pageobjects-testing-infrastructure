@@ -15,10 +15,10 @@ internal sealed class GDSTabsMapper : IComponentMapper<GDSTabsComponent>
     {
         return new GDSTabsComponent()
         {
-            Heading = input.GetChild(new CssSelector(".govuk-tabs__title"))?.Text ?? string.Empty,
-            Tabs = _anchorLinkFactory.GetMany(new QueryRequestArgs()
+            Heading = input.GetChild(new CssElementSelector(".govuk-tabs__title"))?.Text ?? string.Empty,
+            Tabs = _anchorLinkFactory.GetMany(new QueryOptions()
             {
-                Scope = new CssSelector(".govuk-tabs__list")
+                InScope = new CssElementSelector(".govuk-tabs__list")
             }),
             TagName = input.TagName ?? string.Empty
         };

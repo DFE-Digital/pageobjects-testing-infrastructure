@@ -14,13 +14,13 @@ internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>
     {
         return new GDSHeaderComponent()
         {
-            GovUKLink = _linkFactory.Get(new QueryRequestArgs()
+            GovUKLink = _linkFactory.Get(new QueryOptions()
             {
-                Query = new CssSelector(".govuk-header__link--homepage"),
+                Query = new CssElementSelector(".govuk-header__link--homepage"),
             }),
-            ServiceName = _linkFactory.Get(new QueryRequestArgs()
+            ServiceName = _linkFactory.Get(new QueryOptions()
             {
-                Query = new CssSelector(".govuk-header__service-name"),
+                Query = new CssElementSelector(".govuk-header__service-name"),
             }),
             TagName = input.TagName
         };

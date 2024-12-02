@@ -1,6 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.Commands;
-
-namespace Dfe.Testing.Pages.Internal.Commands;
+﻿namespace Dfe.Testing.Pages.Internal.Commands;
 internal sealed class UpdateElementTextCommandHandler : ICommandHandler<UpdateElementTextCommand>
 {
     private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;
@@ -16,10 +14,10 @@ internal sealed class UpdateElementTextCommandHandler : ICommandHandler<UpdateEl
         ArgumentNullException.ThrowIfNull(command.FindWith);
 
         _documentQueryClientAccessor.DocumentQueryClient.Run(
-            new QueryRequestArgs()
+            new QueryOptions()
             {
                 Query = command.FindWith,
-                Scope = command.InScope
+                InScope = command.InScope
             },
             (part) =>
             {

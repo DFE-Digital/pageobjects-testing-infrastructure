@@ -1,12 +1,13 @@
 ﻿using Dfe.Testing.Pages.Components.Label;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
+using Dfe.Testing.Pages.Public.Selector.Factory;
 
 namespace Dfe.Testing.Pages.Public.Mapper;
 internal sealed class LabelMapper : IComponentMapper<LabelComponent>
 {
-    private readonly IComponentDefaultSelectorFactory _componentDefaultSelectorFactory;
+    private readonly IComponentSelectorFactory _componentDefaultSelectorFactory;
 
-    public LabelMapper(IComponentDefaultSelectorFactory componentDefaultSelectorFactory)
+    public LabelMapper(IComponentSelectorFactory componentDefaultSelectorFactory)
     {
         _componentDefaultSelectorFactory = componentDefaultSelectorFactory;
     }

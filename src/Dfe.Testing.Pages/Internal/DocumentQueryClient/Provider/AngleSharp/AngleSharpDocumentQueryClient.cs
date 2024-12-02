@@ -8,11 +8,11 @@ internal class AngleSharpDocumentQueryClient : IDocumentQueryClient
         _htmlDocument = document;
     }
 
-    public void Run(QueryRequestArgs args, Action<IDocumentPart> handler)
+    public void Run(QueryOptions args, Action<IDocumentPart> handler)
     {
         ArgumentNullException.ThrowIfNull(args);
         ArgumentNullException.ThrowIfNull(args.Query);
-        if (args.Scope == null)
+        if (args.InScope == null)
         {
             handler(
                 AsDocumentPart(
@@ -20,42 +20,40 @@ internal class AngleSharpDocumentQueryClient : IDocumentQueryClient
             return;
         }
 
-        var scope = QueryForElementInScope(scope: _htmlDocument, selector: args.Scope);
+        var scope = QueryForElementInScope(scope: _htmlDocument, selector: args.InScope);
         handler(
             AsDocumentPart(
                 QueryForElementInScope(scope, args.Query)));
     }
 
-    public TResult Query<TResult>(QueryRequestArgs queryArgs, Func<IDocumentPart, TResult> Mapper)
+    public IDocumentPart Query(QueryOptions queryArgs)
     {
         ArgumentNullException.ThrowIfNull(queryArgs);
         ArgumentNullException.ThrowIfNull(queryArgs.Query);
-        var element = queryArgs.Scope == null ?
+        var element = queryArgs.InScope == null ?
             QueryForElementInScope(_htmlDocument, queryArgs.Query) :
                 // find the scope and query within
                 QueryForElementInScope(
-                    scope: QueryForElementInScope(scope: _htmlDocument, selector: queryArgs.Scope),
+                    scope: QueryForElementInScope(scope: _htmlDocument, selector: queryArgs.InScope),
                     selector: queryArgs.Query);
 
-        return Mapper(
-            AsDocumentPart(element));
+        return AsDocumentPart(element);
     }
 
 
-    public IEnumerable<TResult> QueryMany<TResult>(QueryRequestArgs queryArgs, Func<IDocumentPart, TResult> Mapper)
+    public IEnumerable<IDocumentPart> QueryMany(QueryOptions queryArgs)
     {
         ArgumentNullException.ThrowIfNull(queryArgs);
         ArgumentNullException.ThrowIfNull(queryArgs.Query);
         var elements =
-            (queryArgs.Scope == null ?
+            (queryArgs.InScope == null ?
                 QueryForMultipleElementsFromScope(scope: _htmlDocument, selector: queryArgs.Query) :
                     // find the scope and query within
                     QueryForMultipleElementsFromScope(
-                        scope: QueryForElementInScope(scope: _htmlDocument, selector: queryArgs.Scope),
+                        scope: QueryForElementInScope(scope: _htmlDocument, selector: queryArgs.InScope),
                         selector: queryArgs.Query)).ToList();
 
-        return AsDocumentParts(elements)
-            .Select(t => Mapper(t));
+        return AsDocumentParts(elements);
     }
 
 
@@ -82,7 +80,7 @@ internal class AngleSharpDocumentQueryClient : IDocumentQueryClient
 
 
     private static AngleSharpDocumentPart AsDocumentPart(IElement element) => new(element);
-    private static IEnumerable<AngleSharpDocumentPart> AsDocumentParts(IEnumerable<IElement> elements) => elements.Select(AsDocumentPart);
+    private static IEnumerable<AngleSharpDocumentPart> AsDocumentParts(IEnumerable<IElement> elements) => elements?.Select(AsDocumentPart).ToList() ?? [];
 
     private sealed class AngleSharpDocumentPart : IDocumentPart
     {
@@ -127,10 +125,9 @@ internal class AngleSharpDocumentQueryClient : IDocumentQueryClient
             return null == child ? null : new AngleSharpDocumentPart(child);
         }
 
-        public IEnumerable<IDocumentPart> GetChildren() => _element.Children?.Select(t => (IDocumentPart)new AngleSharpDocumentPart(t)).ToList() ?? [];
+        public IEnumerable<IDocumentPart> GetChildren() => AsDocumentParts(_element.Children).ToList();
         public IEnumerable<IDocumentPart> GetChildren(IElementSelector selector)
-            => _element.QuerySelectorAll(selector.ToSelector())
-                .Select(AsDocumentPart)
-                .ToList<IDocumentPart>();
+            => AsDocumentParts(
+                _element.QuerySelectorAll(selector?.ToSelector() ?? throw new ArgumentNullException("selector when queryAll children is null")));
     }
 }

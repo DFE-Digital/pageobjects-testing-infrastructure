@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.Input;
+﻿using Dfe.Testing.Pages.Components.Inputs;
 using Dfe.Testing.Pages.Components.Inputs.Radio;
 using Dfe.Testing.Pages.Components.Label;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
@@ -19,10 +19,10 @@ internal sealed class GDSRadioMapper : IComponentMapper<GDSRadioComponent>
     }
     public GDSRadioComponent Map(IDocumentPart input)
     {
-        var inputComponent = _inputFactory.GetFromPart(input);
+        var inputComponent = _inputFactory.GetManyFromPart(input).Single();
         return new()
         {
-            Label = _labelFactory.GetFromPart(input),
+            Label = _labelFactory.GetManyFromPart(input).Single(),
             Name = inputComponent.Name,
             Value = inputComponent.Value,
         };

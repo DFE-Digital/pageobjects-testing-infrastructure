@@ -1,9 +1,9 @@
 ﻿namespace Dfe.Testing.Pages.Public.Selector;
-public sealed class CssSelector : IElementSelector
+public sealed class CssElementSelector : IElementSelector
 {
     private readonly string _locator;
 
-    public CssSelector(string locator)
+    public CssElementSelector(string locator)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(locator, nameof(locator));
         _locator = locator;

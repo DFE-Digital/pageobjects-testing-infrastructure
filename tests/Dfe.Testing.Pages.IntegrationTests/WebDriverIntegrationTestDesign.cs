@@ -1,5 +1,4 @@
-﻿
-using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
+﻿using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
 
 namespace Dfe.Testing.Pages.IntegrationTests;
 
@@ -49,12 +48,12 @@ public sealed class WebDriverIntegrationTestDesign
 
         public void ClickAnchorLink() => _clickElementHandler.Handle(new()
         {
-            FindWith = new CssSelector("#home-link")
+            FindWith = new CssElementSelector("#home-link")
         });
 
         public IEnumerable<AnchorLinkComponent> GetLinks() => _anchorLink.GetMany(new()
         {
-            Scope = new CssSelector(".govuk-header")
+            InScope = new CssElementSelector(".govuk-header")
         });
     }
 }

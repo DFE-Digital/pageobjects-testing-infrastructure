@@ -33,7 +33,7 @@ internal sealed class GDSFieldsetMapper : IComponentMapper<GDSFieldsetComponent>
         return new GDSFieldsetComponent()
         {
             TagName = input.TagName ?? "legend",
-            Legend = input.GetChild(new CssSelector("legend"))?.Text ?? throw new ArgumentNullException("legend on fieldset is null"),
+            Legend = input.GetChild(new CssElementSelector("legend"))?.Text ?? throw new ArgumentNullException("legend on fieldset is null"),
             TextInputs = _textInputFactory.GetManyFromPart(input),
             Radios = _radioFactory.GetManyFromPart(input),
             Checkboxes = _checkboxFactory.GetManyFromPart(input)

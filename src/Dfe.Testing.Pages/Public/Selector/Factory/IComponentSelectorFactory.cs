@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Components;
 
-namespace Dfe.Testing.Pages.Public;
-public interface IComponentDefaultSelectorFactory
+namespace Dfe.Testing.Pages.Public.Selector.Factory;
+public interface IComponentSelectorFactory
 {
     IElementSelector GetSelector<TComponent>() where TComponent : IComponent;
     IElementSelector GetSelector(Type component);

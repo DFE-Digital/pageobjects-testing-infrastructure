@@ -1,4 +1,5 @@
 ﻿using Dfe.Testing.Pages.Public.Commands;
+using Dfe.Testing.Pages.Public.Selector.Options;
 
 namespace Dfe.Testing.Pages.Internal.Commands;
 internal sealed class ClickElementCommandHandler : ICommandHandler<ClickElementCommand>
@@ -15,10 +16,10 @@ internal sealed class ClickElementCommandHandler : ICommandHandler<ClickElementC
         ArgumentNullException.ThrowIfNull(command);
         ArgumentNullException.ThrowIfNull(command.FindWith);
         _documentQueryClientAccessor.DocumentQueryClient.Run(
-            new QueryRequestArgs()
+            new QueryOptions()
             {
                 Query = command.FindWith,
-                Scope = command.InScope
+                InScope = command.InScope
             },
             (part) => part.Click());
     }

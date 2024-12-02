@@ -1,6 +1,6 @@
 ﻿using Dfe.Testing.Pages.Components.ErrorMessage;
 
-namespace Dfe.Testing.Pages.Components.Input;
+namespace Dfe.Testing.Pages.Components.Inputs;
 public record InputComponent : IComponent
 {
     public required string Type { get; init; }

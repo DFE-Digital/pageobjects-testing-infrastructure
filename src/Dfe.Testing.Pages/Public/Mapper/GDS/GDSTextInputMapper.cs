@@ -1,34 +1,38 @@
-﻿using Dfe.Testing.Pages.Components.Input;
+﻿using System.Reflection.Emit;
+using Dfe.Testing.Pages.Components.ErrorMessage;
 using Dfe.Testing.Pages.Components.Inputs.TextInput;
 using Dfe.Testing.Pages.Components.Label;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
 namespace Dfe.Testing.Pages.Public.Mapper.GDS;
-internal class GDSTextInputMapper : IComponentMapper<GDSTextInputComponent>
+internal sealed class GDSTextInputMapper : IComponentMapper<GDSTextInputComponent>
 {
-    private readonly ComponentFactory<InputComponent> _inputFactory;
+    private readonly ComponentFactory<TextInputComponent> _textInputFactory;
     private readonly ComponentFactory<LabelComponent> _labelFactory;
+    private readonly ComponentFactory<GDSErrorMessageComponent> _errorMessageFactory;
 
     public GDSTextInputMapper(
-        ComponentFactory<InputComponent> inputFactory,
-        ComponentFactory<LabelComponent> labelFactory)
+        ComponentFactory<TextInputComponent> inputFactory,
+        ComponentFactory<LabelComponent> labelFactory,
+        ComponentFactory<GDSErrorMessageComponent> errorMessageFactory)
     {
         ArgumentNullException.ThrowIfNull(inputFactory);
         ArgumentNullException.ThrowIfNull(labelFactory);
-        _inputFactory = inputFactory;
+        ArgumentNullException.ThrowIfNull(errorMessageFactory);
+        _textInputFactory = inputFactory;
         _labelFactory = labelFactory;
+        _errorMessageFactory = errorMessageFactory;
     }
     public GDSTextInputComponent Map(IDocumentPart input)
     {
-        var textInput = _inputFactory.GetFromPart(input);
+        var label = _labelFactory.GetManyFromPart(input).Single();
+        var textInput = _textInputFactory.GetManyFromPart(input).Single();
+
         return new GDSTextInputComponent()
         {
-            Label = _labelFactory.GetFromPart(input),
-            Value = textInput.Value,
-            Name = textInput.Name,
-            Type = textInput.Type,
-            PlaceHolder = textInput.PlaceHolder,
-            IsRequired = textInput.IsRequired,
+            Label = label,
+            Input = textInput,
+            ErrorMessage = _errorMessageFactory.GetManyFromPart(input).SingleOrDefault() ?? new GDSErrorMessageComponent() { ErrorMessage = string.Empty }
         };
     }
 }
