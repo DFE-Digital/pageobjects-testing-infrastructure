@@ -37,6 +37,7 @@ To support .NET Developers and Testers in building Web application tests using c
 - [Pagination](https://design-system.service.gov.uk/components/pagination/) - Use anchor link
 - [Panel](https://design-system.service.gov.uk/components/panel/)
 - [Select](https://design-system.service.gov.uk/components/select/)
+- [Table](https://design-system.service.gov.uk/components/table/)
 
 ### Generic components
 
@@ -45,6 +46,7 @@ To support .NET Developers and Testers in building Web application tests using c
 - Input
 - Label
 - Option
+- TableHead, TableBody, TableRow, TableHeadingItem and TableDataItem
 
 ## Adding your own pages
 
