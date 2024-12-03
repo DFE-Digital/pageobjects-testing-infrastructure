@@ -1,16 +1,27 @@
-﻿namespace Dfe.Testing.Pages.Internal.WebApplicationFactory;
+﻿using HttpMethod = System.Net.Http.HttpMethod;
+
+namespace Dfe.Testing.Pages.Internal.WebApplicationFactory;
 internal sealed class HttpRequestBuilder : IHttpRequestBuilder
 {
+    private HttpMethod _method = HttpMethod.Get;
     private string? _domain = null;
     private string _path = "/";
     private readonly List<KeyValuePair<string, string>> _query = [];
     private object? _body = null;
 
+    public IHttpRequestBuilder SetMethod(string method) => SetMethod(HttpMethod.Parse(method));
+
+    public IHttpRequestBuilder SetMethod(HttpMethod method)
+    {
+        _method = method;
+        return this;
+    }
+
     public IHttpRequestBuilder SetDomain(string domain)
     {
         if (string.IsNullOrEmpty(domain))
         {
-            throw new ArgumentException("base uri is null or empty");
+            throw new ArgumentException("domain is null or empty");
         }
         _domain = domain;
         return this;
@@ -38,21 +49,21 @@ internal sealed class HttpRequestBuilder : IHttpRequestBuilder
 
     public HttpRequestMessage Build()
     {
-        if (string.IsNullOrEmpty(_domain))
-        {
-            throw new ArgumentNullException("base uri has not been set");
-        }
-
         UriBuilder uri = new()
         {
-            Scheme = "https://",
-            Host = _domain.TrimEnd('/'),
             Path = _path,
             Query = _query.ToList()
                 .Aggregate(
                     new StringBuilder(), (init, queryPairs) => init.Append($"{queryPairs.Key}={queryPairs.Value}"))
                 .ToString()
         };
+
+        // domain is optional as HttpClient could be configured separately
+        if (_domain != null)
+        {
+            uri.Scheme = "https://";
+            uri.Host = _domain?.TrimEnd('/') ?? string.Empty;
+        }
 
         HttpRequestMessage requestMessage = new()
         {
