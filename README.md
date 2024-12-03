@@ -16,7 +16,6 @@ To support .NET Developers and Testers in building Web application tests using c
 ## Components available to use
 
 `ComponentFactory<IComponent>` *Role:* create components with this
-
 `IComponent` *Role:* mark components with this
 
 ### GDS components
@@ -50,10 +49,10 @@ To support .NET Developers and Testers in building Web application tests using c
 
 ## Adding your own pages
 
-When building PageModels you want to:
+When building Pages you want to:
 
 - `IPage` - *Role:* mark pages with this
-- `IPageFactory` - *Role:* create pages with this
+- `IDocumentSession` - *Role:* create pages with this
 
 ### Mark your pages with `IPage`
 
@@ -74,8 +73,8 @@ public sealed class MyPage : IPage
 ```cs
 
 // NOTE make sure your register the components!
-services.AddTransient<SearchComponent>();
-services.AddTransient<FilterComponent>();
+testServices.AddTransient<SearchComponent>();
+testServices.AddTransient<FilterComponent>();
 
 public sealed class HomePage
 {
@@ -96,7 +95,7 @@ public sealed class HomePage
 }
 ```
 
-### Create and use your pages in tests with `IPageFactory`
+### Create documents and use your pages in tests with `IDocumentSession`
 
 ```cs
 public sealed class MyTestClass : BaseTest
@@ -105,11 +104,11 @@ public sealed class MyTestClass : BaseTest
     [Fact]
     public async Task MyTest()
     {
-        HttpRequestMessage homePageRequest = new()
-        {
-            Uri = new("/")
-        }
-        HomePage homePage = await GetTestService<IPageFactory>().CreatePageAsync<HomePage>(homePageRequest);
+        // create document
+        IDocumentSession documentSession = await GetTestService<IDocumentSession>();
+        await documentSession.RequestDocumentAsync(t => t.SetPath("/"));
+        // create page from the session
+        HomePage page = documentSession.GetPage<HomePage>();
     }
 }
 
