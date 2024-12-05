@@ -23,7 +23,6 @@ public sealed class GDSHeaderTests
                 Text = "Service name",
                 OpensInNewTab = false
             },
-            TagName = "header"
         };
 
         page.GetHeaderWithNoScope().Should().Be(expectedHeader);

@@ -19,11 +19,10 @@ internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>
             {
                 Query = new CssElementSelector(".govuk-header__link--homepage"),
             }),
-            ServiceName = _linkFactory.Get(new QueryOptions()
+            NavigationLinks = _linkFactory.GetMany(new QueryOptions()
             {
-                Query = new CssElementSelector(".govuk-header__service-name"),
-            }),
-            TagName = input.TagName
+                InScope = new CssElementSelector(".govuk-header nav"),
+            })
         };
     }
 }
