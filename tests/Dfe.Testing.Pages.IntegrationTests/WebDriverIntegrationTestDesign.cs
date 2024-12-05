@@ -1,4 +1,5 @@
-﻿using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
+﻿using Dfe.Testing.Pages.Components;
+using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
 
 namespace Dfe.Testing.Pages.IntegrationTests;
 

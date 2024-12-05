@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Components.AnchorLink;
+﻿namespace Dfe.Testing.Pages.Components;
 public record AnchorLinkComponent : IComponent
 {
     public required string LinkedTo { get; init; }

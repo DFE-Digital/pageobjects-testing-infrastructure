@@ -2,9 +2,9 @@
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
 namespace Dfe.Testing.Pages.Public.Mapper.GDS.Table;
-internal class TableHeadingMapper : IComponentMapper<TableHeading>
+internal class TableHeadingMapper : IComponentMapper<TableHeadingItem>
 {
-    public TableHeading Map(IDocumentPart input)
+    public TableHeadingItem Map(IDocumentPart input)
     {
         return new()
         {

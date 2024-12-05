@@ -10,58 +10,75 @@ internal sealed class WebDriverDocumentQueryClient : IDocumentQueryClient
         _webDriverAdaptor = webDriverAdaptor;
     }
 
-    public void Run(QueryOptions args, Action<IDocumentPart> handler)
+    public void Run(QueryOptions args, Action<IDocumentPart> handler) => handler(Query(args));
+
+    public IDocumentPart Query(QueryOptions args)
     {
-        ArgumentNullException.ThrowIfNull(args);
-        ArgumentNullException.ThrowIfNull(args.Query);
         if (args.InScope == null)
         {
-            handler(
-                WebDriverDocumentPart.Create(
-                    Find(args.Query)));
-            return;
+            List<IDocumentPart> results = QueryManyGlobal(args);
+
+            if (results.Count == 0)
+            {
+                throw new ArgumentException($"element not found with {args.Query!.ToSelector()}");
+            }
+
+            if (results.Count > 1)
+            {
+                throw new ArgumentException($"multiple elements found with query {args.Query}, cannot query for a single element");
+            }
+            return results.Single();
         }
 
-        handler(
-            WebDriverDocumentPart.Create(
-                Find(args.InScope)
-                    .FindElement(
-                        WebDriverByLocatorHelpers.CreateLocator(args.Query))));
-    }
+        List<IDocumentPart> scope = QueryManyWithScope(args);
 
-    public IDocumentPart Query(QueryOptions queryArgs)
-    {
-        ArgumentNullException.ThrowIfNull(queryArgs);
-        ArgumentNullException.ThrowIfNull(queryArgs.Query);
-        return
-            WebDriverDocumentPart.Create(
-                queryArgs.InScope == null ?
-                    _webDriverAdaptor.FindElement(queryArgs.Query!) :
-                    _webDriverAdaptor.FindElement(queryArgs.InScope!)
-                        .FindElement(
-                            WebDriverByLocatorHelpers.CreateLocator(queryArgs.Query)));
+        if (scope.Count == 0)
+        {
+            throw new ArgumentException($"element scope not found with {args.InScope!.ToSelector()}");
+        }
+
+        if (scope.Count > 1)
+        {
+            throw new ArgumentException($"multiple elements found with in scope {args.InScope.ToSelector()}, cannot query for a single element");
+        }
+
+        return scope.Single().FindDescendant(args.Query!) ??
+            throw new ArgumentNullException($"element {args.Query!.ToSelector()} not found in scope {args.InScope!.ToSelector()}");
     }
 
     public IEnumerable<IDocumentPart> QueryMany(QueryOptions queryArgs)
-    {
-        ArgumentNullException.ThrowIfNull(queryArgs);
-        ArgumentNullException.ThrowIfNull(queryArgs.Query);
-        IEnumerable<IWebElement>? elements =
-                queryArgs.InScope == null ?
-                    _webDriverAdaptor.FindElements(queryArgs.Query!) :
-                    _webDriverAdaptor.FindElement(queryArgs.InScope!)
-                        .FindElements(
-                            WebDriverByLocatorHelpers.CreateLocator(queryArgs.Query));
+        => queryArgs.InScope == null ? QueryManyGlobal(queryArgs) : QueryManyWithScope(queryArgs);
 
-        return elements
-            .Select(WebDriverDocumentPart.Create)
-            // TODO expression is evaluated immediately on IEnumerable<T> because otherwise stale references to elements that have changed...
-            // Could improve design by capturing queryscope inside of DocumentPart so it's retryable? Come back to
-            .ToList();
+
+    // TODO expression is evaluated immediately on IEnumerable<T> because otherwise stale references to elements that have changed...
+    // Could improve design by capturing queryscope inside of DocumentPart so it's retryable? Come back to
+    private List<IDocumentPart> QueryManyWithScope(QueryOptions queryArgs)
+    {
+        ValidateQueryOptions(queryArgs);
+
+        return ToDocumentParts(
+                _webDriverAdaptor.FindElement(queryArgs.InScope!)
+                    .FindElements(WebDriverByLocatorHelpers.CreateLocator(queryArgs.Query!))
+                ).ToList();
     }
 
-    private IWebElement Find(IElementSelector selector) => _webDriverAdaptor.FindElement(selector);
+    private List<IDocumentPart> QueryManyGlobal(QueryOptions args)
+    {
+        ValidateQueryOptions(args);
 
+        return ToDocumentParts(_webDriverAdaptor.FindElements(args.Query!))
+                    .ToList();
+    }
+
+    private static void ValidateQueryOptions(QueryOptions args)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+        ArgumentNullException.ThrowIfNull(args.Query);
+    }
+
+    private static IDocumentPart ToDocumentParts(IWebElement element) => new WebDriverDocumentPart(element);
+
+    private static IEnumerable<IDocumentPart> ToDocumentParts(IEnumerable<IWebElement> elements) => elements?.Select(ToDocumentParts) ?? [];
 
     private sealed class WebDriverDocumentPart : IDocumentPart
     {
@@ -72,8 +89,6 @@ internal sealed class WebDriverDocumentQueryClient : IDocumentQueryClient
             ArgumentNullException.ThrowIfNull(element);
             _wrappedElement = element;
         }
-
-        public static WebDriverDocumentPart Create(IWebElement element) => new(element);
 
         public string Text
         {
@@ -92,35 +107,29 @@ internal sealed class WebDriverDocumentQueryClient : IDocumentQueryClient
 
         public IDictionary<string, string> GetAttributes() => throw new NotImplementedException("TODO GetAttributes in WebDriver - parsing over the top or JS");
 
-        public IDocumentPart? GetChild(IElementSelector selector) => FindDocumentPart(selector);
-
         public IEnumerable<IDocumentPart> GetChildren()
-            => AsDocumentPart(
+            => ToDocumentParts(
                 FindMany(
                     WebDriverByLocatorHelpers.AsXPath(new ChildXPathSelector())))
                 .ToList<IDocumentPart>();
 
-        public IEnumerable<IDocumentPart> GetChildren(IElementSelector selector)
+        public IDocumentPart? FindDescendant(IElementSelector selector) => FindDocumentPart(selector);
+
+        public IEnumerable<IDocumentPart> FindDescendants(IElementSelector selector)
             => FindMany(
                     WebDriverByLocatorHelpers.CreateLocator(selector))
-                .Select(Create)
-                .ToList<IDocumentPart>();
+                .Select(ToDocumentParts);
 
-        private WebDriverDocumentPart FindDocumentPart(IElementSelector selector)
+        private IDocumentPart FindDocumentPart(IElementSelector selector)
             // TODO pass in an error message into the collection extensions?
-            => AsDocumentPart(
+            => ToDocumentParts(
                 FindMany(
                     WebDriverByLocatorHelpers.CreateLocator(selector))
                 .ThrowIfNullOrEmpty()
                 .ThrowIfMultiple())
                 .Single();
 
-        private ReadOnlyCollection<IWebElement> FindMany(By by)
-            => _wrappedElement.FindElements(by) ?? Array.Empty<IWebElement>().AsReadOnly();
-
-        private static IEnumerable<WebDriverDocumentPart> AsDocumentPart(IEnumerable<IWebElement> elements)
-            => elements?.Select(
-                (element) => new WebDriverDocumentPart(element)) ?? [];
+        private ReadOnlyCollection<IWebElement> FindMany(By by) => _wrappedElement.FindElements(by) ?? Array.Empty<IWebElement>().AsReadOnly();
 
         public void Click() => _wrappedElement.Click();
     }

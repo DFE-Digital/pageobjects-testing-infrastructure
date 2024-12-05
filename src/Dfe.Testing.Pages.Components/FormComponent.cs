@@ -7,7 +7,7 @@ using Dfe.Testing.Pages.Components.Inputs.TextInput;
 using Dfe.Testing.Pages.Components.Select;
 using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace Dfe.Testing.Pages.Components.Form;
+namespace Dfe.Testing.Pages.Components;
 
 public record FormComponent : IComponent
 {

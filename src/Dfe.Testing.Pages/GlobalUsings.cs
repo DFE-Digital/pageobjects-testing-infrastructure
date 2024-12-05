@@ -5,7 +5,6 @@ global using AngleSharp;
 global using AngleSharp.Dom;
 global using AngleSharp.Html.Dom;
 global using AngleSharp.Io;
-global using Dfe.Testing.Pages.Components.AnchorLink;
 global using Dfe.Testing.Pages.Components.Header;
 global using Dfe.Testing.Pages.Internal.DocumentQueryClient;
 global using Dfe.Testing.Pages.Internal.DocumentQueryClient.Provider;

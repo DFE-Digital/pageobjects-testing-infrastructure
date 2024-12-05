@@ -4,11 +4,11 @@ using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 namespace Dfe.Testing.Pages.Public.Mapper.GDS.Table;
 internal sealed class TableRowMapper : IComponentMapper<TableRow>
 {
-    private readonly ComponentFactory<TableHeading> _tableHeadingFactory;
+    private readonly ComponentFactory<TableHeadingItem> _tableHeadingFactory;
     private readonly ComponentFactory<TableDataItem> _tableDataItemFactory;
 
     public TableRowMapper(
-        ComponentFactory<TableHeading> tableHeadingFactory,
+        ComponentFactory<TableHeadingItem> tableHeadingFactory,
         ComponentFactory<TableDataItem> tableDataItemFactory)
     {
         ArgumentNullException.ThrowIfNull(tableHeadingFactory);

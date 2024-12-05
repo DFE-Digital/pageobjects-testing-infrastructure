@@ -1,11 +1,11 @@
-﻿using Dfe.Testing.Pages.Components.Button;
+﻿using Dfe.Testing.Pages.Components;
+using Dfe.Testing.Pages.Components.Button;
 using Dfe.Testing.Pages.Components.CookieBanner;
 using Dfe.Testing.Pages.Components.Details;
 using Dfe.Testing.Pages.Components.ErrorMessage;
 using Dfe.Testing.Pages.Components.ErrorSummary;
 using Dfe.Testing.Pages.Components.Fieldset;
 using Dfe.Testing.Pages.Components.Footer;
-using Dfe.Testing.Pages.Components.Form;
 using Dfe.Testing.Pages.Components.Inputs;
 using Dfe.Testing.Pages.Components.Inputs.Checkbox;
 using Dfe.Testing.Pages.Components.Inputs.Radio;
@@ -16,7 +16,6 @@ using Dfe.Testing.Pages.Components.Panel;
 using Dfe.Testing.Pages.Components.Select;
 using Dfe.Testing.Pages.Components.Table;
 using Dfe.Testing.Pages.Components.Tabs;
-using Dfe.Testing.Pages.Components.Text;
 using Dfe.Testing.Pages.Internal;
 using Dfe.Testing.Pages.Public.Mapper;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
@@ -73,7 +72,7 @@ public static class DependencyInjection
                     { nameof(TableHead), () => new CssElementSelector("thead") },
                     { nameof(TableBody), () => new CssElementSelector("tbody") },
                     { nameof(TableRow), () => new CssElementSelector("tr") },
-                    { nameof(TableHeading), () => new CssElementSelector("th") },
+                    { nameof(TableHeadingItem), () => new CssElementSelector("th") },
                     { nameof(TableDataItem), () => new CssElementSelector("td") },
                     { nameof(TextComponent), () => new CssElementSelector("*") },
                     { nameof(TextInputComponent), () => new CssElementSelector("input[type=text]") },
@@ -107,8 +106,8 @@ public static class DependencyInjection
         .AddTransient<ComponentFactory<TableRow>>()
         .AddTransient<IComponentMapper<TableRow>, TableRowMapper>()
         // th
-        .AddTransient<ComponentFactory<TableHeading>>()
-        .AddTransient<IComponentMapper<TableHeading>, TableHeadingMapper>()
+        .AddTransient<ComponentFactory<TableHeadingItem>>()
+        .AddTransient<IComponentMapper<TableHeadingItem>, TableHeadingMapper>()
         // td
         .AddTransient<ComponentFactory<TableDataItem>>()
         .AddTransient<IComponentMapper<TableDataItem>, TableDataItemMapper>()

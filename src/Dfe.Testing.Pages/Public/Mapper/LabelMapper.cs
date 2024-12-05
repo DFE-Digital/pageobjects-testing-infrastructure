@@ -13,7 +13,7 @@ internal sealed class LabelMapper : IComponentMapper<LabelComponent>
     }
     public LabelComponent Map(IDocumentPart input)
     {
-        var part = input.TagName == "label" ? input : input?.GetChild(_componentDefaultSelectorFactory.GetSelector<LabelComponent>());
+        var part = input.TagName == "label" ? input : input?.FindDescendant(_componentDefaultSelectorFactory.GetSelector<LabelComponent>());
 
         return new()
         {

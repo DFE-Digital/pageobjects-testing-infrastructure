@@ -45,7 +45,7 @@ public class ComponentFactory<T> where T : IComponent
 
     internal virtual IList<T> GetManyFromPart(IDocumentPart? part)
         => part?
-            .GetChildren(_componentSelectorFactory.GetSelector<T>())?
+            .FindDescendants(_componentSelectorFactory.GetSelector<T>())?
             .Select(_mapper.Map)
             .ToList() ?? throw new ArgumentNullException(nameof(part));
 

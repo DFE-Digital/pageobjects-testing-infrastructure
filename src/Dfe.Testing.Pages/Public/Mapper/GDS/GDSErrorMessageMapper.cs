@@ -8,7 +8,7 @@ internal sealed class GDSErrorMessageMapper : IComponentMapper<GDSErrorMessageCo
     {
         return new()
         {
-            ErrorMessage = input.GetChild(new CssElementSelector(".govuk-error-message"))?.Text ?? string.Empty
+            ErrorMessage = input.FindDescendant(new CssElementSelector(".govuk-error-message"))?.Text ?? string.Empty
         };
     }
 }

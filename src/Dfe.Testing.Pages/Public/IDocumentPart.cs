@@ -7,7 +7,7 @@ public interface IDocumentPart
     string? GetAttribute(string attributeName);
     IDictionary<string, string> GetAttributes();
     IEnumerable<IDocumentPart> GetChildren();
-    IEnumerable<IDocumentPart> GetChildren(IElementSelector selector);
-    IDocumentPart? GetChild(IElementSelector selector);
+    IDocumentPart? FindDescendant(IElementSelector selector);
+    IEnumerable<IDocumentPart> FindDescendants(IElementSelector selector);
     void Click();
 }

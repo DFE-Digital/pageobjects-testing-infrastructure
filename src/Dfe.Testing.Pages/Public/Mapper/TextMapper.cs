@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.Text;
+﻿using Dfe.Testing.Pages.Components;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
 namespace Dfe.Testing.Pages.Public.Mapper;

@@ -5,30 +5,3 @@ public record GDSTableComponent : IComponent
     public TableHead Head { get; init; } = new TableHead() { Rows = [] };
     public required TableBody Body { get; init; }
 }
-
-public record TableHead : IComponent
-{
-    public required IEnumerable<TableRow> Rows { get; init; }
-}
-public record TableBody : IComponent
-{
-    public required IEnumerable<TableRow> Rows { get; init; }
-}
-
-public record TableRow : IComponent
-{
-    public IEnumerable<TableHeading> Headings { get; init; } = [];
-    public IEnumerable<TableDataItem> DataItem { get; init; } = [];
-
-}
-
-public record TableHeading : IComponent
-{
-    public required string Text { get; init; }
-    public string Scope { get; init; } = string.Empty;
-}
-
-public record TableDataItem : IComponent
-{
-    public required string Text { get; init; }
-}

@@ -1,5 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.AnchorLink;
-using Dfe.Testing.Pages.Components.Button;
+﻿using Dfe.Testing.Pages.Components.Button;
 
 namespace Dfe.Testing.Pages.Components.CookieBanner;
 public record GDSCookieBannerComponent : IComponent

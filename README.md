@@ -244,7 +244,7 @@ public sealed class MyTestClass : BaseTest
   [Fact]
   public async Task MyTest()
   {
-    IPageFactory pageFactory = GetTestService<IPageFactory>(); // is available
+    IDocumentSession documentSession = GetTestService<IDocumentSession>(); // is available
   }
 }
 ```

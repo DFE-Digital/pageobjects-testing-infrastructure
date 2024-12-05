@@ -118,7 +118,7 @@ internal class AngleSharpDocumentQueryClient : IDocumentQueryClient
                     keySelector: (attr) => attr.Name,
                     elementSelector: (attr) => attr.Value) ?? [];
 
-        public IDocumentPart? GetChild(IElementSelector selector)
+        public IDocumentPart? FindDescendant(IElementSelector selector)
         {
             ArgumentNullException.ThrowIfNull(selector);
             var child = _element.QuerySelector(selector.ToSelector());
@@ -126,7 +126,7 @@ internal class AngleSharpDocumentQueryClient : IDocumentQueryClient
         }
 
         public IEnumerable<IDocumentPart> GetChildren() => AsDocumentParts(_element.Children).ToList();
-        public IEnumerable<IDocumentPart> GetChildren(IElementSelector selector)
+        public IEnumerable<IDocumentPart> FindDescendants(IElementSelector selector)
             => AsDocumentParts(
                 _element.QuerySelectorAll(selector?.ToSelector() ?? throw new ArgumentNullException("selector when queryAll children is null")));
     }

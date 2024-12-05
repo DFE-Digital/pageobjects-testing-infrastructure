@@ -9,10 +9,3 @@ public record GDSSelectComponent : IComponent
     public string Hint { get; init; } = string.Empty;
     public GDSErrorMessageComponent ErrorMessage { get; init; } = new() { ErrorMessage = string.Empty };
 }
-
-public record OptionComponent : IComponent
-{
-    public required string Value { get; init; }
-    public required string Text { get; init; }
-    public bool IsSelected { get; init; } = false;
-}

@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Components.Button;
+﻿using Dfe.Testing.Pages.Components;
+using Dfe.Testing.Pages.Components.Button;
 using Dfe.Testing.Pages.Components.CookieBanner;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
@@ -22,7 +23,7 @@ internal sealed class GDSCookieBannerMapper : IComponentMapper<GDSCookieBannerCo
     {
         return new()
         {
-            Heading = input.GetChild(new CssElementSelector(".govuk-cookie-banner__heading"))!.Text.Trim(),
+            Heading = input.FindDescendant(new CssElementSelector(".govuk-cookie-banner__heading"))!.Text.Trim(),
             //Content = documentPart.GetChild(new CssSelector(".govuk-cookie-banner__content"))!.Text,
             CookieChoiceButtons = _buttonFactory.GetMany(new QueryOptions()
             {

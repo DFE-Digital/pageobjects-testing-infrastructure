@@ -8,8 +8,8 @@ internal sealed class GDSDetailsMapper : IComponentMapper<GDSDetailsComponent>
     {
         return new()
         {
-            Summary = input.GetChild(new CssElementSelector(".govuk-details__summary"))?.Text ?? throw new ArgumentNullException("summary on details is null"),
-            Content = input.GetChild(new CssElementSelector(".govuk-details__text"))?.Text ?? string.Empty
+            Summary = input.FindDescendant(new CssElementSelector(".govuk-details__summary"))?.Text ?? throw new ArgumentNullException("summary on details is null"),
+            Content = input.FindDescendant(new CssElementSelector(".govuk-details__text"))?.Text ?? string.Empty
         };
     }
 }

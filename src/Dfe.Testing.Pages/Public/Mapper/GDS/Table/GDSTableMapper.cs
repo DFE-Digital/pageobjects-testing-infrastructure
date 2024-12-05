@@ -22,7 +22,7 @@ internal sealed class GDSTableMapper : IComponentMapper<GDSTableComponent>
         return new()
         {
             // TODO should this be a component so it can be overwritten for headings?
-            Heading = input.GetChild(new CssElementSelector("caption"))?.Text ?? string.Empty,
+            Heading = input.FindDescendant(new CssElementSelector("caption"))?.Text ?? string.Empty,
             Head = _tableHeadFactory.GetManyFromPart(input).Single(),
             Body = _tableBodyFactory.GetManyFromPart(input).Single()
         };

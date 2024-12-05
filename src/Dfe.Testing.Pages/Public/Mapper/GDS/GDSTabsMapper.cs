@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Components.Tabs;
+﻿using Dfe.Testing.Pages.Components;
+using Dfe.Testing.Pages.Components.Tabs;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
 namespace Dfe.Testing.Pages.Public.Mapper.GDS;
@@ -15,7 +16,7 @@ internal sealed class GDSTabsMapper : IComponentMapper<GDSTabsComponent>
     {
         return new GDSTabsComponent()
         {
-            Heading = input.GetChild(new CssElementSelector(".govuk-tabs__title"))?.Text ?? string.Empty,
+            Heading = input.FindDescendant(new CssElementSelector(".govuk-tabs__title"))?.Text ?? string.Empty,
             Tabs = _anchorLinkFactory.GetMany(new QueryOptions()
             {
                 InScope = new CssElementSelector(".govuk-tabs__list")

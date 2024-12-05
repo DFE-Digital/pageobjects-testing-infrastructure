@@ -1,6 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.AnchorLink;
-
-namespace Dfe.Testing.Pages.Components.ErrorSummary;
+﻿namespace Dfe.Testing.Pages.Components.ErrorSummary;
 public record GDSErrorSummaryComponent : IComponent
 {
     public required string Heading { get; init; }

@@ -20,7 +20,7 @@ internal class InputMapper : IComponentMapper<InputComponent>
     {
         var mappable = from.TagName == "input" ?
             from :
-            from.GetChild(_componentDefaultSelectorFactory.GetSelector<InputComponent>()) ?? throw new ArgumentNullException("could not find child InputComponent");
+            from.FindDescendant(_componentDefaultSelectorFactory.GetSelector<InputComponent>()) ?? throw new ArgumentNullException("could not find child InputComponent");
 
         var errors = _errorMessageFactory.GetManyFromPart(from) ?? [NoErrorMessage()];
 

@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Components.Footer;
+﻿using Dfe.Testing.Pages.Components;
+using Dfe.Testing.Pages.Components.Footer;
 using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 using Dfe.Testing.Pages.Public.Selector.Factory;
 
@@ -28,7 +29,7 @@ internal sealed class GDSFooterMapper : IComponentMapper<GDSFooterComponent>
                 Query = new CssElementSelector(".govuk-footer__copyright-logo"),
                 InScope = _componentSelectorFactory.GetSelector<GDSFooterComponent>()
             }),
-            LicenseMessage = input.GetChild(new CssElementSelector(".govuk-footer__licence-description"))?.Text ?? string.Empty,
+            LicenseMessage = input.FindDescendant(new CssElementSelector(".govuk-footer__licence-description"))?.Text ?? string.Empty,
             ApplicationLinks = _anchorLinKFactory.GetMany(new QueryOptions()
             {
                 Query = new CssElementSelector(".govuk-footer__inline-list"),

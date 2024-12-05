@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Public.Mapper.Abstraction;
+﻿using Dfe.Testing.Pages.Components;
+using Dfe.Testing.Pages.Public.Mapper.Abstraction;
 
 namespace Dfe.Testing.Pages.Public.Mapper;
 public sealed class AnchorLinkMapper : IComponentMapper<AnchorLinkComponent>
