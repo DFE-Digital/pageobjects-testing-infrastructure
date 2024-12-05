@@ -7,15 +7,9 @@ public class ComponentController : Controller
     [Route("component/{component}/{type=default}")]
     public IActionResult Index([FromRoute] string component, [FromRoute] string type)
     {
-        if (string.IsNullOrEmpty(component))
-        {
-            return BadRequest("component is empty");
-        }
-        if (string.IsNullOrEmpty(type))
-        {
-            return BadRequest("type is empty");
-        }
-        return View(component + "/" + type);
+        return string.IsNullOrEmpty(component)
+            ? BadRequest("component is empty")
+            : string.IsNullOrEmpty(type) ? BadRequest("type is empty") : View(component + "/" + type);
     }
 
 }

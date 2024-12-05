@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Components;
+﻿using Dfe.Testing.Pages.Public.Components;
 
 namespace Dfe.Testing.Pages.Public.Selector.Factory;
 public interface IComponentSelectorFactory

@@ -1,6 +1,4 @@
-﻿using Dfe.Testing.Pages.Components;
-using Dfe.Testing.Pages.Components.Header;
-using FluentAssertions;
+﻿using Dfe.Testing.Pages.Public.Components.GDS.Header;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.Header;
 public sealed class GDSHeaderTests

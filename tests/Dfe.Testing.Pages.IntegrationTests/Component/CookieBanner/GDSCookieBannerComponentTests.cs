@@ -1,7 +1,4 @@
-﻿using Dfe.Testing.Pages.Components;
-using Dfe.Testing.Pages.Components.CookieBanner;
-
-namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;
+﻿namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;
 public sealed class GDSCookieBannerComponentTests
 {
 

@@ -18,31 +18,20 @@ internal sealed class WebDriverDocumentQueryClient : IDocumentQueryClient
         {
             List<IDocumentPart> results = QueryManyGlobal(args);
 
-            if (results.Count == 0)
-            {
-                throw new ArgumentException($"element not found with {args.Query!.ToSelector()}");
-            }
-
-            if (results.Count > 1)
-            {
-                throw new ArgumentException($"multiple elements found with query {args.Query}, cannot query for a single element");
-            }
-            return results.Single();
+            return results.Count == 0
+                ? throw new ArgumentException($"element not found with {args.Query!.ToSelector()}")
+                : results.Count > 1
+                ? throw new ArgumentException($"multiple elements found with query {args.Query}, cannot query for a single element")
+                : results.Single();
         }
 
         List<IDocumentPart> scope = QueryManyWithScope(args);
 
-        if (scope.Count == 0)
-        {
-            throw new ArgumentException($"element scope not found with {args.InScope!.ToSelector()}");
-        }
-
-        if (scope.Count > 1)
-        {
-            throw new ArgumentException($"multiple elements found with in scope {args.InScope.ToSelector()}, cannot query for a single element");
-        }
-
-        return scope.Single().FindDescendant(args.Query!) ??
+        return scope.Count == 0
+            ? throw new ArgumentException($"element scope not found with {args.InScope!.ToSelector()}")
+            : scope.Count > 1
+            ? throw new ArgumentException($"multiple elements found with in scope {args.InScope.ToSelector()}, cannot query for a single element")
+            : scope.Single().FindDescendant(args.Query!) ??
             throw new ArgumentNullException($"element {args.Query!.ToSelector()} not found in scope {args.InScope!.ToSelector()}");
     }
 

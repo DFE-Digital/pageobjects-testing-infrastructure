@@ -1,7 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.Commands;
-using Dfe.Testing.Pages.Public.Selector.Options;
-
-namespace Dfe.Testing.Pages.Internal.Commands;
+﻿namespace Dfe.Testing.Pages.Internal.Commands;
 internal sealed class ClickElementCommandHandler : ICommandHandler<ClickElementCommand>
 {
     private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;
