@@ -18,7 +18,7 @@ public sealed class WebDriverIntegrationTestDesign
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        SearchPage searchPage = session.GetPage<SearchPage>();
+        SearchPage searchPage = session.GetPageObject<SearchPage>();
 
         searchPage.ClickAnchorLink();
         IApplicationNavigatorAccessor navigatorAccessor = collection.ServiceProvider.GetRequiredService<IApplicationNavigatorAccessor>();
@@ -37,11 +37,11 @@ public sealed class WebDriverIntegrationTestDesign
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        SearchPage page = session.GetPage<SearchPage>();
+        SearchPage page = session.GetPageObject<SearchPage>();
         page.GetLinks().Should().HaveCount(3);
     }
 
-    public sealed class SearchPage : IPage
+    public sealed class SearchPage : IPageObject
     {
         private readonly ICommandHandler<ClickElementCommand> _clickElementHandler;
         private readonly ComponentFactory<AnchorLinkComponent> _anchorLink;
@@ -72,7 +72,7 @@ public static class MockServiceCollection
     {
         return new ServiceCollection()
             .AddWebDriver()
-            .AddTransient<IPage, SearchPage>()
+            .AddTransient<IPageObject, SearchPage>()
             .BuildServiceProvider()
             .CreateScope();
     }

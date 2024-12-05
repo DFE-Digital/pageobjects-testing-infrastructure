@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Components.Header;
+﻿using Dfe.Testing.Pages.Components;
+using Dfe.Testing.Pages.Components.Header;
 using FluentAssertions;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.Header;
@@ -17,12 +18,15 @@ public sealed class GDSHeaderTests
                 Text = "GOV.UK",
                 OpensInNewTab = false
             },
-            ServiceName = new()
-            {
-                LinkedTo = "#",
-                Text = "Service name",
-                OpensInNewTab = false
-            },
+            NavigationLinks =
+            [
+                new()
+                {
+                    LinkedTo = "#",
+                    Text = "Service name",
+                    OpensInNewTab = false
+                }
+            ]
         };
 
         page.GetHeaderWithNoScope().Should().Be(expectedHeader);

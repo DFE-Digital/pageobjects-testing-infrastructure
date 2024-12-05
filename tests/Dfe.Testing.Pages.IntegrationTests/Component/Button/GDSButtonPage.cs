@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Public.Selector.Options;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.Button;
-internal sealed class GDSButtonPage : IPage
+internal sealed class GDSButtonPage : IPageObject
 {
     private readonly ComponentFactory<GDSButtonComponent> _buttonFactory;
 
