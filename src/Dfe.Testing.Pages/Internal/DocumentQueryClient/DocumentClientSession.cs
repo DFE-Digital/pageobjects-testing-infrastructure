@@ -38,7 +38,7 @@ internal sealed class DocumentClientSession : IDocumentClientSession
         _accessor.DocumentQueryClient = _documentQueryClient;
     }
 
-    public TPage GetPage<TPage>() where TPage : class, IPage
+    public TPage GetPageObject<TPage>() where TPage : class, IPageObject
     {
         EnsureDocumentCreated();
         return _pageResolver.GetPage<TPage>();

@@ -3,5 +3,5 @@ public interface IDocumentClientSession
 {
     Task RequestDocumentAsync(Action<IHttpRequestBuilder> configureDocumentRequest);
     Task RequestDocumentAsync(HttpRequestMessage documentRequest);
-    TPage GetPage<TPage>() where TPage : class, IPage;
+    TPage GetPageObject<TPage>() where TPage : class, IPageObject;
 }
