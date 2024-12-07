@@ -153,6 +153,8 @@ GDS Table
 
 ---END GDS---
 
+**TODO** ensure all supporting components are referenced here and reside outside of the GDSComponents folder
+
 Anchor Link
 
 - [Library](/src/Dfe.Testing.Pages/Public/Components/Link/AnchorLinkComponent.cs)
