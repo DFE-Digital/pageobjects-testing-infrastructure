@@ -230,10 +230,12 @@ public sealed class MyTestClass : BaseTest
     {
         // create document
         IDocumentSessionClient documentSession = await GetTestService<IDocumentSessionClient>();
+
+        // pageobjects are not coupled to the path request made for a document
         await documentSession.RequestDocumentAsync(
             (t) => t.SetPath("/"));
 
-        // create page from the session
+        // create page from the documentSession
         HomePage page = documentSession.GetPage<HomePage>();
     }
 }
