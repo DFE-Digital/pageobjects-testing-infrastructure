@@ -8,7 +8,7 @@ internal static class DependencyInjection
     internal static IServiceCollection AddDocumentQueryClient<TProvider>(this IServiceCollection services) where TProvider : class, IDocumentQueryClientProvider
         => services
             // Client API
-            .AddScoped<IDocumentClientSession, DocumentClientSession>()
+            .AddScoped<IDocumentSessionClient, DocumentSessionClient>()
             // Document Query Client
             .AddScoped<IDocumentQueryClientProvider, TProvider>()
             .AddScoped<IDocumentQueryClientAccessor, DocumentQueryClientAccessor>()

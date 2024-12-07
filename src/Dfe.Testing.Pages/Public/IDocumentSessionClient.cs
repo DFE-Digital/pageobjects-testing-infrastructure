@@ -1,5 +1,5 @@
 ﻿namespace Dfe.Testing.Pages.Public;
-public interface IDocumentClientSession
+public interface IDocumentSessionClient
 {
     Task RequestDocumentAsync(Action<IHttpRequestBuilder> configureDocumentRequest);
     Task RequestDocumentAsync(HttpRequestMessage documentRequest);

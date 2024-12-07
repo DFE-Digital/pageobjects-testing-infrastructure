@@ -15,7 +15,7 @@ internal static class ComponentTestHelper
             .BuildServiceProvider()
             .CreateScope();
 
-        IDocumentClientSession session = scopedContainerWithPage.ServiceProvider.GetRequiredService<IDocumentClientSession>();
+        IDocumentSessionClient session = scopedContainerWithPage.ServiceProvider.GetRequiredService<IDocumentSessionClient>();
         await session.RequestDocumentAsync(httpRequest);
         return session.GetPageObject<TPage>();
     }

@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public;
+﻿namespace Dfe.Testing.Pages.Public.Mapper;
 public interface IDocumentPart
 {
     string Text { get; set; }

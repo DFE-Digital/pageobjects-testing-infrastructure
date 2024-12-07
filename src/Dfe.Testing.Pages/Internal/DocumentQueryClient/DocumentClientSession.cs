@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Internal.DocumentQueryClient.Resolver;
 
 namespace Dfe.Testing.Pages.Internal.DocumentQueryClient;
-internal sealed class DocumentClientSession : IDocumentClientSession
+internal sealed class DocumentSessionClient : IDocumentSessionClient
 {
     private IDocumentQueryClient? _documentQueryClient;
     private readonly IDocumentQueryClientAccessor _accessor;
@@ -9,7 +9,7 @@ internal sealed class DocumentClientSession : IDocumentClientSession
     private readonly IHttpRequestBuilder _requestBuilder;
     private readonly IPageObjectResolver _pageResolver;
 
-    public DocumentClientSession(
+    public DocumentSessionClient(
         IDocumentQueryClientProvider provider,
         IDocumentQueryClientAccessor accessor,
         IHttpRequestBuilder requestBuilder,

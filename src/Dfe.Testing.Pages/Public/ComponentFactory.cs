@@ -1,5 +1,4 @@
-﻿using Dfe.Testing.Pages.Public.Components;
-using Dfe.Testing.Pages.Public.Selector.Factory;
+﻿using Dfe.Testing.Pages.Public.Selector.Factory;
 
 namespace Dfe.Testing.Pages.Public;
 public class ComponentFactory<T> where T : IComponent

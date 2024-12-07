@@ -10,7 +10,7 @@ public sealed class WebDriverIntegrationTestDesign
     {
         using var collection = MockServiceCollection.WithWebDriver();
 
-        IDocumentClientSession session = collection.ServiceProvider.GetRequiredService<IDocumentClientSession>();
+        IDocumentSessionClient session = collection.ServiceProvider.GetRequiredService<IDocumentSessionClient>();
         await session.RequestDocumentAsync(
             (t) =>
                 t.SetDomain("searchprototype.azurewebsites.net")
@@ -29,7 +29,7 @@ public sealed class WebDriverIntegrationTestDesign
     {
         using var collection = MockServiceCollection.WithWebDriver();
 
-        IDocumentClientSession session = collection.ServiceProvider.GetRequiredService<IDocumentClientSession>();
+        IDocumentSessionClient session = collection.ServiceProvider.GetRequiredService<IDocumentSessionClient>();
         await session.RequestDocumentAsync(
             (t) =>
                 t.SetDomain("searchprototype.azurewebsites.net")
