@@ -186,7 +186,7 @@ When building your PageObjects you want to:
 `IDocumentSessionClient` - *Role:* create pages with this
 
 ```cs
-public sealed class MyPage : IPageObject
+public sealed class HomePage : IPageObject
 
 ```
 
