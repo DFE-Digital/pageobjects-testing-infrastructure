@@ -26,11 +26,9 @@ To support .NET Developers and Testers in building Web application tests with co
 
 ### AngleSharp
 
-**TODO** separate document creator from query so AngleSharp can be used independently from WebAppFactory.
-
 ```cs
-services.AddAngleSharp<TApplicationProgram>(); // TApplicationProgram is your .NET Program class for your Web Application
-
+services.AddAngleSharp(); 
+services.AddWebApplicationFactory<TApplicationProgram>(); // TApplicationProgram is your Program class from your .NET Web Application
 ```
 
 ### WebDriver
