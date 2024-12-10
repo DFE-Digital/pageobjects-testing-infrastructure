@@ -43,7 +43,7 @@ services.ConfigureWebDriverSession(t => {
     t.BrowserOptions = configuration.BrowserOptions
 });
 
-OR bind options against the WebDriverSessionOptions object
+// OR bind options against the WebDriverSessionOptions object
 services.Configure<WebDriverSessionOptions>(configuration);
 services.AddSingleton<WebDriverSessionOptions>(sp => sp.GetRequireService<IOptions<WebDriverSessionOptions>>.Value); // ensure non-options is registered
 ```
