@@ -26,17 +26,26 @@ To support .NET Developers and Testers in building Web application tests with co
 
 ### AngleSharp
 
-**TODO** separate document creator from query so AngleSharp can be used independently from WebAppFactory.
-
 ```cs
-services.AddAngleSharp<TApplicationProgram>(); // TApplicationProgram is your .NET Program class for your Web Application
-
+services.AddAngleSharp(); 
+services.AddWebApplicationFactory<TApplicationProgram>(); // TApplicationProgram is your Program class from your .NET Web Application
 ```
 
 ### WebDriver
 
 ```cs
 services.AddWebDriver();
+
+// configure default WebDriverSessionOptions from configuration
+services.ConfigureWebDriverSession(t => {
+    t.BrowserType = configuration.BrowserType
+    t.Headless = configuration.Headless;
+    t.BrowserOptions = configuration.BrowserOptions
+});
+
+// OR bind options against the WebDriverSessionOptions object
+services.Configure<WebDriverSessionOptions>(configuration);
+services.AddSingleton<WebDriverSessionOptions>(sp => sp.GetRequireService<IOptions<WebDriverSessionOptions>>.Value); // ensure non-options is registered
 ```
 
 ## Components available to use
@@ -231,7 +240,7 @@ public sealed class MyTestClass : BaseTest
     public async Task MyTest()
     {
         // create document
-        IDocumentSessionClient documentSession = await GetTestService<IDocumentSessionClient>();
+        IDocumentSessionClient documentSessionClient = await GetTestService<IDocumentSessionClient>();
 
         // pageobjects are not coupled to the path request made for a document
         await documentSession.RequestDocumentAsync(
