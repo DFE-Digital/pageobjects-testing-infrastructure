@@ -1,4 +1,5 @@
-﻿using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
+﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;
+using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
 
 namespace Dfe.Testing.Pages.IntegrationTests;
 
@@ -20,8 +21,10 @@ public sealed class WebDriverIntegrationTestDesign
         SearchPage searchPage = session.GetPageObject<SearchPage>();
 
         searchPage.ClickAnchorLink();
-        IApplicationNavigatorAccessor navigatorAccessor = collection.ServiceProvider.GetRequiredService<IApplicationNavigatorAccessor>();
-        navigatorAccessor.Navigator.CurrentUri().Should().Be(new Uri("https://searchprototype.azurewebsites.net/"));
+        var driverAdaptorProvider = collection.ServiceProvider.GetRequiredService<IWebDriverAdaptorProvider>();
+        IWebDriverAdaptor driverAdaptor = await driverAdaptorProvider.GetAsync();
+        await driverAdaptor.NavigateToAsync(new Uri("https://searchprototype.azurewebsites.net/"));
+        driverAdaptor.CurrentUri().Should().Be("https://searchprototype.azurewebsites.net/");
     }
 
     [Fact]

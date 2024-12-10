@@ -4,10 +4,11 @@ namespace Dfe.Testing.Pages.Internal.WebApplicationFactory;
 internal sealed class HttpRequestBuilder : IHttpRequestBuilder
 {
     private HttpMethod _method = HttpMethod.Get;
-    private string? _domain = null;
+    private string? _domain = "localhost";
     private string _path = "/";
     private readonly List<KeyValuePair<string, string>> _query = [];
     private object? _body = null;
+    private ushort _port = 443;
 
     public IHttpRequestBuilder SetMethod(string method) => SetMethod(HttpMethod.Parse(method));
 
@@ -34,6 +35,12 @@ internal sealed class HttpRequestBuilder : IHttpRequestBuilder
         return this;
     }
 
+    public IHttpRequestBuilder SetPort(ushort port)
+    {
+        _port = port;
+        return this;
+    }
+
     public IHttpRequestBuilder AddQueryParameter(KeyValuePair<string, string> query)
     {
         _query.Add(query);
@@ -55,10 +62,11 @@ internal sealed class HttpRequestBuilder : IHttpRequestBuilder
             Query = _query.ToList()
                 .Aggregate(
                     new StringBuilder(), (init, queryPairs) => init.Append($"{queryPairs.Key}={queryPairs.Value}"))
-                .ToString()
+                .ToString(),
+            Port = _port
         };
 
-        // domain is optional as HttpClient could be configured separately
+        // domain and scheme optional as HttpClient could be configured separately
         if (_domain != null)
         {
             uri.Scheme = "https://";

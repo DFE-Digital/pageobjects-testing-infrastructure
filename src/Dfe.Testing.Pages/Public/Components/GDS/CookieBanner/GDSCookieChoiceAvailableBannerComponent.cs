@@ -1,12 +1,11 @@
 ﻿using Dfe.Testing.Pages.Public.Components.GDS.Button;
 using Dfe.Testing.Pages.Public.Components.Link;
+using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.CookieBanner;
-public record GDSCookieBannerComponent : IComponent
+public record GDSCookieChoiceAvailableBannerComponent : IComponent
 {
-    public required string Heading { get; init; }
-    //public required string Content { get; init; }
+    public required TextComponent Heading { get; init; }
     public required IEnumerable<GDSButtonComponent> CookieChoiceButtons { get; init; }
     public required AnchorLinkComponent ViewCookiesLink { get; init; }
-    public string TagName { get; init; } = "div";
 }

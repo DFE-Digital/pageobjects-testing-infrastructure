@@ -1,4 +1,6 @@
-﻿namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;
+﻿using Dfe.Testing.Pages.Public.Components.Text;
+
+namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;
 public sealed class GDSCookieBannerComponentTests
 {
 
@@ -7,9 +9,9 @@ public sealed class GDSCookieBannerComponentTests
     {
         var page = await ComponentTestHelper.RequestPage<GDSCookieBannerPage>("/component/cookiebanner");
 
-        GDSCookieBannerComponent expectedDefaultCookieBanner = new()
+        GDSCookieChoiceAvailableBannerComponent expectedDefaultCookieBanner = new()
         {
-            Heading = "Cookies on [name of service]",
+            Heading = new TextComponent() { Text = "Cookies on [name of service]" },
             CookieChoiceButtons =
             [
                 new GDSButtonComponent()

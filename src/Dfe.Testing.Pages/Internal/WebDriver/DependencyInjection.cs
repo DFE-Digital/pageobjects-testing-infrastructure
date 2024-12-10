@@ -1,4 +1,6 @@
-﻿namespace Dfe.Testing.Pages.Internal.WebDriver;
+﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor.Factory;
+
+namespace Dfe.Testing.Pages.Internal.WebDriver;
 
 internal static class DependencyInjection
 {
@@ -10,12 +12,15 @@ internal static class DependencyInjection
     private static IServiceCollection AddPublicAPI(this IServiceCollection services)
         =>
         services
-            // Scoped to allow client to alter per test scope
+            // TODO expose this as a transient builder
             .AddScoped<WebDriverClientSessionOptions>()
-            .AddScoped<IApplicationNavigatorAccessor, ApplicationNavigatorAccessor>();
+            .AddScoped<IWebDriverAdaptor, CachedWebDriverAdaptor>()
+            .AddSingleton<IBrowserFactory, ChromeDriverFactory>();
+            // TODO WebDriverApplicationOptions Domain, Port, Scheme - a mapper from provided ApplicationOptions to WebDriverApplicationOptions
+            //.AddScoped<IWebDriverAdaptorProvider, CachedWebDriverAdaptorProvider>();
+
 
     private static IServiceCollection AddInternals(this IServiceCollection services)
         => services
-            .AddScoped<IWebDriverAdaptorProvider, CachedWebDriverAdaptorProvider>()
             .AddTransient<IWebDriverSessionOptionsBuilder, WebDriverSessionOptionsBuilder>();
 }

@@ -23,11 +23,10 @@ namespace Dfe.Testing.Pages;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddAngleSharp<TApplicationProgram>(this IServiceCollection services) where TApplicationProgram : class
+    public static IServiceCollection AddAngleSharp(this IServiceCollection services)
         => services
             .AddDocumentQueryClient<AngleSharpDocumentQueryClientProvider>()
             .AddTransient<IHtmlDocumentProvider, HtmlDocumentProvider>()
-            .AddWebApplicationFactory<TApplicationProgram>()
             .AddComponentMapping();
 
     public static IServiceCollection AddWebDriver(this IServiceCollection services)
@@ -35,6 +34,14 @@ public static class DependencyInjection
             .AddDocumentQueryClient<WebDriverDocumentQueryClientProvider>()
             .AddWebDriverServices()
             .AddComponentMapping();
+
+    public static IServiceCollection AddWebApplicationFactory<TApplicationProgram>(this IServiceCollection services) where TApplicationProgram : class
+        => services
+            .AddScoped<WebApplicationFactory<TApplicationProgram>, TestServerFactory<TApplicationProgram>>()
+            // TODO may need to defer the creation of HttpClient
+            .AddScoped(scope => scope.GetRequiredService<WebApplicationFactory<TApplicationProgram>>().CreateClient())
+            .AddScoped<IConfigureWebHostHandler, ConfigureWebHostHandler>()
+            .AddTransient<IHttpRequestBuilder, HttpRequestBuilder>();
 
     internal static IServiceCollection AddComponentMapping(this IServiceCollection services)
     {
@@ -54,7 +61,8 @@ public static class DependencyInjection
                     { nameof(GDSRadioComponent), () => new CssElementSelector(".govuk-radios__item") },
                     { nameof(GDSTextInputComponent), () => new CssElementSelector(".govuk-form-group:has(input[type=text])")},
                     { nameof(GDSButtonComponent), () => new CssElementSelector("button")},
-                    { nameof(GDSCookieBannerComponent), () => new CssElementSelector(".govuk-cookie-banner")},
+                    { nameof(GDSCookieChoiceAvailableBannerComponent), () => new CssElementSelector(".govuk-cookie-banner")},
+                    { nameof(GDSCookieChoiceMadeBannerComponent), () => new CssElementSelector(".govuk-cookie-banner")},
                     { nameof(GDSTabsComponent), () => new CssElementSelector(".govuk-tabs")},
                     { nameof(GDSDetailsComponent), () => new CssElementSelector(".govuk-details") },
                     { nameof(GDSErrorSummaryComponent), () => new CssElementSelector(".govuk-error-summary") },
@@ -126,8 +134,10 @@ public static class DependencyInjection
         .AddTransient<ComponentFactory<GDSTextInputComponent>>()
         .AddTransient<IComponentMapper<GDSTextInputComponent>, GDSTextInputMapper>()
         // cookie banner
-        .AddTransient<ComponentFactory<GDSCookieBannerComponent>>()
-        .AddTransient<IComponentMapper<GDSCookieBannerComponent>, GDSCookieBannerMapper>()
+        .AddTransient<ComponentFactory<GDSCookieChoiceAvailableBannerComponent>>()
+        .AddTransient<IComponentMapper<GDSCookieChoiceAvailableBannerComponent>, GDSCookieChoiceAvailableMapper>()
+        .AddTransient<ComponentFactory<GDSCookieChoiceMadeBannerComponent>>()
+        .AddTransient<IComponentMapper<GDSCookieChoiceMadeBannerComponent>, GDSCookieChoiceMadeBannerMappper>()
         // tabs
         .AddTransient<ComponentFactory<GDSTabsComponent>>()
         .AddTransient<IComponentMapper<GDSTabsComponent>, GDSTabsMapper>()

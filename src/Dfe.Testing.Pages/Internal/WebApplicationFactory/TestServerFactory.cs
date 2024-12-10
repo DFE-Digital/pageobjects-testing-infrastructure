@@ -6,7 +6,8 @@ internal class TestServerFactory<T> : WebApplicationFactory<T> where T : class
     public TestServerFactory(IConfigureWebHostHandler configureWebHostHandler)
     {
         _configureWebHostHandler = configureWebHostHandler;
-        ClientOptions.AllowAutoRedirect = false;
+        // TODO options determine this, default to false
+        ClientOptions.AllowAutoRedirect = true;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)

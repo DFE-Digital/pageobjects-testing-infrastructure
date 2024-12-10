@@ -1,13 +1,13 @@
 ﻿namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;
 internal sealed class GDSCookieBannerPage : IPageObject
 {
-    private readonly ComponentFactory<GDSCookieBannerComponent> _cookieBannerFactory;
+    private readonly ComponentFactory<GDSCookieChoiceAvailableBannerComponent> _cookieBannerFactory;
 
-    public GDSCookieBannerPage(ComponentFactory<GDSCookieBannerComponent> cookieBannerFactory)
+    public GDSCookieBannerPage(ComponentFactory<GDSCookieChoiceAvailableBannerComponent> cookieBannerFactory)
     {
         ArgumentNullException.ThrowIfNull(cookieBannerFactory);
         _cookieBannerFactory = cookieBannerFactory;
     }
 
-    internal GDSCookieBannerComponent GetBannerNoScope() => _cookieBannerFactory.Get();
+    internal GDSCookieChoiceAvailableBannerComponent GetBannerNoScope() => _cookieBannerFactory.Get();
 }

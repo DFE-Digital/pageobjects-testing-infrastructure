@@ -10,7 +10,8 @@ internal static class ComponentTestHelper
         };
 
         var scopedContainerWithPage = new ServiceCollection()
-            .AddAngleSharp<Program>()
+            .AddAngleSharp()
+            .AddWebApplicationFactory<Program>()
             .AddTransient<IPageObject, TPage>()
             .BuildServiceProvider()
             .CreateScope();
