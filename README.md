@@ -35,6 +35,17 @@ services.AddWebApplicationFactory<TApplicationProgram>(); // TApplicationProgram
 
 ```cs
 services.AddWebDriver();
+
+// configure default WebDriverSessionOptions from configuration
+services.ConfigureWebDriverSession(t => {
+    t.BrowserType = configuration.BrowserType
+    t.Headless = configuration.Headless;
+    t.BrowserOptions = configuration.BrowserOptions
+});
+
+OR bind options against the WebDriverSessionOptions object
+services.Configure<WebDriverSessionOptions>(configuration);
+services.AddSingleton<WebDriverSessionOptions>(sp => sp.GetRequireService<IOptions<WebDriverSessionOptions>>.Value); // ensure non-options is registered
 ```
 
 ## Components available to use
