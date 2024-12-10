@@ -240,7 +240,7 @@ public sealed class MyTestClass : BaseTest
     public async Task MyTest()
     {
         // create document
-        IDocumentSessionClient documentSession = await GetTestService<IDocumentSessionClient>();
+        IDocumentSessionClient documentSessionClient = await GetTestService<IDocumentSessionClient>();
 
         // pageobjects are not coupled to the path request made for a document
         await documentSession.RequestDocumentAsync(
