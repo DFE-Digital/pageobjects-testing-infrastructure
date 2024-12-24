@@ -1,19 +1,24 @@
 ﻿namespace Dfe.Testing.Pages.Public.Components.GDS.Table.Mapper;
-internal class TableBodyMapper : IComponentMapper<TableBody>
+internal class TableBodyMapper : BaseDocumentSectionToComponentMapper<TableBody>
 {
-    private readonly ComponentFactory<TableRow> _rowFactory;
+    private readonly IMapper<IDocumentSection, TableRow> _rowMapper;
 
-    public TableBodyMapper(ComponentFactory<TableRow> rowFactory)
+    public TableBodyMapper(
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, TableRow> rowMapper) : base(documentSectionFinder)
     {
-        ArgumentNullException.ThrowIfNull(rowFactory);
-        _rowFactory = rowFactory;
+        ArgumentNullException.ThrowIfNull(rowMapper);
+        _rowMapper = rowMapper;
     }
 
-    public TableBody Map(IDocumentPart input)
+    public override TableBody Map(IDocumentSection input)
     {
+        IDocumentSection mappable = FindMappableSection<TableBody>(input);
         return new()
         {
-            Rows = _rowFactory.GetManyFromPart(input)
+            Rows = _documentSectionFinder.FindMany<TableRow>(mappable).Select(_rowMapper.Map)
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection section) => section.TagName.Equals("tbody", StringComparison.OrdinalIgnoreCase);
 }

@@ -1,27 +1,26 @@
-﻿using Dfe.Testing.Pages.Public.Components.Link;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Header;
-internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>
+internal sealed class GDSHeaderMapper : BaseDocumentSectionToComponentMapper<GDSHeaderComponent>
 {
-    private readonly ComponentFactory<AnchorLinkComponent> _linkFactory;
+    private readonly IMapper<IDocumentSection, AnchorLinkComponent> _linkMapper;
 
-    public GDSHeaderMapper(ComponentFactory<AnchorLinkComponent> linkFactory)
+    public GDSHeaderMapper(
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, AnchorLinkComponent> linkMapper) : base(documentSectionFinder)
     {
-        ArgumentNullException.ThrowIfNull(linkFactory);
-        _linkFactory = linkFactory;
+        ArgumentNullException.ThrowIfNull(linkMapper);
+        _linkMapper = linkMapper;
     }
-    public GDSHeaderComponent Map(IDocumentPart input)
+    public override GDSHeaderComponent Map(IDocumentSection input)
     {
+        var mappable = FindMappableSection<GDSHeaderComponent>(input);
         return new GDSHeaderComponent()
         {
-            GovUKLink = _linkFactory.Get(new QueryOptions()
-            {
-                Query = new CssElementSelector(".govuk-header__link--homepage"),
-            }),
-            NavigationLinks = _linkFactory.GetMany(new QueryOptions()
-            {
-                InScope = new CssElementSelector(".govuk-header nav"),
-            })
+            GovUKLink = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-header__link--homepage")).MapWith(_linkMapper),
+            NavigationLinks = _documentSectionFinder.FindMany(mappable, new CssElementSelector(".govuk-header nav")).Select(_linkMapper.Map),
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection section) => section.TagName.Equals("header", StringComparison.OrdinalIgnoreCase);
 }

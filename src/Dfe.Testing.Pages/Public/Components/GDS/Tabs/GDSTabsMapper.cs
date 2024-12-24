@@ -1,25 +1,31 @@
-﻿using Dfe.Testing.Pages.Public.Components.Link;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
+using Dfe.Testing.Pages.Public.Components.Core.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Tabs;
-internal sealed class GDSTabsMapper : IComponentMapper<GDSTabsComponent>
+internal sealed class GDSTabsMapper : BaseDocumentSectionToComponentMapper<GDSTabsComponent>
 {
-    private readonly ComponentFactory<AnchorLinkComponent> _anchorLinkFactory;
+    private readonly IMapper<IDocumentSection, AnchorLinkComponent> _anchorLinkFactory;
+    private readonly IMapper<IDocumentSection, TextComponent> _textMapper;
 
-    public GDSTabsMapper(ComponentFactory<AnchorLinkComponent> anchorLinkFactory)
+    public GDSTabsMapper(
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, AnchorLinkComponent> anchorLinkFactory,
+        IMapper<IDocumentSection, TextComponent> textMapper) : base(documentSectionFinder)
     {
         ArgumentNullException.ThrowIfNull(anchorLinkFactory);
+        ArgumentNullException.ThrowIfNull(textMapper);
         _anchorLinkFactory = anchorLinkFactory;
+        _textMapper = textMapper;
     }
-    public GDSTabsComponent Map(IDocumentPart input)
+    public override GDSTabsComponent Map(IDocumentSection section)
     {
+        var mappable = FindMappableSection<GDSTabsComponent>(section);
         return new GDSTabsComponent()
         {
-            Heading = input.FindDescendant(new CssElementSelector(".govuk-tabs__title"))?.Text ?? string.Empty,
-            Tabs = _anchorLinkFactory.GetMany(new QueryOptions()
-            {
-                InScope = new CssElementSelector(".govuk-tabs__list")
-            }),
-            TagName = input.TagName ?? string.Empty
+            Heading = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-tabs__title")).MapWith(_textMapper),
+            Tabs = _documentSectionFinder.FindMany(mappable, new CssElementSelector(".govuk-tabs__list")).Select(_anchorLinkFactory.Map)
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection section) => true; // TODO check contains tabs inside
 }

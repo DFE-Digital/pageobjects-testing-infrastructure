@@ -9,7 +9,10 @@ public sealed class GDSButtonComponentTests
         GDSButtonComponent expectedDefaultButton = new()
         {
             ButtonType = ButtonStyleType.Primary,
-            Text = "Save and continue",
+            Text = new()
+            {
+                Text = "Save and continue"
+            },
             IsSubmit = true,
             Disabled = false
         };
@@ -25,7 +28,10 @@ public sealed class GDSButtonComponentTests
         GDSButtonComponent expectedDefaultButton = new()
         {
             ButtonType = ButtonStyleType.Primary,
-            Text = "Nested save and continue",
+            Text = new()
+            {
+                Text = "Nested save and continue"
+            },
             IsSubmit = true,
             Disabled = false
         };
@@ -44,14 +50,17 @@ public sealed class GDSButtonComponentTests
                 new()
                 {
                     ButtonType = ButtonStyleType.Primary,
-                    Text = "Save and continue",
+                    Text = new()
+                    {
+                        Text = "Save and continue"
+                    },
                     IsSubmit = true,
                     Disabled = false
                 },
                 new()
                 {
                     ButtonType = ButtonStyleType.Primary,
-                    Text = "Nested save and continue",
+                    Text = new() { Text = "Nested save and continue" },
                     IsSubmit = true,
                     Disabled = false
                 }
@@ -69,14 +78,20 @@ public sealed class GDSButtonComponentTests
                 new()
                 {
                     ButtonType = ButtonStyleType.Primary,
-                    Text = "Save and continue",
+                    Text = new()
+                    {
+                        Text = "Save and continue"
+                    },
                     IsSubmit = true,
                     Disabled = false
                 },
                 new()
                 {
                     ButtonType = ButtonStyleType.Primary,
-                    Text = "Nested save and continue",
+                    Text = new()
+                    {
+                        Text = "Nested save and continue"
+                    },
                     IsSubmit = true,
                     Disabled = false
                 }

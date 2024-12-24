@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.IntegrationTests;
+﻿namespace Dfe.Testing.Pages.UnitTests;
 public sealed class ClickElementCommandHandlerTests
 {
 

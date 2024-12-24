@@ -1,4 +1,9 @@
 ﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;
+using Dfe.Testing.Pages.Public.Components;
+using Dfe.Testing.Pages.Public.Components.Core.Link;
+using Dfe.Testing.Pages.Public.PageObject;
+using Dfe.Testing.Pages.Shared.Contracts;
+using Dfe.Testing.Pages.Shared.Selector;
 using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
 
 namespace Dfe.Testing.Pages.IntegrationTests;
@@ -11,14 +16,16 @@ public sealed class WebDriverIntegrationTestDesign
     {
         using var collection = MockServiceCollection.WithWebDriver();
 
-        IDocumentSessionClient session = collection.ServiceProvider.GetRequiredService<IDocumentSessionClient>();
-        await session.RequestDocumentAsync(
+        IDocumentService documentService = collection.ServiceProvider.GetRequiredService<IDocumentService>();
+        IPageObjectFactory pageObjectFactory = collection.ServiceProvider.GetRequiredService<IPageObjectFactory>();
+
+        await documentService.RequestDocumentAsync(
             (t) =>
                 t.SetDomain("searchprototype.azurewebsites.net")
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        SearchPage searchPage = session.GetPageObject<SearchPage>();
+        SearchPage searchPage = pageObjectFactory.GetPage<SearchPage>();
 
         searchPage.ClickAnchorLink();
         var driverAdaptorProvider = collection.ServiceProvider.GetRequiredService<IWebDriverAdaptorProvider>();
@@ -32,14 +39,16 @@ public sealed class WebDriverIntegrationTestDesign
     {
         using var collection = MockServiceCollection.WithWebDriver();
 
-        IDocumentSessionClient session = collection.ServiceProvider.GetRequiredService<IDocumentSessionClient>();
-        await session.RequestDocumentAsync(
+        IDocumentService documentService = collection.ServiceProvider.GetRequiredService<IDocumentService>();
+        IPageObjectFactory pageObjectFactory = collection.ServiceProvider.GetRequiredService<IPageObjectFactory>();
+
+        await documentService.RequestDocumentAsync(
             (t) =>
                 t.SetDomain("searchprototype.azurewebsites.net")
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        SearchPage page = session.GetPageObject<SearchPage>();
+        SearchPage page = pageObjectFactory.GetPage<SearchPage>();
         page.GetLinks().Should().HaveCount(3);
     }
 
@@ -58,12 +67,12 @@ public sealed class WebDriverIntegrationTestDesign
 
         public void ClickAnchorLink() => _clickElementHandler.Handle(new()
         {
-            FindWith = new CssElementSelector("#home-link")
+            Selector = new CssElementSelector("#home-link")
         });
 
         public IEnumerable<AnchorLinkComponent> GetLinks() => _anchorLink.GetMany(new()
         {
-            InScope = new CssElementSelector(".govuk-header")
+            FindInScope = new CssElementSelector(".govuk-header")
         });
     }
 }

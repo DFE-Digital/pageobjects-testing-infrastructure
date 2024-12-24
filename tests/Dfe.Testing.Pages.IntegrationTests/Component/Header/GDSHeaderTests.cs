@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Public.Components.GDS.Header;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Text;
+using Dfe.Testing.Pages.Public.Components.GDS.Header;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.Header;
 public sealed class GDSHeaderTests
@@ -13,7 +14,10 @@ public sealed class GDSHeaderTests
             GovUKLink = new()
             {
                 LinkedTo = "#",
-                Text = "GOV.UK",
+                Text = new TextComponent()
+                {
+                    Text = "GOV.UK"
+                },
                 OpensInNewTab = false
             },
             NavigationLinks =
@@ -21,7 +25,10 @@ public sealed class GDSHeaderTests
                 new()
                 {
                     LinkedTo = "#",
-                    Text = "Service name",
+                    Text = new TextComponent()
+                    {
+                        Text = "Service name"
+                    },
                     OpensInNewTab = false
                 }
             ]

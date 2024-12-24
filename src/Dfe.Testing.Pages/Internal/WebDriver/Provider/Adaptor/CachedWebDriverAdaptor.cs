@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor.Factory;
+﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Factory;
 
 namespace Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;
 

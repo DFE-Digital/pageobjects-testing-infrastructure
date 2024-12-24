@@ -1,23 +1,23 @@
-﻿namespace Dfe.Testing.Pages.Internal.Commands;
+﻿using Dfe.Testing.Pages.Internal.DocumentClient;
+
+namespace Dfe.Testing.Pages.Internal.Commands;
 internal sealed class ClickElementCommandHandler : ICommandHandler<ClickElementCommand>
 {
-    private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;
+    private readonly IDocumentService _documentService;
 
-    public ClickElementCommandHandler(IDocumentQueryClientAccessor documentQueryClientAccessor)
+    public ClickElementCommandHandler(IDocumentService documentClient)
     {
-        ArgumentNullException.ThrowIfNull(documentQueryClientAccessor, nameof(documentQueryClientAccessor));
-        _documentQueryClientAccessor = documentQueryClientAccessor;
+        _documentService = documentClient;
     }
     public void Handle(ClickElementCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentNullException.ThrowIfNull(command.FindWith);
-        _documentQueryClientAccessor.DocumentQueryClient.Run(
-            new QueryOptions()
-            {
-                Query = command.FindWith,
-                InScope = command.InScope
-            },
-            (part) => part.Click());
+        ArgumentNullException.ThrowIfNull(command.Selector);
+
+        _documentService.ExecuteCommand(new FindOptions()
+        {
+            Selector = command.Selector,
+            FindInScope = command.FindInScope
+        }, (part) => part.Click());
     }
 }

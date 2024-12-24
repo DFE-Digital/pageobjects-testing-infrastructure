@@ -1,30 +1,36 @@
-﻿using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
-using Dfe.Testing.Pages.Public.Components.Label;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Label;
+using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Select;
-internal sealed class GDSSelectMapper : IComponentMapper<GDSSelectComponent>
+internal sealed class GDSSelectMapper : BaseDocumentSectionToComponentMapper<GDSSelectComponent>
 {
-    private readonly ComponentFactory<LabelComponent> _labelFactory;
-    private readonly ComponentFactory<OptionComponent> _optionFactory;
-    private readonly ComponentFactory<GDSErrorMessageComponent> _errorMessageFactory;
+    private readonly IMapper<IDocumentSection, LabelComponent> _labelMapper;
+    private readonly IMapper<IDocumentSection, OptionComponent> _optionFactory;
+    private readonly IMapper<IDocumentSection, GDSErrorMessageComponent> _errorMessageFactory;
 
     public GDSSelectMapper(
-        ComponentFactory<LabelComponent> labelFactory,
-        ComponentFactory<OptionComponent> optionFactory,
-        ComponentFactory<GDSErrorMessageComponent> errorMessageFactory)
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, LabelComponent> labelMapper,
+        IMapper<IDocumentSection, OptionComponent> optionMapper,
+        IMapper<IDocumentSection, GDSErrorMessageComponent> errorMessageMapper) : base(documentSectionFinder)
     {
-        _labelFactory = labelFactory;
-        _optionFactory = optionFactory;
-        _errorMessageFactory = errorMessageFactory;
+        _labelMapper = labelMapper;
+        _optionFactory = optionMapper;
+        _errorMessageFactory = errorMessageMapper;
     }
-    public GDSSelectComponent Map(IDocumentPart input)
+
+    public override GDSSelectComponent Map(IDocumentSection input)
     {
         return new GDSSelectComponent()
         {
-            Label = _labelFactory.GetManyFromPart(input).Single(),
-            Options = _optionFactory.GetManyFromPart(input),
-            ErrorMessage = _errorMessageFactory.GetManyFromPart(input).SingleOrDefault()
-                ?? new GDSErrorMessageComponent() { ErrorMessage = string.Empty }
+            Label = _documentSectionFinder.Find<LabelComponent>(input).MapWith(_labelMapper),
+            Options = _documentSectionFinder.FindMany<OptionComponent>(input).Select(_optionFactory.Map),
+            ErrorMessage =
+                _documentSectionFinder.FindMany<GDSErrorMessageComponent>(input)
+                    .FirstOrDefault()?.MapWith(_errorMessageFactory)
+                        ?? new GDSErrorMessageComponent() { ErrorMessage = new() { Text = string.Empty } }
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection section) => section.TagName.Equals("select", StringComparison.OrdinalIgnoreCase);
 }

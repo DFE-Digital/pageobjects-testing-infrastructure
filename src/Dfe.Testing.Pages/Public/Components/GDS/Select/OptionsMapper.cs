@@ -1,13 +1,21 @@
 ﻿namespace Dfe.Testing.Pages.Public.Components.GDS.Select;
-internal sealed class OptionsMapper : IComponentMapper<OptionComponent>
+internal sealed class OptionsMapper : BaseDocumentSectionToComponentMapper<OptionComponent>
 {
-    public OptionComponent Map(IDocumentPart input)
+    public OptionsMapper(IDocumentSectionFinder documentSectionFinder) : base(documentSectionFinder)
     {
+    }
+
+    public override OptionComponent Map(IDocumentSection section)
+    {
+        var mappable = FindMappableSection<OptionComponent>(section);
+
         return new()
         {
-            IsSelected = input.HasAttribute("selected"),
-            Text = input.Text ?? string.Empty,
-            Value = input.GetAttribute("value") ?? string.Empty
+            IsSelected = mappable.HasAttribute("selected"),
+            Text = mappable.Text ?? string.Empty,
+            Value = mappable.GetAttribute("value") ?? string.Empty
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection section) => section.TagName.Equals("option", StringComparison.OrdinalIgnoreCase);
 }

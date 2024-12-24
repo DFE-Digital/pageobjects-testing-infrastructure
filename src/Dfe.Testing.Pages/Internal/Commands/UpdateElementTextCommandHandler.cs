@@ -1,32 +1,29 @@
-﻿namespace Dfe.Testing.Pages.Internal.Commands;
+﻿using Dfe.Testing.Pages.Internal.DocumentClient;
+
+namespace Dfe.Testing.Pages.Internal.Commands;
 internal sealed class UpdateElementTextCommandHandler : ICommandHandler<UpdateElementTextCommand>
 {
-    private readonly IDocumentQueryClientAccessor _documentQueryClientAccessor;
+    private readonly IDocumentService _documentService;
 
-    public UpdateElementTextCommandHandler(IDocumentQueryClientAccessor documentQueryClientAccessor)
+    public UpdateElementTextCommandHandler(IDocumentService documentService)
     {
-        ArgumentNullException.ThrowIfNull(documentQueryClientAccessor, nameof(documentQueryClientAccessor));
-        _documentQueryClientAccessor = documentQueryClientAccessor;
+        _documentService = documentService;
     }
     public void Handle(UpdateElementTextCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentNullException.ThrowIfNull(command.FindWith);
+        ArgumentNullException.ThrowIfNull(command.Selector);
 
-        _documentQueryClientAccessor.DocumentQueryClient.Run(
-            new QueryOptions()
-            {
-                Query = command.FindWith,
-                InScope = command.InScope
-            },
+        FindOptions options = new FindOptions()
+        {
+            Selector = command.Selector,
+            FindInScope = command.FindInScope
+        };
+
+        _documentService.ExecuteCommand(options,
             (part) =>
             {
-                if (string.IsNullOrEmpty(command.Text))
-                {
-                    part.Text = string.Empty;
-                    return;
-                }
-                part.Text = command.Text;
+                part.Text = string.IsNullOrEmpty(command.Text) ? string.Empty : command.Text;
             });
     }
 }

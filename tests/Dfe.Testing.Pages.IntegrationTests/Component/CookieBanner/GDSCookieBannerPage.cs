@@ -1,4 +1,7 @@
-﻿namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;
+﻿using Dfe.Testing.Pages.Public.Components;
+using Dfe.Testing.Pages.Public.PageObject;
+
+namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;
 internal sealed class GDSCookieBannerPage : IPageObject
 {
     private readonly ComponentFactory<GDSCookieChoiceAvailableBannerComponent> _cookieBannerFactory;

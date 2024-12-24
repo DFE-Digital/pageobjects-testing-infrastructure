@@ -1,6 +1,8 @@
-﻿namespace Dfe.Testing.Pages.Public.Components.GDS.Panel;
-public record GDSPanelComponent : IComponent
+﻿using Dfe.Testing.Pages.Public.Components.Core.Text;
+
+namespace Dfe.Testing.Pages.Public.Components.GDS.Panel;
+public record GDSPanelComponent
 {
-    public required string Heading { get; init; }
-    public required string Content { get; init; }
+    public required TextComponent Heading { get; init; }
+    public required TextComponent Content { get; init; }
 }

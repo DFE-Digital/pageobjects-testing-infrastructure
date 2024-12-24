@@ -1,4 +1,6 @@
-﻿using Dfe.Testing.Pages.Public.Components.GDS.Header;
+﻿using Dfe.Testing.Pages.Public.Components;
+using Dfe.Testing.Pages.Public.Components.GDS.Header;
+using Dfe.Testing.Pages.Public.PageObject;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.Header;
 internal sealed class GDSHeaderPage : IPageObject

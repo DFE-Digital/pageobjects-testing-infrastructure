@@ -1,22 +1,38 @@
-﻿namespace Dfe.Testing.Pages.Public.Components.GDS.Button;
-internal class GDSButtonMapper : IComponentMapper<GDSButtonComponent>
+﻿using Dfe.Testing.Pages.Public.Components.Core.Text;
+
+namespace Dfe.Testing.Pages.Public.Components.GDS.Button;
+internal class GDSButtonMapper : BaseDocumentSectionToComponentMapper<GDSButtonComponent>
 {
+    private readonly IMapper<IDocumentSection, TextComponent> _textMapper;
+
+    public GDSButtonMapper(
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, TextComponent> textMapper) : base(documentSectionFinder)
+    {
+        _textMapper = textMapper;
+    }
+
     internal static IElementSelector SecondaryButtonStyle => new CssElementSelector("govuk-button--secondary");
     internal static IElementSelector WarningButtonStyle => new CssElementSelector(".govuk-button--warning");
-    public GDSButtonComponent Map(IDocumentPart part)
+
+    public override GDSButtonComponent Map(IDocumentSection part)
     {
-        var classStyles = part.GetAttribute("class") ?? string.Empty;
-        return new GDSButtonComponent()
+        IDocumentSection mappable = FindMappableSection<GDSButtonComponent>(part);
+        var buttonStyles = mappable.GetAttribute("class") ?? string.Empty;
+
+        return new()
         {
             ButtonType =
-                classStyles.Contains(SecondaryButtonStyle.ToSelector()) ? ButtonStyleType.Secondary :
-                classStyles.Contains(WarningButtonStyle.ToSelector()) ? ButtonStyleType.Warning
+                buttonStyles.Contains(SecondaryButtonStyle.ToSelector()) ? ButtonStyleType.Secondary :
+                buttonStyles.Contains(WarningButtonStyle.ToSelector()) ? ButtonStyleType.Warning
                     : ButtonStyleType.Primary,
-            Text = part.Text?.Trim() ?? string.Empty,
-            Disabled = part.HasAttribute("disabled"),
-            IsSubmit = part.GetAttribute("type") == "submit",
-            Name = part.GetAttribute("name") ?? string.Empty,
-            Value = part.GetAttribute("value") ?? string.Empty
+            Text = _textMapper.Map(mappable),
+            Disabled = mappable.HasAttribute("disabled"),
+            IsSubmit = mappable.GetAttribute("type") == "submit",
+            Name = mappable.GetAttribute("name") ?? string.Empty,
+            Value = mappable.GetAttribute("value") ?? string.Empty
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection part) => part.TagName.Equals("button", StringComparison.OrdinalIgnoreCase);
 }

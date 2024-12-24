@@ -1,4 +1,6 @@
-﻿using Dfe.Testing.Pages.Public.Selector.Options;
+﻿using Dfe.Testing.Pages.Public.Components;
+using Dfe.Testing.Pages.Public.PageObject;
+using Dfe.Testing.Pages.Shared.Selector;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.Button;
 internal sealed class GDSButtonPage : IPageObject
@@ -11,13 +13,13 @@ internal sealed class GDSButtonPage : IPageObject
     }
 
     public GDSButtonComponent GetNoScope() => _buttonFactory.Get();
-    public GDSButtonComponent GetWithScope() => _buttonFactory.Get(new QueryOptions()
+    public GDSButtonComponent GetWithScope() => _buttonFactory.Get(new CreateComponentRequest()
     {
-        InScope = new CssElementSelector("#gds-button-default-nested-nested-container")
+        FindInScope = new CssElementSelector("#gds-button-default-nested-nested-container")
     });
     public IEnumerable<GDSButtonComponent> GetManyNoScope() => _buttonFactory.GetMany();
-    public IEnumerable<GDSButtonComponent> GetManyWithScope() => _buttonFactory.GetMany(new QueryOptions()
+    public IEnumerable<GDSButtonComponent> GetManyWithScope() => _buttonFactory.GetMany(new CreateComponentRequest()
     {
-        InScope = new CssElementSelector("#gds-button-default-nested-container")
+        FindInScope = new CssElementSelector("#gds-button-default-nested-container")
     });
 }

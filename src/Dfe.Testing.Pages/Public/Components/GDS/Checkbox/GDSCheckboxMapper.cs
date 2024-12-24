@@ -1,28 +1,35 @@
-﻿using Dfe.Testing.Pages.Public.Components.Label;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Inputs;
+using Dfe.Testing.Pages.Public.Components.Core.Label;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Checkbox;
-internal sealed class GDSCheckboxMapper : IComponentMapper<GDSCheckboxComponent>
+internal sealed class GDSCheckboxMapper : BaseDocumentSectionToComponentMapper<GDSCheckboxComponent>
 {
-    private readonly ComponentFactory<InputComponent> _inputFactory;
-    private readonly ComponentFactory<LabelComponent> _labelFactory;
+    private readonly IMapper<IDocumentSection, CheckboxComponent> _checkboxMapper;
+    private readonly IMapper<IDocumentSection, LabelComponent> _labelMapper;
 
     public GDSCheckboxMapper(
-        ComponentFactory<InputComponent> inputFactory,
-        ComponentFactory<LabelComponent> labelFactory)
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, CheckboxComponent> checkboxMapper,
+        IMapper<IDocumentSection, LabelComponent> labelMapper)
+            : base(documentSectionFinder)
     {
-        _inputFactory = inputFactory;
-        _labelFactory = labelFactory;
+        _checkboxMapper = checkboxMapper;
+        _labelMapper = labelMapper;
     }
 
-    public GDSCheckboxComponent Map(IDocumentPart input)
+    public override GDSCheckboxComponent Map(IDocumentSection section) // MapComponentRequest<TComponent> ComponentFinderMapping, 
     {
-        var inputComponent = _inputFactory.GetManyFromPart(input).Single();
-        return new GDSCheckboxComponent()
+        IDocumentSection mappable = FindMappableSection<GDSCheckboxComponent>(section);
+        CheckboxComponent checkbox = _checkboxMapper.Map(mappable);
+        return new()
         {
-            Label = _labelFactory.GetManyFromPart(input).Single(),
-            Name = inputComponent.Name,
-            Value = inputComponent.Value,
-            Checked = inputComponent.IsChecked,
+            Label = _labelMapper.Map(mappable),
+            Name = checkbox.Name,
+            Value = checkbox.Value,
+            Checked = checkbox.IsChecked,
+            IsRequired = checkbox.IsRequired
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection part) => true; // TODO something with input
 }

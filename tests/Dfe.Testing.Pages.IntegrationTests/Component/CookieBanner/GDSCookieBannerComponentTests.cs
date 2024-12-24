@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Public.Components.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
+using Dfe.Testing.Pages.Public.Components.Core.Text;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;
 public sealed class GDSCookieBannerComponentTests
@@ -16,7 +17,10 @@ public sealed class GDSCookieBannerComponentTests
             [
                 new GDSButtonComponent()
                 {
-                    Text = "Accept additional cookies",
+                    Text = new()
+                    {
+                        Text = "Accept additional cookies",
+                    },
                     ButtonType = ButtonStyleType.Primary,
                     IsSubmit = true,
                     Value = "yes",
@@ -24,7 +28,10 @@ public sealed class GDSCookieBannerComponentTests
                 },
                 new GDSButtonComponent()
                 {
-                    Text = "Reject additional cookies",
+                    Text = new()
+                    {
+                        Text = "Reject additional cookies"
+                    },
                     ButtonType = ButtonStyleType.Primary,
                     IsSubmit = true,
                     Value = "no",
@@ -34,7 +41,10 @@ public sealed class GDSCookieBannerComponentTests
             ViewCookiesLink = new AnchorLinkComponent()
             {
                 LinkedTo = "#",
-                Text = "View cookies",
+                Text = new()
+                {
+                    Text = "View cookies"
+                },
                 OpensInNewTab = false
             }
         };

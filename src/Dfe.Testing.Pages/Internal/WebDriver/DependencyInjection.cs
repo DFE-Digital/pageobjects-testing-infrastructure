@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor.Factory;
+﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Factory;
 
 namespace Dfe.Testing.Pages.Internal.WebDriver;
 
@@ -16,8 +16,8 @@ internal static class DependencyInjection
             .AddScoped<WebDriverClientSessionOptions>()
             .AddScoped<IWebDriverAdaptor, CachedWebDriverAdaptor>()
             .AddSingleton<IBrowserFactory, ChromeDriverFactory>();
-            // TODO WebDriverApplicationOptions Domain, Port, Scheme - a mapper from provided ApplicationOptions to WebDriverApplicationOptions
-            //.AddScoped<IWebDriverAdaptorProvider, CachedWebDriverAdaptorProvider>();
+    // TODO WebDriverApplicationOptions Domain, Port, Scheme - a mapper from provided ApplicationOptions to WebDriverApplicationOptions
+    //.AddScoped<IWebDriverAdaptorProvider, CachedWebDriverAdaptorProvider>();
 
 
     private static IServiceCollection AddInternals(this IServiceCollection services)

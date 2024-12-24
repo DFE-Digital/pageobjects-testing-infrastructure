@@ -1,21 +1,28 @@
-﻿using Dfe.Testing.Pages.Public.Components.Link;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.ErrorSummary;
-internal sealed class GDSErrorSummaryMapper : IComponentMapper<GDSErrorSummaryComponent>
+internal sealed class GDSErrorSummaryMapper : BaseDocumentSectionToComponentMapper<GDSErrorSummaryComponent>
 {
-    private readonly ComponentFactory<AnchorLinkComponent> _anchorLinkFactory;
+    private readonly IMapper<IDocumentSection, AnchorLinkComponent> _anchorLinkMapper;
 
-    public GDSErrorSummaryMapper(ComponentFactory<AnchorLinkComponent> anchorLinkFactory)
+    public GDSErrorSummaryMapper(
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, AnchorLinkComponent> anchorLinkFactory) : base(documentSectionFinder)
     {
         ArgumentNullException.ThrowIfNull(anchorLinkFactory);
-        _anchorLinkFactory = anchorLinkFactory;
+        ArgumentNullException.ThrowIfNull(documentSectionFinder);
+        _anchorLinkMapper = anchorLinkFactory;
     }
-    public GDSErrorSummaryComponent Map(IDocumentPart input)
+
+    public override GDSErrorSummaryComponent Map(IDocumentSection input)
     {
         return new()
         {
             Heading = input.FindDescendant(new CssElementSelector(".govuk-error-summary__title"))?.Text ?? throw new ArgumentNullException("heading on error summary is null"),
-            Errors = _anchorLinkFactory.GetManyFromPart(input)
+            Errors = _documentSectionFinder.FindMany<AnchorLinkComponent>(input).Select(_anchorLinkMapper.Map)
         };
     }
+    protected override bool IsMappableFrom(IDocumentSection part) => true; // TODO check contains errorsummary inside
 }
+
+

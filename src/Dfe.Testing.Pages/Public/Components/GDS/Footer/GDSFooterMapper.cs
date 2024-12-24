@@ -1,38 +1,32 @@
-﻿using Dfe.Testing.Pages.Public.Components.Link;
-using Dfe.Testing.Pages.Public.Selector.Factory;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
+using Dfe.Testing.Pages.Public.Components.Core.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Footer;
-internal sealed class GDSFooterMapper : IComponentMapper<GDSFooterComponent>
+internal sealed class GDSFooterMapper : BaseDocumentSectionToComponentMapper<GDSFooterComponent>
 {
-    private readonly ComponentFactory<AnchorLinkComponent> _anchorLinKFactory;
-    private readonly IComponentSelectorFactory _componentSelectorFactory;
+    private readonly IMapper<IDocumentSection, TextComponent> _textComponentMapper;
+    private readonly IMapper<IDocumentSection, AnchorLinkComponent> _anchorLinkMapper;
 
-    public GDSFooterMapper(ComponentFactory<AnchorLinkComponent> anchorLinKFactory, IComponentSelectorFactory componentSelectorFactory)
+    public GDSFooterMapper(
+        IMapper<IDocumentSection, TextComponent> textComponentMapper,
+        IMapper<IDocumentSection, AnchorLinkComponent> anchorLinKMapper,
+        IDocumentSectionFinder documentSectionFinder) : base(documentSectionFinder)
     {
-        ArgumentNullException.ThrowIfNull(anchorLinKFactory);
-        _componentSelectorFactory = componentSelectorFactory;
-        _anchorLinKFactory = anchorLinKFactory;
+        ArgumentNullException.ThrowIfNull(anchorLinKMapper);
+        _textComponentMapper = textComponentMapper;
+        _anchorLinkMapper = anchorLinKMapper;
     }
-    public GDSFooterComponent Map(IDocumentPart input)
+    public override GDSFooterComponent Map(IDocumentSection input)
     {
+        var mappable = FindMappableSection<GDSFooterComponent>(input);
         return new()
         {
-            CrownCopyrightLink = _anchorLinKFactory.Get(new QueryOptions()
-            {
-                Query = new CssElementSelector(".govuk-footer__copyright-logo"),
-                InScope = _componentSelectorFactory.GetSelector<GDSFooterComponent>()
-            }),
-            LicenseLink = _anchorLinKFactory.Get(new QueryOptions()
-            {
-                Query = new CssElementSelector(".govuk-footer__copyright-logo"),
-                InScope = _componentSelectorFactory.GetSelector<GDSFooterComponent>()
-            }),
-            LicenseMessage = input.FindDescendant(new CssElementSelector(".govuk-footer__licence-description"))?.Text ?? string.Empty,
-            ApplicationLinks = _anchorLinKFactory.GetMany(new QueryOptions()
-            {
-                Query = new CssElementSelector(".govuk-footer__inline-list"),
-                InScope = _componentSelectorFactory.GetSelector<GDSFooterComponent>()
-            }) ?? []
+            CrownCopyrightLink = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-footer__link .govuk-footer__copyright-logo")).MapWith(_anchorLinkMapper),
+            LicenseLink = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-footer__licence-description .govuk-footer__link")).MapWith(_anchorLinkMapper),
+            LicenseMessage = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-footer__licence-description")).MapWith(_textComponentMapper),
+            ApplicationLinks = _documentSectionFinder.FindMany(mappable, new CssElementSelector(".govuk-footer__link")).MapWith(_anchorLinkMapper)
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection section) => section.TagName.Equals("footer", StringComparison.OrdinalIgnoreCase);
 }

@@ -1,15 +1,27 @@
-﻿namespace Dfe.Testing.Pages.Public.Components.GDS.NotificationBanner;
-internal sealed class GDSNotificationBannerMapper : IComponentMapper<GDSNotificationBannerComponent>
+﻿using Dfe.Testing.Pages.Public.Components.Core.Text;
+
+namespace Dfe.Testing.Pages.Public.Components.GDS.NotificationBanner;
+internal sealed class GDSNotificationBannerMapper : BaseDocumentSectionToComponentMapper<GDSNotificationBannerComponent>
 {
-    public GDSNotificationBannerComponent Map(IDocumentPart input)
+    private readonly IMapper<IDocumentSection, TextComponent> _textMapper;
+
+    public GDSNotificationBannerMapper(
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, TextComponent> textMapper) : base(documentSectionFinder)
     {
+        ArgumentNullException.ThrowIfNull(textMapper);
+        _textMapper = textMapper;
+    }
+
+    public override GDSNotificationBannerComponent Map(IDocumentSection input)
+    {
+        var mappable = FindMappableSection<GDSNotificationBannerComponent>(input);
         return new()
         {
-            Heading = input.FindDescendant(new CssElementSelector(".govuk-notification-banner__title"))?.Text ??
-                throw new ArgumentNullException("heading on notification banner is null"),
-
-            Content = input.FindDescendant(new CssElementSelector(".govuk-notification-banner__content"))?.Text ??
-                throw new ArgumentNullException("content on notification banner is null")
+            Heading = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-notification-banner__title")).MapWith(_textMapper),
+            Content = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-notification-banner__content")).MapWith(_textMapper)
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection section) => true; // TODO notification banner
 }

@@ -1,24 +1,29 @@
 ﻿namespace Dfe.Testing.Pages.Public.Components.GDS.Table.Mapper;
-internal sealed class TableRowMapper : IComponentMapper<TableRow>
+internal sealed class TableRowMapper : BaseDocumentSectionToComponentMapper<TableRow>
 {
-    private readonly ComponentFactory<TableHeadingItem> _tableHeadingFactory;
-    private readonly ComponentFactory<TableDataItem> _tableDataItemFactory;
+    private readonly IMapper<IDocumentSection, TableHeadingItem> _tableHeadingItemMapper;
+    private readonly IMapper<IDocumentSection, TableDataItem> _tableDataItemMapper;
 
     public TableRowMapper(
-        ComponentFactory<TableHeadingItem> tableHeadingFactory,
-        ComponentFactory<TableDataItem> tableDataItemFactory)
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, TableHeadingItem> tableHeadingFactory,
+        IMapper<IDocumentSection, TableDataItem> tableDataItemFactory) : base(documentSectionFinder)
     {
         ArgumentNullException.ThrowIfNull(tableHeadingFactory);
         ArgumentNullException.ThrowIfNull(tableDataItemFactory);
-        _tableHeadingFactory = tableHeadingFactory;
-        _tableDataItemFactory = tableDataItemFactory;
+        _tableHeadingItemMapper = tableHeadingFactory;
+        _tableDataItemMapper = tableDataItemFactory;
     }
-    public TableRow Map(IDocumentPart input)
+
+    public override TableRow Map(IDocumentSection section)
     {
+        var mappable = FindMappableSection<TableRow>(section);
         return new TableRow()
         {
-            Headings = _tableHeadingFactory.GetManyFromPart(input),
-            DataItem = _tableDataItemFactory.GetManyFromPart(input)
+            Headings = _documentSectionFinder.FindMany<TableHeadingItem>(mappable).Select(_tableHeadingItemMapper.Map),
+            DataItem = _documentSectionFinder.FindMany<TableDataItem>(mappable).Select(_tableDataItemMapper.Map),
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection section) => section.TagName.Equals("tr", StringComparison.OrdinalIgnoreCase);
 }

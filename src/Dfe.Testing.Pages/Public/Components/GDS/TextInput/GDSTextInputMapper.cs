@@ -1,36 +1,38 @@
-﻿using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
-using Dfe.Testing.Pages.Public.Components.Inputs;
-using Dfe.Testing.Pages.Public.Components.Label;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Inputs;
+using Dfe.Testing.Pages.Public.Components.Core.Label;
+using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
 
-namespace Dfe.Testing.Pages.Public.Components.GDS.Inputs.TextInput;
-internal sealed class GDSTextInputMapper : IComponentMapper<GDSTextInputComponent>
+namespace Dfe.Testing.Pages.Public.Components.GDS.TextInput;
+internal sealed class GDSTextInputMapper : BaseDocumentSectionToComponentMapper<GDSTextInputComponent>
 {
-    private readonly ComponentFactory<TextInputComponent> _textInputFactory;
-    private readonly ComponentFactory<LabelComponent> _labelFactory;
-    private readonly ComponentFactory<GDSErrorMessageComponent> _errorMessageFactory;
+    private readonly IMapper<IDocumentSection, TextInputComponent> _textInputMapper;
+    private readonly IMapper<IDocumentSection, LabelComponent> _labelMapper;
+    private readonly IMapper<IDocumentSection, GDSErrorMessageComponent> _errorMessageMapper;
 
     public GDSTextInputMapper(
-        ComponentFactory<TextInputComponent> inputFactory,
-        ComponentFactory<LabelComponent> labelFactory,
-        ComponentFactory<GDSErrorMessageComponent> errorMessageFactory)
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, TextInputComponent> textInputMapper,
+        IMapper<IDocumentSection, LabelComponent> labelMapper,
+        IMapper<IDocumentSection, GDSErrorMessageComponent> errorMessageMapper) : base(documentSectionFinder)
     {
-        ArgumentNullException.ThrowIfNull(inputFactory);
-        ArgumentNullException.ThrowIfNull(labelFactory);
-        ArgumentNullException.ThrowIfNull(errorMessageFactory);
-        _textInputFactory = inputFactory;
-        _labelFactory = labelFactory;
-        _errorMessageFactory = errorMessageFactory;
+        ArgumentNullException.ThrowIfNull(textInputMapper);
+        ArgumentNullException.ThrowIfNull(labelMapper);
+        ArgumentNullException.ThrowIfNull(errorMessageMapper);
+        _textInputMapper = textInputMapper;
+        _labelMapper = labelMapper;
+        _errorMessageMapper = errorMessageMapper;
     }
-    public GDSTextInputComponent Map(IDocumentPart input)
-    {
-        var label = _labelFactory.GetManyFromPart(input).Single();
-        var textInput = _textInputFactory.GetManyFromPart(input).Single();
 
+    public override GDSTextInputComponent Map(IDocumentSection input)
+    {
+        var mappable = FindMappableSection<GDSTextInputComponent>(input);
         return new GDSTextInputComponent()
         {
-            Label = label,
-            Input = textInput,
-            ErrorMessage = _errorMessageFactory.GetManyFromPart(input).SingleOrDefault() ?? new GDSErrorMessageComponent() { ErrorMessage = string.Empty }
+            Label = _labelMapper.Map(mappable),
+            Input = _textInputMapper.Map(mappable),
+            ErrorMessage = _errorMessageMapper.Map(mappable) ?? new GDSErrorMessageComponent() { ErrorMessage = new() { Text = string.Empty } }
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection section) => section.TagName.Equals("div", StringComparison.OrdinalIgnoreCase); // TODO && section.HasClass("govuk-form-group");
 }

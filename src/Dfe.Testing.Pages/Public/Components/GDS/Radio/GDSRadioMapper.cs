@@ -1,32 +1,40 @@
-﻿using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
-using Dfe.Testing.Pages.Public.Components.Inputs;
-using Dfe.Testing.Pages.Public.Components.Label;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Inputs;
+using Dfe.Testing.Pages.Public.Components.Core.Label;
+using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Radio;
-internal sealed class GDSRadioMapper : IComponentMapper<GDSRadioComponent>
+internal sealed class GDSRadioMapper : BaseDocumentSectionToComponentMapper<GDSRadioComponent>
 {
-    private readonly ComponentFactory<LabelComponent> _labelFactory;
-    private readonly ComponentFactory<RadioComponent> _radioFactory;
-    private readonly ComponentFactory<GDSErrorMessageComponent> _errorMessageFactory;
+    private readonly IMapper<IDocumentSection, LabelComponent> _labelMapper;
+    private readonly IMapper<IDocumentSection, RadioComponent> _radioMapper;
+    private readonly IMapper<IDocumentSection, GDSErrorMessageComponent> _errorMessageMapper;
 
     public GDSRadioMapper(
-        ComponentFactory<LabelComponent> labelFactory,
-        ComponentFactory<RadioComponent> radioFactory,
-        ComponentFactory<GDSErrorMessageComponent> errorMessageFactory)
+        IDocumentSectionFinder documentSectionFinder,
+        IMapper<IDocumentSection, LabelComponent> labelMapper,
+        IMapper<IDocumentSection, RadioComponent> radioMapper,
+        IMapper<IDocumentSection, GDSErrorMessageComponent> errorMessageMapper) : base(documentSectionFinder)
     {
-        _labelFactory = labelFactory;
-        _radioFactory = radioFactory;
-        _errorMessageFactory = errorMessageFactory;
+        _labelMapper = labelMapper;
+        _radioMapper = radioMapper;
+        _errorMessageMapper = errorMessageMapper;
     }
-    public GDSRadioComponent Map(IDocumentPart input)
+    public override GDSRadioComponent Map(IDocumentSection section)
     {
-        var radio = _radioFactory.GetManyFromPart(input).Single();
+        var mappable = FindMappableSection<GDSRadioComponent>(section);
         return new()
         {
-            Label = _labelFactory.GetManyFromPart(input).Single(),
-            Radio = radio,
-            ErrorMessage = _errorMessageFactory.GetManyFromPart(input).FirstOrDefault()
-                ?? new GDSErrorMessageComponent() { ErrorMessage = string.Empty }
+            Label = _documentSectionFinder.FindMany<LabelComponent>(mappable).Single().MapWith(_labelMapper),
+            Radio = _documentSectionFinder.FindMany<RadioComponent>(mappable).Single().MapWith(_radioMapper),
+            ErrorMessage = _documentSectionFinder.FindMany<GDSErrorMessageComponent>(mappable).Select(_errorMessageMapper.Map).FirstOrDefault() ?? new GDSErrorMessageComponent()
+            {
+                ErrorMessage = new()
+                {
+                    Text = string.Empty
+                }
+            }
         };
     }
+
+    protected override bool IsMappableFrom(IDocumentSection section) => true; // TODO contains radio
 }

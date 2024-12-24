@@ -1,9 +1,11 @@
-﻿namespace Dfe.Testing.Pages.Public.Components.GDS.Button;
+﻿using Dfe.Testing.Pages.Public.Components.Core.Text;
 
-public record GDSButtonComponent : IComponent
+namespace Dfe.Testing.Pages.Public.Components.GDS.Button;
+
+public record GDSButtonComponent
 {
     public required ButtonStyleType ButtonType { get; init; } = ButtonStyleType.Primary;
-    public required string Text { get; init; } = string.Empty;
+    public required TextComponent Text { get; init; }
     public bool Disabled { get; init; } = false;
     public bool IsSubmit { get; init; } = false;
     public string Value { get; init; } = string.Empty;
