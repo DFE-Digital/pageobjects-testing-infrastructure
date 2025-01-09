@@ -128,12 +128,19 @@ public static class DependencyInjection
         .AddComponentMapper<GDSFooterComponent, GDSFooterMapper>()
         .AddComponentMapper<GDSNotificationBannerComponent, GDSNotificationBannerMapper>()
         .AddComponentMapper<GDSPanelComponent, GDSPanelMapper>()
-        .AddComponentMapper<GDSSelectComponent, GDSSelectMapper>();
+        .AddComponentMapper<GDSSelectComponent, GDSSelectMapper>()
+        // Builders for client to create complex objects
+        .AddTransient<IGDSButtonBuilder, GDSButtonBuilder>()
+        .AddTransient<IGDSCheckboxBuilder, GDSCheckboxBuilder>()
+        .AddTransient<ICheckboxBuilder, CheckboxBuilder>()
+        .AddTransient<IAnchorLinkComponentBuilder, AnchorLinkComponentBuilder>()
+        .AddTransient<IGDSCookieChoiceAvailableBannerComponentBuilder, GDSCookieChoiceAvailableBannerComponentBuilder>()
+        .AddTransient<IGDSCookieChoiceMadeBannerComponentBuilder, GDSCookieChoiceMadeBannerComponentBuilder>();
         return services;
     }
 }
 
-public static class ComponentExtensions
+internal static class ComponentExtensions
 {
     public static IServiceCollection AddComponentMapper<TComponent, TMapperImpl>(this IServiceCollection services)
         where TComponent : class

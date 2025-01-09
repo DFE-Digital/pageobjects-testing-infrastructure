@@ -6,6 +6,7 @@ using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler.Factory;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler.Options;
 using Dfe.Testing.Pages.Public.Components.Checkbox;
 using Dfe.Testing.Pages.Public.Components.GDS.Button;
+using Dfe.Testing.Pages.Public.Components.GDS.Checkbox;
 using Dfe.Testing.Pages.Public.Components.Link;
 using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
 
@@ -35,10 +36,5 @@ internal static class DependencyInjection
             .AddScoped<ICommandHandler<ClickElementCommand>, ClickElementCommandHandler>()
             .AddScoped<ICommandHandler<UpdateElementTextCommand>, UpdateElementTextCommandHandler>()
             // Helpers
-            .AddTransient<IHttpRequestBuilder, HttpRequestBuilder>()
-            .AddTransient<IGDSButtonBuilder, GDSButtonBuilder>()
-            .AddTransient<ICheckboxBuilder, CheckboxBuilder>()
-            .AddTransient<IAnchorLinkComponentBuilder, AnchorLinkComponentBuilder>()
-            .AddTransient<IGDSCookieChoiceAvailableBannerComponentBuilder, GDSCookieChoiceAvailableBannerComponentBuilder>()
-            .AddTransient<IGDSCookieChoiceMadeBannerComponentBuilder, GDSCookieChoiceMadeBannerComponentBuilder>();
+            .AddTransient<IHttpRequestBuilder, HttpRequestBuilder>();
 }
