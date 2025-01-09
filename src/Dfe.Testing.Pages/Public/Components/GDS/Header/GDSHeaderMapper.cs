@@ -1,26 +1,51 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
+﻿using Dfe.Testing.Pages.Public.Components.Link;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.SelectorFactory;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Header;
-internal sealed class GDSHeaderMapper : BaseDocumentSectionToComponentMapper<GDSHeaderComponent>
+internal sealed class GDSHeaderMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSHeaderComponent>>
 {
-    private readonly IMapper<IDocumentSection, AnchorLinkComponent> _linkMapper;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IComponentSelectorFactory _componentSelectorFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<AnchorLinkComponent>> _linkMapper;
 
     public GDSHeaderMapper(
-        IDocumentSectionFinder documentSectionFinder,
-        IMapper<IDocumentSection, AnchorLinkComponent> linkMapper) : base(documentSectionFinder)
+        IMapRequestFactory mapRequestFactory,
+        IMappingResultFactory mappingResultFactory,
+        IComponentSelectorFactory componentSelectorFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<AnchorLinkComponent>> linkMapper)
     {
         ArgumentNullException.ThrowIfNull(linkMapper);
+        _mapRequestFactory = mapRequestFactory;
+        _mappingResultFactory = mappingResultFactory;
+        _componentSelectorFactory = componentSelectorFactory;
         _linkMapper = linkMapper;
     }
-    public override GDSHeaderComponent Map(IDocumentSection input)
+    public MappedResponse<GDSHeaderComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        var mappable = FindMappableSection<GDSHeaderComponent>(input);
-        return new GDSHeaderComponent()
-        {
-            GovUKLink = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-header__link--homepage")).MapWith(_linkMapper),
-            NavigationLinks = _documentSectionFinder.FindMany(mappable, new CssElementSelector(".govuk-header nav")).Select(_linkMapper.Map),
-        };
-    }
+        MappedResponse<AnchorLinkComponent> mappedGovUKLink = _linkMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                new CssElementSelector(".govuk-header__link--homepage")))
+            .AddMappedResponseToResults(request.MappingResults);
 
-    protected override bool IsMappableFrom(IDocumentSection section) => section.TagName.Equals("header", StringComparison.OrdinalIgnoreCase);
+        IEnumerable<MappedResponse<AnchorLinkComponent>> mappedNavigationLinks = request.FindManyDescendantsAndMap<AnchorLinkComponent>(
+            _mapRequestFactory,
+            new CssElementSelector(".govuk-header nav"),
+            _linkMapper)
+        .AddMappedResponseToResults(request.MappingResults);
+
+        GDSHeaderComponent component = new()
+        {
+            GovUKLink = mappedGovUKLink.Mapped,
+            NavigationLinks = mappedNavigationLinks.Select(t => t.Mapped)
+        };
+
+        return _mappingResultFactory.Create(
+            component,
+            MappingStatus.Success,
+            request.From);
+    }
 }

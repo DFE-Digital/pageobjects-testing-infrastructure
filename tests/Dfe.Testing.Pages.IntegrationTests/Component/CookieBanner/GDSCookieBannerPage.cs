@@ -12,5 +12,5 @@ internal sealed class GDSCookieBannerPage : IPageObject
         _cookieBannerFactory = cookieBannerFactory;
     }
 
-    internal GDSCookieChoiceAvailableBannerComponent GetBannerNoScope() => _cookieBannerFactory.Get();
+    internal GDSCookieChoiceAvailableBannerComponent GetBannerNoScope() => _cookieBannerFactory.Create().Created;
 }

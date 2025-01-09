@@ -1,29 +1,39 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Text;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
-internal sealed class GDSErrorMessageMapper : BaseDocumentSectionToComponentMapper<GDSErrorMessageComponent>
+internal sealed class GDSErrorMessageMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>>
 {
-    private readonly IMapper<IDocumentSection, TextComponent> _textMapper;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
 
-    public GDSErrorMessageMapper(IDocumentSectionFinder documentSectionFinder, IMapper<IDocumentSection, TextComponent> textMapper) : base(documentSectionFinder)
+    public GDSErrorMessageMapper(
+        IMapRequestFactory mapRequestFactory,
+        IMappingResultFactory mappingResultFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper)
     {
+        _mappingResultFactory = mappingResultFactory;
         _textMapper = textMapper;
+        _mapRequestFactory = mapRequestFactory;
     }
 
-    public override GDSErrorMessageComponent Map(IDocumentSection input)
+    public MappedResponse<GDSErrorMessageComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        var mappable = FindMappableSection<GDSErrorMessageComponent>(input);
-        return new()
-        {
-            ErrorMessage =
-                _documentSectionFinder.FindMany(mappable, new CssElementSelector(".govuk-error-message"))
-                    .FirstOrDefault()?
-                    .MapWith(_textMapper) ?? new TextComponent()
-                    {
-                        Text = string.Empty
-                    }
-        };
-    }
+        MappedResponse<TextComponent> mappedErrorMessage = _textMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                new CssElementSelector(".govuk-error-message")));
 
-    protected override bool IsMappableFrom(IDocumentSection part) => true; //TODO something to do with contains an error message
+        GDSErrorMessageComponent component = new()
+        {
+            ErrorMessage = mappedErrorMessage.Mapped!
+        };
+
+        return _mappingResultFactory.Create(
+            component,
+            MappingStatus.Success,
+            request.From);
+    }
 }

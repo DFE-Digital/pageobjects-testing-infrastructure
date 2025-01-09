@@ -1,100 +1,82 @@
-﻿namespace Dfe.Testing.Pages.IntegrationTests.Component.Button;
+﻿using Dfe.Testing.Pages.Public.PageObject;
+
+namespace Dfe.Testing.Pages.IntegrationTests.Component.Button;
 public sealed class GDSButtonComponentTests
 {
     [Fact]
     public async Task Should_Query_DefaultGDSButton()
     {
-        var page = await ComponentTestHelper.RequestPage<GDSButtonPage>("/component/button/button");
+        using var scope = ComponentTestHelper.GetServices<GDSButtonPage>();
+        IDocumentService docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
+        await docService.RequestDocumentAsync(t => t.SetPath("/component/button/button"));
 
-        GDSButtonComponent expectedDefaultButton = new()
-        {
-            ButtonType = ButtonStyleType.Primary,
-            Text = new()
-            {
-                Text = "Save and continue"
-            },
-            IsSubmit = true,
-            Disabled = false
-        };
+        GDSButtonPage buttonPage = scope.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<GDSButtonPage>();
 
-        page.GetNoScope().Should().Be(expectedDefaultButton);
+        GDSButtonComponent defaultButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
+            .SetText("Save and continue")
+            .SetType("submit")
+            .Build();
+        buttonPage.GetNoScope().Should().Be(defaultButton);
     }
 
     [Fact]
     public async Task Should_Scoped_Query_DefaultGDSButton()
     {
-        var page = await ComponentTestHelper.RequestPage<GDSButtonPage>("/component/button/buttonnested");
+        using var scope = ComponentTestHelper.GetServices<GDSButtonPage>();
+        IDocumentService docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
+        await docService.RequestDocumentAsync(t => t.SetPath("/component/button/buttonnested"));
 
-        GDSButtonComponent expectedDefaultButton = new()
-        {
-            ButtonType = ButtonStyleType.Primary,
-            Text = new()
-            {
-                Text = "Nested save and continue"
-            },
-            IsSubmit = true,
-            Disabled = false
-        };
+        GDSButtonPage buttonPage = scope.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<GDSButtonPage>();
 
-        page.GetWithScope().Should().Be(expectedDefaultButton);
+        GDSButtonComponent nestedDefaultButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
+            .SetText("Nested save and continue")
+            .SetType("submit")
+            .Build();
+
+        buttonPage.GetWithScope().Should().Be(nestedDefaultButton);
     }
 
     [Fact]
     public async Task Should_Query_Many_DefaultGDSButton()
     {
-        var page = await ComponentTestHelper.RequestPage<GDSButtonPage>("/component/button/buttonnested");
+        using var scope = ComponentTestHelper.GetServices<GDSButtonPage>();
+        IDocumentService docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
+        await docService.RequestDocumentAsync(t => t.SetPath("/component/button/buttonnested"));
 
-        page.GetManyNoScope().Should().BeEquivalentTo(
-            new GDSButtonComponent[]
-            {
-                new()
-                {
-                    ButtonType = ButtonStyleType.Primary,
-                    Text = new()
-                    {
-                        Text = "Save and continue"
-                    },
-                    IsSubmit = true,
-                    Disabled = false
-                },
-                new()
-                {
-                    ButtonType = ButtonStyleType.Primary,
-                    Text = new() { Text = "Nested save and continue" },
-                    IsSubmit = true,
-                    Disabled = false
-                }
-            });
+        GDSButtonPage buttonPage = scope.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<GDSButtonPage>();
+
+        GDSButtonComponent nestedButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
+            .SetText("Nested save and continue")
+            .SetType("submit")
+            .Build();
+
+        GDSButtonComponent button = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
+            .SetText("Save and continue")
+            .SetType("submit")
+            .Build();
+
+        buttonPage.GetManyNoScope().Should().BeEquivalentTo([button, nestedButton]);
     }
 
     [Fact]
     public async Task Should_Query_Many_WithScope_DefaultGDSButton()
     {
-        var page = await ComponentTestHelper.RequestPage<GDSButtonPage>("/component/button/buttonnested");
+        using var scope = ComponentTestHelper.GetServices<GDSButtonPage>();
+        IDocumentService docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
+        await docService.RequestDocumentAsync(t => t.SetPath("/component/button/buttonnested"));
 
-        page.GetManyWithScope().Should().BeEquivalentTo(
-            new GDSButtonComponent[]
-            {
-                new()
-                {
-                    ButtonType = ButtonStyleType.Primary,
-                    Text = new()
-                    {
-                        Text = "Save and continue"
-                    },
-                    IsSubmit = true,
-                    Disabled = false
-                },
-                new()
-                {
-                    ButtonType = ButtonStyleType.Primary,
-                    Text = new()
-                    {
-                        Text = "Nested save and continue"
-                    },
-                    IsSubmit = true,
-                    Disabled = false
-                }
-            });
+        GDSButtonPage buttonPage = scope.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<GDSButtonPage>();
+
+        GDSButtonComponent nestedButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
+            .SetText("Nested save and continue")
+            .SetType("submit")
+            .Build();
+
+        GDSButtonComponent button = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
+            .SetText("Save and continue")
+            .SetType("submit")
+            .Build();
+
+        buttonPage.GetManyNoScope().Should().BeEquivalentTo([button, nestedButton]);
     }
 }

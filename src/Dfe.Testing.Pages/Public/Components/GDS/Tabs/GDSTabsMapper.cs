@@ -1,31 +1,56 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
-using Dfe.Testing.Pages.Public.Components.Core.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Link;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.SelectorFactory;
+using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Tabs;
-internal sealed class GDSTabsMapper : BaseDocumentSectionToComponentMapper<GDSTabsComponent>
+internal sealed class GDSTabsMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSTabsComponent>>
 {
-    private readonly IMapper<IDocumentSection, AnchorLinkComponent> _anchorLinkFactory;
-    private readonly IMapper<IDocumentSection, TextComponent> _textMapper;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IComponentSelectorFactory _componentSelectorFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<AnchorLinkComponent>> _anchorLinkMapper;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
+    private readonly IMappingResultFactory _mappingResultFactory;
 
     public GDSTabsMapper(
-        IDocumentSectionFinder documentSectionFinder,
-        IMapper<IDocumentSection, AnchorLinkComponent> anchorLinkFactory,
-        IMapper<IDocumentSection, TextComponent> textMapper) : base(documentSectionFinder)
+        IMapRequestFactory mapRequestFactory,
+        IComponentSelectorFactory componentSelectorFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<AnchorLinkComponent>> anchorLinkFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
+        IMappingResultFactory mappingResultFactory)
     {
         ArgumentNullException.ThrowIfNull(anchorLinkFactory);
         ArgumentNullException.ThrowIfNull(textMapper);
-        _anchorLinkFactory = anchorLinkFactory;
+        _mapRequestFactory = mapRequestFactory;
+        _componentSelectorFactory = componentSelectorFactory;
+        _anchorLinkMapper = anchorLinkFactory;
         _textMapper = textMapper;
+        _mappingResultFactory = mappingResultFactory;
     }
-    public override GDSTabsComponent Map(IDocumentSection section)
+    public MappedResponse<GDSTabsComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        var mappable = FindMappableSection<GDSTabsComponent>(section);
-        return new GDSTabsComponent()
-        {
-            Heading = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-tabs__title")).MapWith(_textMapper),
-            Tabs = _documentSectionFinder.FindMany(mappable, new CssElementSelector(".govuk-tabs__list")).Select(_anchorLinkFactory.Map)
-        };
-    }
+        MappedResponse<TextComponent> headingResponse = _textMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                new CssElementSelector(".govuk-tabs__title")))
+        .AddMappedResponseToResults(request.MappingResults);
 
-    protected override bool IsMappableFrom(IDocumentSection section) => true; // TODO check contains tabs inside
+        IEnumerable<MappedResponse<AnchorLinkComponent>> links =
+            request.FindManyDescendantsAndMap<AnchorLinkComponent>(
+                _mapRequestFactory,
+                new CssElementSelector(".govuk-tabs__list"),
+                _anchorLinkMapper);
+
+        GDSTabsComponent tabs = new()
+        {
+            Heading = headingResponse.Mapped,
+            Tabs = links.Select(t => t.Mapped!)
+        };
+
+        return _mappingResultFactory.Create(
+            tabs,
+            MappingStatus.Success,
+            request.From);
+    }
 }

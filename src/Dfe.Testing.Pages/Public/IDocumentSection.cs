@@ -1,6 +1,7 @@
 ﻿namespace Dfe.Testing.Pages.Public;
 public interface IDocumentSection
 {
+    string Document { get; }
     string Text { get; set; }
     string TagName { get; }
     bool HasAttribute(string attributeName);

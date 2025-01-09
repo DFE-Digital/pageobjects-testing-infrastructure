@@ -1,6 +1,6 @@
 ﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;
 using Dfe.Testing.Pages.Public.Components;
-using Dfe.Testing.Pages.Public.Components.Core.Link;
+using Dfe.Testing.Pages.Public.Components.Link;
 using Dfe.Testing.Pages.Public.PageObject;
 using Dfe.Testing.Pages.Shared.Contracts;
 using Dfe.Testing.Pages.Shared.Selector;
@@ -25,7 +25,7 @@ public sealed class WebDriverIntegrationTestDesign
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        SearchPage searchPage = pageObjectFactory.GetPage<SearchPage>();
+        SearchPage searchPage = pageObjectFactory.Create<SearchPage>();
 
         searchPage.ClickAnchorLink();
         var driverAdaptorProvider = collection.ServiceProvider.GetRequiredService<IWebDriverAdaptorProvider>();
@@ -48,7 +48,7 @@ public sealed class WebDriverIntegrationTestDesign
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        SearchPage page = pageObjectFactory.GetPage<SearchPage>();
+        SearchPage page = pageObjectFactory.Create<SearchPage>();
         page.GetLinks().Should().HaveCount(3);
     }
 
@@ -70,10 +70,10 @@ public sealed class WebDriverIntegrationTestDesign
             Selector = new CssElementSelector("#home-link")
         });
 
-        public IEnumerable<AnchorLinkComponent> GetLinks() => _anchorLink.GetMany(new()
+        public IEnumerable<AnchorLinkComponent> GetLinks() => _anchorLink.CreateMany(new()
         {
             FindInScope = new CssElementSelector(".govuk-header")
-        });
+        }).Select(t => t.Created);
     }
 }
 

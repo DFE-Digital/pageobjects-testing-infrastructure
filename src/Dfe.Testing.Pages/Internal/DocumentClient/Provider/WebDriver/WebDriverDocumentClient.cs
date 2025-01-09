@@ -102,8 +102,8 @@ internal sealed class WebDriverDocumentClient : IDocumentClient
             get => _textHandler.Handle(_wrappedElement.Text);
             set => _wrappedElement.SendKeys(value);
         }
-
         public string TagName => _wrappedElement.TagName;
+        public string Document => _wrappedElement.GetAttribute("outerHTML"); // innerHTML for internal if needed
 
         public bool HasAttribute(string attributeName) => GetAttribute(attributeName) != null;
         public string? GetAttribute(string attributeName)

@@ -1,43 +1,65 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
-using Dfe.Testing.Pages.Public.Components.Core.Text;
+﻿using System.ComponentModel;
 using Dfe.Testing.Pages.Public.Components.GDS.Button;
+using Dfe.Testing.Pages.Public.Components.GDS.Checkbox;
+using Dfe.Testing.Pages.Public.Components.Link;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.SelectorFactory;
+using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.CookieBanner;
-internal sealed class GDSCookieChoiceMadeBannerMappper : BaseDocumentSectionToComponentMapper<GDSCookieChoiceMadeBannerComponent>
+internal sealed class GDSCookieChoiceMadeBannerMappper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSCookieChoiceMadeBannerComponent>>
 {
-    private readonly IMapper<IDocumentSection, TextComponent> _textMapper;
-    private readonly IMapper<IDocumentSection, AnchorLinkComponent> _linkMapper;
-    private readonly IMapper<IDocumentSection, GDSButtonComponent> _buttonMapper;
+    private readonly IGDSCookieChoiceMadeBannerComponentBuilder _builder;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<AnchorLinkComponent>> _linkMapper;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSButtonComponent>> _buttonMapper;
 
     public GDSCookieChoiceMadeBannerMappper(
-        IDocumentSectionFinder documentSectionFinder,
-        IMapper<IDocumentSection, TextComponent> textFactory,
-        IMapper<IDocumentSection, AnchorLinkComponent> linkFactory,
-        IMapper<IDocumentSection, GDSButtonComponent> buttonFactory) : base(documentSectionFinder)
+        IGDSCookieChoiceMadeBannerComponentBuilder builder,
+        IMapRequestFactory mapRequestFactory,
+        IMappingResultFactory mappingResultFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<AnchorLinkComponent>> linkFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSButtonComponent>> buttonFactory)
     {
+        _mappingResultFactory = mappingResultFactory;
         _textMapper = textFactory;
         _linkMapper = linkFactory;
         _buttonMapper = buttonFactory;
+        _builder = builder;
+        _mapRequestFactory = mapRequestFactory;
     }
 
-    public override GDSCookieChoiceMadeBannerComponent Map(IDocumentSection input)
+    public MappedResponse<GDSCookieChoiceMadeBannerComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        var mappable = FindMappableSection<GDSCookieChoiceMadeBannerComponent>(input);
-        return new()
-        {
-            Message = _documentSectionFinder.FindMany(mappable, new CssElementSelector(".govuk-cookie-banner_content"))
-                    .Single()
-                    .MapWith(_textMapper),
+        MappedResponse<TextComponent> mappedMessage = _textMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                new CssElementSelector(".govuk-cookie-banner_content")))
+            .AddMappedResponseToResults(request.MappingResults);
 
-            ChangeYourCookieSettingsLink = _documentSectionFinder.FindMany<AnchorLinkComponent>(mappable)
-                    .Single()
-                    .MapWith(_linkMapper),
+        MappedResponse<AnchorLinkComponent> mappedChangeYourCookiesLink = _linkMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults))
+            .AddMappedResponseToResults(request.MappingResults);
 
-            HideCookies = _documentSectionFinder.FindMany<GDSButtonComponent>(mappable)
-                    .Single()
-                    .MapWith(_buttonMapper)
-        };
+        MappedResponse<GDSButtonComponent> mappedHideCookiesButton = _buttonMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults))
+            .AddMappedResponseToResults(request.MappingResults);
+
+        _builder.SetHideCookiesButton(mappedHideCookiesButton.Mapped!)
+            .SetChangeYourCookieSettingsLink(mappedChangeYourCookiesLink.Mapped!)
+            .SetMessage(mappedMessage.Mapped!.Text);
+
+        return _mappingResultFactory.Create(
+            _builder.Build(),
+            MappingStatus.Success,
+            request.From);
     }
-
-    protected override bool IsMappableFrom(IDocumentSection part) => part.GetAttribute("class")!.Contains("govuk-cookie-banner");
 }

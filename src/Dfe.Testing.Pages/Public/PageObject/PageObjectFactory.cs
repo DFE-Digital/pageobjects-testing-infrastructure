@@ -10,7 +10,7 @@ internal sealed class PageObjectFactory : IPageObjectFactory
         _pages = pages;
     }
 
-    public TPage GetPage<TPage>() where TPage : class, IPageObject
+    public TPage Create<TPage>() where TPage : class, IPageObject
         => (TPage)_pages.Single((page) =>
             page.GetType().Name == typeof(TPage).Name);
 }

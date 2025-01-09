@@ -1,38 +1,66 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Inputs;
-using Dfe.Testing.Pages.Public.Components.Core.Label;
-using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
+﻿using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
+using Dfe.Testing.Pages.Public.Components.Inputs;
+using Dfe.Testing.Pages.Public.Components.Label;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.SelectorFactory;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.TextInput;
-internal sealed class GDSTextInputMapper : BaseDocumentSectionToComponentMapper<GDSTextInputComponent>
+internal sealed class GDSTextInputMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSTextInputComponent>>
 {
-    private readonly IMapper<IDocumentSection, TextInputComponent> _textInputMapper;
-    private readonly IMapper<IDocumentSection, LabelComponent> _labelMapper;
-    private readonly IMapper<IDocumentSection, GDSErrorMessageComponent> _errorMessageMapper;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IComponentSelectorFactory _componentSelectorFactory;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextInputComponent>> _textInputMapper;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<LabelComponent>> _labelMapper;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>> _errorMessageMapper;
 
     public GDSTextInputMapper(
-        IDocumentSectionFinder documentSectionFinder,
-        IMapper<IDocumentSection, TextInputComponent> textInputMapper,
-        IMapper<IDocumentSection, LabelComponent> labelMapper,
-        IMapper<IDocumentSection, GDSErrorMessageComponent> errorMessageMapper) : base(documentSectionFinder)
+        IMapRequestFactory mapRequestFactory,
+        IComponentSelectorFactory componentSelectorFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextInputComponent>> textInputMapper,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<LabelComponent>> labelMapper,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>> errorMessageMapper,
+        IMappingResultFactory mappingResultFactory)
     {
         ArgumentNullException.ThrowIfNull(textInputMapper);
         ArgumentNullException.ThrowIfNull(labelMapper);
         ArgumentNullException.ThrowIfNull(errorMessageMapper);
+        _mapRequestFactory = mapRequestFactory;
         _textInputMapper = textInputMapper;
         _labelMapper = labelMapper;
         _errorMessageMapper = errorMessageMapper;
+        _mappingResultFactory = mappingResultFactory;
+        _componentSelectorFactory = componentSelectorFactory;
     }
 
-    public override GDSTextInputComponent Map(IDocumentSection input)
+    public MappedResponse<GDSTextInputComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        var mappable = FindMappableSection<GDSTextInputComponent>(input);
-        return new GDSTextInputComponent()
-        {
-            Label = _labelMapper.Map(mappable),
-            Input = _textInputMapper.Map(mappable),
-            ErrorMessage = _errorMessageMapper.Map(mappable) ?? new GDSErrorMessageComponent() { ErrorMessage = new() { Text = string.Empty } }
-        };
-    }
+        MappedResponse<LabelComponent> label = _labelMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                _componentSelectorFactory.GetSelector<LabelComponent>()));
 
-    protected override bool IsMappableFrom(IDocumentSection section) => section.TagName.Equals("div", StringComparison.OrdinalIgnoreCase); // TODO && section.HasClass("govuk-form-group");
+        MappedResponse<TextInputComponent> text = _textInputMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults));
+
+        MappedResponse<GDSErrorMessageComponent> errorMessage = _errorMessageMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults));
+
+        GDSTextInputComponent component = new()
+        {
+            Label = label.Mapped,
+            TextInput = text.Mapped,
+            ErrorMessage = errorMessage.Mapped
+        };
+
+        return _mappingResultFactory.Create(
+            component,
+            MappingStatus.Success,
+            request.From);
+    }
 }

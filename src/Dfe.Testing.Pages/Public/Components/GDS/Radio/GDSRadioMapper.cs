@@ -1,40 +1,60 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Inputs;
-using Dfe.Testing.Pages.Public.Components.Core.Label;
-using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
+﻿using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
+using Dfe.Testing.Pages.Public.Components.Label;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.Radio;
+using Dfe.Testing.Pages.Public.Components.SelectorFactory;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Radio;
-internal sealed class GDSRadioMapper : BaseDocumentSectionToComponentMapper<GDSRadioComponent>
+internal sealed class GDSRadioMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSRadioComponent>>
 {
-    private readonly IMapper<IDocumentSection, LabelComponent> _labelMapper;
-    private readonly IMapper<IDocumentSection, RadioComponent> _radioMapper;
-    private readonly IMapper<IDocumentSection, GDSErrorMessageComponent> _errorMessageMapper;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IComponentSelectorFactory _componentSelectorFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<LabelComponent>> _labelMapper;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<RadioComponent>> _radioMapper;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>> _errorMessageMapper;
 
     public GDSRadioMapper(
-        IDocumentSectionFinder documentSectionFinder,
-        IMapper<IDocumentSection, LabelComponent> labelMapper,
-        IMapper<IDocumentSection, RadioComponent> radioMapper,
-        IMapper<IDocumentSection, GDSErrorMessageComponent> errorMessageMapper) : base(documentSectionFinder)
+        IMapRequestFactory mapRequestFactory,
+        IMappingResultFactory mappingResultFactory,
+        IComponentSelectorFactory componentSelectorFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<LabelComponent>> labelMapper,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<RadioComponent>> radioMapper,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>> errorMessageMapper)
     {
+        _mappingResultFactory = mappingResultFactory;
         _labelMapper = labelMapper;
         _radioMapper = radioMapper;
         _errorMessageMapper = errorMessageMapper;
+        _componentSelectorFactory = componentSelectorFactory;
+        _mapRequestFactory = mapRequestFactory;
     }
-    public override GDSRadioComponent Map(IDocumentSection section)
+    public MappedResponse<GDSRadioComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        var mappable = FindMappableSection<GDSRadioComponent>(section);
-        return new()
-        {
-            Label = _documentSectionFinder.FindMany<LabelComponent>(mappable).Single().MapWith(_labelMapper),
-            Radio = _documentSectionFinder.FindMany<RadioComponent>(mappable).Single().MapWith(_radioMapper),
-            ErrorMessage = _documentSectionFinder.FindMany<GDSErrorMessageComponent>(mappable).Select(_errorMessageMapper.Map).FirstOrDefault() ?? new GDSErrorMessageComponent()
-            {
-                ErrorMessage = new()
-                {
-                    Text = string.Empty
-                }
-            }
-        };
-    }
+        MappedResponse<LabelComponent> mappedLabel = _labelMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                request.EntryPoint ?? _componentSelectorFactory.GetSelector<LabelComponent>()))
+            .AddMappedResponseToResults(request.MappingResults);
 
-    protected override bool IsMappableFrom(IDocumentSection section) => true; // TODO contains radio
+        MappedResponse<RadioComponent> mappedRadio = _radioMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                request.EntryPoint ?? _componentSelectorFactory.GetSelector<RadioComponent>()))
+            .AddMappedResponseToResults(request.MappingResults);
+
+        GDSRadioComponent radio = new()
+        {
+            Label = mappedLabel.Mapped,
+            Radio = mappedRadio.Mapped,
+            Error = _errorMessageMapper.Map(request).Mapped
+        };
+
+        return _mappingResultFactory.Create(
+            radio,
+            MappingStatus.Success,
+            request.From);
+    }
 }

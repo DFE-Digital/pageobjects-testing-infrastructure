@@ -1,27 +1,49 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Text;
+﻿using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.NotificationBanner;
-internal sealed class GDSNotificationBannerMapper : BaseDocumentSectionToComponentMapper<GDSNotificationBannerComponent>
+internal sealed class GDSNotificationBannerMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSNotificationBannerComponent>>
 {
-    private readonly IMapper<IDocumentSection, TextComponent> _textMapper;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
 
     public GDSNotificationBannerMapper(
-        IDocumentSectionFinder documentSectionFinder,
-        IMapper<IDocumentSection, TextComponent> textMapper) : base(documentSectionFinder)
+        IMapRequestFactory mapRequestFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
+        IMappingResultFactory mappingResultFactory)
     {
         ArgumentNullException.ThrowIfNull(textMapper);
+        _mapRequestFactory = mapRequestFactory;
         _textMapper = textMapper;
+        _mappingResultFactory = mappingResultFactory;
     }
 
-    public override GDSNotificationBannerComponent Map(IDocumentSection input)
+    public MappedResponse<GDSNotificationBannerComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        var mappable = FindMappableSection<GDSNotificationBannerComponent>(input);
-        return new()
-        {
-            Heading = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-notification-banner__title")).MapWith(_textMapper),
-            Content = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-notification-banner__content")).MapWith(_textMapper)
-        };
-    }
+        MappedResponse<TextComponent> mappedHeading = _textMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                new CssElementSelector(".govuk-notification-banner__title")))
+            .AddMappedResponseToResults(request.MappingResults);
 
-    protected override bool IsMappableFrom(IDocumentSection section) => true; // TODO notification banner
+        MappedResponse<TextComponent> mappedContent = _textMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                new CssElementSelector(".govuk-notification-banner__content")))
+        .AddMappedResponseToResults(request.MappingResults);
+
+        GDSNotificationBannerComponent component = new()
+        {
+            Heading = mappedHeading.Mapped,
+            Content = mappedContent.Mapped
+        };
+
+        return _mappingResultFactory.Create(
+            component,
+            MappingStatus.Success,
+            request.From);
+    }
 }

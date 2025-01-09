@@ -1,21 +1,40 @@
-﻿namespace Dfe.Testing.Pages.Public.Components.GDS.Select;
-internal sealed class OptionsMapper : BaseDocumentSectionToComponentMapper<OptionComponent>
+﻿using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.Text;
+
+namespace Dfe.Testing.Pages.Public.Components.GDS.Select;
+internal sealed class OptionsMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<OptionComponent>>
 {
-    public OptionsMapper(IDocumentSectionFinder documentSectionFinder) : base(documentSectionFinder)
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
+    private readonly IMappingResultFactory _mappingResultFactory;
+
+    public OptionsMapper(
+        IMapRequestFactory mapRequestFactory,
+        IMappingResultFactory mappingResultFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper)
     {
+        _textMapper = textMapper;
+        _mappingResultFactory = mappingResultFactory;
+        _mapRequestFactory = mapRequestFactory;
     }
-
-    public override OptionComponent Map(IDocumentSection section)
+    public MappedResponse<OptionComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        var mappable = FindMappableSection<OptionComponent>(section);
+        MappedResponse<TextComponent> mappedText = _textMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults))
+            .AddMappedResponseToResults(request.MappingResults);
 
-        return new()
+        OptionComponent option = new()
         {
-            IsSelected = mappable.HasAttribute("selected"),
-            Text = mappable.Text ?? string.Empty,
-            Value = mappable.GetAttribute("value") ?? string.Empty
+            IsSelected = request.From.HasAttribute("selected"),
+            Text = mappedText.Mapped,
+            Value = request.From.GetAttribute("value") ?? string.Empty
         };
-    }
 
-    protected override bool IsMappableFrom(IDocumentSection section) => section.TagName.Equals("option", StringComparison.OrdinalIgnoreCase);
+        return _mappingResultFactory.Create(
+            option,
+            MappingStatus.Success,
+            request.From);
+    }
 }

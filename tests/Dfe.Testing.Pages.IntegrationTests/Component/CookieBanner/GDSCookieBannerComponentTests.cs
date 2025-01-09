@@ -1,5 +1,5 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
-using Dfe.Testing.Pages.Public.Components.Core.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Link;
+using Dfe.Testing.Pages.Public.PageObject;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component.CookieBanner;
 public sealed class GDSCookieBannerComponentTests
@@ -8,47 +8,39 @@ public sealed class GDSCookieBannerComponentTests
     [Fact]
     public async Task Should_Query_DefaultGDSCookieBanner()
     {
-        var page = await ComponentTestHelper.RequestPage<GDSCookieBannerPage>("/component/cookiebanner");
+        using var scope = ComponentTestHelper.GetServices<GDSCookieBannerPage>();
+        IDocumentService docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
+        await docService.RequestDocumentAsync(t => t.SetPath("/component/cookiebanner"));
 
-        GDSCookieChoiceAvailableBannerComponent expectedDefaultCookieBanner = new()
-        {
-            Heading = new TextComponent() { Text = "Cookies on [name of service]" },
-            CookieChoiceButtons =
-            [
-                new GDSButtonComponent()
-                {
-                    Text = new()
-                    {
-                        Text = "Accept additional cookies",
-                    },
-                    ButtonType = ButtonStyleType.Primary,
-                    IsSubmit = true,
-                    Value = "yes",
-                    Name = "cookies[additional]"
-                },
-                new GDSButtonComponent()
-                {
-                    Text = new()
-                    {
-                        Text = "Reject additional cookies"
-                    },
-                    ButtonType = ButtonStyleType.Primary,
-                    IsSubmit = true,
-                    Value = "no",
-                    Name = "cookies[additional]"
-                }
-            ],
-            ViewCookiesLink = new AnchorLinkComponent()
-            {
-                LinkedTo = "#",
-                Text = new()
-                {
-                    Text = "View cookies"
-                },
-                OpensInNewTab = false
-            }
-        };
+        GDSCookieBannerPage cookieBannerPage = scope.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<GDSCookieBannerPage>();
+        IGDSCookieChoiceAvailableBannerComponentBuilder choiceAvailableBannerBuilder = scope.ServiceProvider.GetRequiredService<IGDSCookieChoiceAvailableBannerComponentBuilder>();
 
-        page.GetBannerNoScope().Should().BeEquivalentTo(expectedDefaultCookieBanner);
+        GDSButtonComponent acceptCookiesButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
+            .SetText("Accept additional cookies")
+                    .SetName("cookies[additional]")
+                    .SetType("submit")
+                    .SetValue("yes")
+                    .Build();
+        GDSButtonComponent rejectCookiesButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
+            .SetText("Reject additional cookies")
+                    .SetName("cookies[additional]")
+                    .SetType("submit")
+                    .SetValue("no")
+                    .Build();
+
+        AnchorLinkComponent anchorLink = scope.ServiceProvider.GetRequiredService<IAnchorLinkComponentBuilder>()
+            .SetText("View cookies")
+            .SetLink("#")
+            .SetOpensInNewTab(false)
+            .Build();
+
+        choiceAvailableBannerBuilder.SetHeading("Cookies on [name of service]")
+            .AddCookieChoiceButton(acceptCookiesButton)
+            .AddCookieChoiceButton(rejectCookiesButton)
+            .SetViewCookiesLink(anchorLink);
+
+        GDSCookieChoiceAvailableBannerComponent component = choiceAvailableBannerBuilder.Build();
+
+        cookieBannerPage.GetBannerNoScope().Should().BeEquivalentTo(component);
     }
 }

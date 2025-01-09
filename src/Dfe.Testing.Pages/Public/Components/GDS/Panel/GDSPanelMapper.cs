@@ -1,27 +1,51 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Text;
+﻿using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Panel;
-internal sealed class GDSPanelMapper : BaseDocumentSectionToComponentMapper<GDSPanelComponent>
+internal sealed class GDSPanelMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSPanelComponent>>
 {
-    private readonly IMapper<IDocumentSection, TextComponent> _textMapper;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
 
     public GDSPanelMapper(
-        IDocumentSectionFinder documentSectionFinder,
-        IMapper<IDocumentSection, TextComponent> textMapper) : base(documentSectionFinder)
+        IMapRequestFactory mapRequestFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
+        IMappingResultFactory mappingResultFactory)
     {
         ArgumentNullException.ThrowIfNull(textMapper);
+        _mapRequestFactory = mapRequestFactory;
         _textMapper = textMapper;
+        _mappingResultFactory = mappingResultFactory;
     }
 
-    public override GDSPanelComponent Map(IDocumentSection input)
+    public MappedResponse<GDSPanelComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        var mappable = FindMappableSection<GDSPanelComponent>(input);
-        return new()
-        {
-            Heading = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-panel__title")).MapWith(_textMapper),
-            Content = _documentSectionFinder.Find(mappable, new CssElementSelector(".govuk-panel__body")).MapWith(_textMapper),
-        };
-    }
+        // Heading
+        MappedResponse<TextComponent> mappedHeading = _textMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                new CssElementSelector(".govuk-panel__title")))
+            .AddMappedResponseToResults(request.MappingResults);
 
-    protected override bool IsMappableFrom(IDocumentSection section) => true; // TODO panel
+        // Content
+        MappedResponse<TextComponent> mappedContent = _textMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                new CssElementSelector(".govuk-panel__body")))
+            .AddMappedResponseToResults(request.MappingResults);
+
+        GDSPanelComponent panel = new()
+        {
+            Heading = mappedHeading.Mapped,
+            Content = mappedContent.Mapped
+        };
+
+        return _mappingResultFactory.Create(
+            panel,
+            MappingStatus.Success,
+            request.From);
+    }
 }

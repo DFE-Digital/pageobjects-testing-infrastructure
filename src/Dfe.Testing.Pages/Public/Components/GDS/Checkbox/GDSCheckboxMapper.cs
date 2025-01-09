@@ -1,35 +1,46 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Inputs;
-using Dfe.Testing.Pages.Public.Components.Core.Label;
+﻿using Dfe.Testing.Pages.Public.Components.Checkbox;
+using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
+using Dfe.Testing.Pages.Public.Components.Label;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Checkbox;
-internal sealed class GDSCheckboxMapper : BaseDocumentSectionToComponentMapper<GDSCheckboxComponent>
+internal sealed class GDSCheckboxMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSCheckboxComponent>>
 {
-    private readonly IMapper<IDocumentSection, CheckboxComponent> _checkboxMapper;
-    private readonly IMapper<IDocumentSection, LabelComponent> _labelMapper;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IGDSCheckboxBuilder _builder;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<CheckboxComponent>> _checkboxMapper;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<LabelComponent>> _labelMapper;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>> _errorMessageMapper;
 
     public GDSCheckboxMapper(
-        IDocumentSectionFinder documentSectionFinder,
-        IMapper<IDocumentSection, CheckboxComponent> checkboxMapper,
-        IMapper<IDocumentSection, LabelComponent> labelMapper)
-            : base(documentSectionFinder)
+        IMappingResultFactory mappingResultFactory,
+        IGDSCheckboxBuilder builder,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<CheckboxComponent>> checkboxMapper,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<LabelComponent>> labelMapper,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>> errorMessageMapper)
     {
+        _mappingResultFactory = mappingResultFactory;
+        _builder = builder;
         _checkboxMapper = checkboxMapper;
         _labelMapper = labelMapper;
+        _errorMessageMapper = errorMessageMapper;
     }
 
-    public override GDSCheckboxComponent Map(IDocumentSection section) // MapComponentRequest<TComponent> ComponentFinderMapping, 
+    public MappedResponse<GDSCheckboxComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        IDocumentSection mappable = FindMappableSection<GDSCheckboxComponent>(section);
-        CheckboxComponent checkbox = _checkboxMapper.Map(mappable);
-        return new()
-        {
-            Label = _labelMapper.Map(mappable),
-            Name = checkbox.Name,
-            Value = checkbox.Value,
-            Checked = checkbox.IsChecked,
-            IsRequired = checkbox.IsRequired
-        };
-    }
+        MappedResponse<LabelComponent> mappedLabel = _labelMapper.Map(request).AddMappedResponseToResults(request.MappingResults);
+        MappedResponse<CheckboxComponent> mappedCheckbox = _checkboxMapper.Map(request).AddMappedResponseToResults(request.MappingResults);
+        MappedResponse<GDSErrorMessageComponent> mappedErrorMessage = _errorMessageMapper.Map(request).AddMappedResponseToResults(request.MappingResults);
 
-    protected override bool IsMappableFrom(IDocumentSection part) => true; // TODO something with input
+        GDSCheckboxComponent component = _builder.SetCheckbox(mappedCheckbox.Mapped!)
+            .SetLabelText(mappedLabel.Mapped!.Text!.Text)
+            .SetLabelFor(mappedLabel.Mapped!.Text.Text)
+            .SetErrorMessage(mappedErrorMessage.Mapped!.ErrorMessage.Text)
+            .Build();
+
+        return _mappingResultFactory.Create(
+                component,
+                MappingStatus.Success,
+                request.From);
+    }
 }

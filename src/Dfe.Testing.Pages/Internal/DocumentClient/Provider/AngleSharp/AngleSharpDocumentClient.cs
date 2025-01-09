@@ -126,6 +126,8 @@ internal class AngleSharpDocumentClient : IDocumentClient
 
         public string TagName => _wrappedElement.TagName.ToLowerInvariant();
 
+        public string Document => _wrappedElement.ToHtml();
+
         public void Click()
         {
             throw new NotImplementedException("Clicking is not available with an AngleSharp client");

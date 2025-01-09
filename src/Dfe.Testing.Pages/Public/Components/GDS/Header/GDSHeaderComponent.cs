@@ -1,8 +1,8 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
+﻿using Dfe.Testing.Pages.Public.Components.Link;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Header;
 public record GDSHeaderComponent
 {
-    public required AnchorLinkComponent GovUKLink { get; init; }
-    public IEnumerable<AnchorLinkComponent> NavigationLinks { get; init; } = [];
+    public required AnchorLinkComponent? GovUKLink { get; init; }
+    public IEnumerable<AnchorLinkComponent?> NavigationLinks { get; init; } = [];
 }

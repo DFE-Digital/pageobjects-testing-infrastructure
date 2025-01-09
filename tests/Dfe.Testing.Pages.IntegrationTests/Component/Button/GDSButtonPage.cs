@@ -12,14 +12,14 @@ internal sealed class GDSButtonPage : IPageObject
         _buttonFactory = buttonFactory;
     }
 
-    public GDSButtonComponent GetNoScope() => _buttonFactory.Get();
-    public GDSButtonComponent GetWithScope() => _buttonFactory.Get(new CreateComponentRequest()
+    public GDSButtonComponent GetNoScope() => _buttonFactory.Create().Created;
+    public GDSButtonComponent GetWithScope() => _buttonFactory.Create(new CreateComponentRequest()
     {
         FindInScope = new CssElementSelector("#gds-button-default-nested-nested-container")
-    });
-    public IEnumerable<GDSButtonComponent> GetManyNoScope() => _buttonFactory.GetMany();
-    public IEnumerable<GDSButtonComponent> GetManyWithScope() => _buttonFactory.GetMany(new CreateComponentRequest()
+    }).Created;
+    public IEnumerable<GDSButtonComponent> GetManyNoScope() => _buttonFactory.CreateMany().Select(t => t.Created);
+    public IEnumerable<GDSButtonComponent> GetManyWithScope() => _buttonFactory.CreateMany(new CreateComponentRequest()
     {
         FindInScope = new CssElementSelector("#gds-button-default-nested-container")
-    });
+    }).Select(t => t.Created);
 }

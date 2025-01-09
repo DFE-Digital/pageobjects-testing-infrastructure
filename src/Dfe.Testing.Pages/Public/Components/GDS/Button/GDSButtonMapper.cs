@@ -1,38 +1,57 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Link;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Button;
-internal class GDSButtonMapper : BaseDocumentSectionToComponentMapper<GDSButtonComponent>
+internal class GDSButtonMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSButtonComponent>>
 {
-    private readonly IMapper<IDocumentSection, TextComponent> _textMapper;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
+    private readonly IGDSButtonBuilder _buttonBuilder;
 
     public GDSButtonMapper(
-        IDocumentSectionFinder documentSectionFinder,
-        IMapper<IDocumentSection, TextComponent> textMapper) : base(documentSectionFinder)
+        IMapRequestFactory mapRequestFactory,
+        IMappingResultFactory mappingResultFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
+        IGDSButtonBuilder buttonBuilder)
     {
+        ArgumentNullException.ThrowIfNull(textMapper);
+        ArgumentNullException.ThrowIfNull(buttonBuilder);
+        _mapRequestFactory = mapRequestFactory;
+        _mappingResultFactory = mappingResultFactory;
         _textMapper = textMapper;
+        _buttonBuilder = buttonBuilder;
     }
 
-    internal static IElementSelector SecondaryButtonStyle => new CssElementSelector("govuk-button--secondary");
-    internal static IElementSelector WarningButtonStyle => new CssElementSelector(".govuk-button--warning");
-
-    public override GDSButtonComponent Map(IDocumentSection part)
+    public MappedResponse<GDSButtonComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        IDocumentSection mappable = FindMappableSection<GDSButtonComponent>(part);
-        var buttonStyles = mappable.GetAttribute("class") ?? string.Empty;
+        MappedResponse<TextComponent> text = _textMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults));
 
-        return new()
-        {
-            ButtonType =
-                buttonStyles.Contains(SecondaryButtonStyle.ToSelector()) ? ButtonStyleType.Secondary :
-                buttonStyles.Contains(WarningButtonStyle.ToSelector()) ? ButtonStyleType.Warning
-                    : ButtonStyleType.Primary,
-            Text = _textMapper.Map(mappable),
-            Disabled = mappable.HasAttribute("disabled"),
-            IsSubmit = mappable.GetAttribute("type") == "submit",
-            Name = mappable.GetAttribute("name") ?? string.Empty,
-            Value = mappable.GetAttribute("value") ?? string.Empty
-        };
+        request.MappingResults.Add(text.MappingResult);
+
+        string buttonStyles = request.From.GetAttribute("class") ?? string.Empty;
+
+        ButtonStyleType buttonType =
+                buttonStyles.Contains("govuk-button--secondary") ? ButtonStyleType.Secondary :
+                buttonStyles.Contains("govuk-button--warning") ? ButtonStyleType.Warning
+                    : ButtonStyleType.Primary;
+
+        _buttonBuilder.SetValue(request.From.GetAttribute("value") ?? string.Empty)
+            .SetName(request.From.GetAttribute("name") ?? string.Empty)
+            .SetText(text.Mapped?.Text ?? string.Empty)
+            .SetEnabled(!request.From.HasAttribute("disabled"))
+            .SetButtonStyle(buttonType)
+            .SetType(request.From.GetAttribute("type") ?? string.Empty)
+            .Build();
+
+        return _mappingResultFactory.Create(
+                mapped: _buttonBuilder.Build(),
+                status: MappingStatus.Success,
+                section: request.From);
     }
-
-    protected override bool IsMappableFrom(IDocumentSection part) => part.TagName.Equals("button", StringComparison.OrdinalIgnoreCase);
 }

@@ -1,28 +1,59 @@
-﻿using Dfe.Testing.Pages.Public.Components.Core.Link;
+﻿using Dfe.Testing.Pages.Public.Components.Link;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.SelectorFactory;
+using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.ErrorSummary;
-internal sealed class GDSErrorSummaryMapper : BaseDocumentSectionToComponentMapper<GDSErrorSummaryComponent>
+internal sealed class GDSErrorSummaryMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorSummaryComponent>>
 {
-    private readonly IMapper<IDocumentSection, AnchorLinkComponent> _anchorLinkMapper;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IComponentSelectorFactory _componentSelectorFactory;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
+    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<AnchorLinkComponent>> _anchorLinkMapper;
 
     public GDSErrorSummaryMapper(
-        IDocumentSectionFinder documentSectionFinder,
-        IMapper<IDocumentSection, AnchorLinkComponent> anchorLinkFactory) : base(documentSectionFinder)
+        IMapRequestFactory mapRequestFactory,
+        IMappingResultFactory mappingResultFactory,
+        IComponentSelectorFactory componentSelectorFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<AnchorLinkComponent>> anchorLinkMapper)
     {
-        ArgumentNullException.ThrowIfNull(anchorLinkFactory);
-        ArgumentNullException.ThrowIfNull(documentSectionFinder);
-        _anchorLinkMapper = anchorLinkFactory;
+        ArgumentNullException.ThrowIfNull(anchorLinkMapper);
+        ArgumentNullException.ThrowIfNull(componentSelectorFactory);
+        _mappingResultFactory = mappingResultFactory;
+        _componentSelectorFactory = componentSelectorFactory;
+        _textMapper = textMapper;
+        _anchorLinkMapper = anchorLinkMapper;
+        _mapRequestFactory = mapRequestFactory;
     }
 
-    public override GDSErrorSummaryComponent Map(IDocumentSection input)
+    public MappedResponse<GDSErrorSummaryComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        return new()
+        // Heading
+        MappedResponse<TextComponent> mappedHeading = _textMapper.Map(
+            _mapRequestFactory.Create(
+                request.From,
+                request.MappingResults,
+                new CssElementSelector(".govuk-error-summary__title")));
+        request.MappingResults.Add(mappedHeading.MappingResult);
+
+        // Errors
+        IEnumerable<MappedResponse<AnchorLinkComponent>> mappedErrors = request.FindManyDescendantsAndMap(
+            _mapRequestFactory,
+            _componentSelectorFactory.GetSelector<AnchorLinkComponent>(),
+            _anchorLinkMapper)
+        .AddMappedResponseToResults(request.MappingResults);
+
+        GDSErrorSummaryComponent component = new()
         {
-            Heading = input.FindDescendant(new CssElementSelector(".govuk-error-summary__title"))?.Text ?? throw new ArgumentNullException("heading on error summary is null"),
-            Errors = _documentSectionFinder.FindMany<AnchorLinkComponent>(input).Select(_anchorLinkMapper.Map)
+            Heading = mappedHeading.Mapped,
+            Errors = mappedErrors.Select(t => t.Mapped)
         };
+
+        return _mappingResultFactory.Create(
+            component,
+            MappingStatus.Success,
+            request.From);
     }
-    protected override bool IsMappableFrom(IDocumentSection part) => true; // TODO check contains errorsummary inside
 }
-
-

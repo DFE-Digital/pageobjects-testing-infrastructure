@@ -12,6 +12,6 @@ internal sealed class GDSHeaderPage : IPageObject
         _headerFactory = headerFactory;
     }
 
-    public GDSHeaderComponent GetHeaderWithNoScope() => _headerFactory.Get();
+    public GDSHeaderComponent GetHeaderWithNoScope() => _headerFactory.Create().Created;
 }
 

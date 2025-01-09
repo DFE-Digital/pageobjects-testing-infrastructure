@@ -1,13 +1,9 @@
 ﻿using Dfe.Testing.Pages.Internal;
-using Dfe.Testing.Pages.Internal.DocumentClient;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.AngleSharp;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.WebDriver;
 using Dfe.Testing.Pages.Public.Components;
-using Dfe.Testing.Pages.Public.Components.Core.Form;
-using Dfe.Testing.Pages.Public.Components.Core.Inputs;
-using Dfe.Testing.Pages.Public.Components.Core.Label;
-using Dfe.Testing.Pages.Public.Components.Core.Link;
-using Dfe.Testing.Pages.Public.Components.Core.Text;
+using Dfe.Testing.Pages.Public.Components.Checkbox;
+using Dfe.Testing.Pages.Public.Components.Form;
 using Dfe.Testing.Pages.Public.Components.GDS.Button;
 using Dfe.Testing.Pages.Public.Components.GDS.Checkbox;
 using Dfe.Testing.Pages.Public.Components.GDS.Details;
@@ -18,9 +14,22 @@ using Dfe.Testing.Pages.Public.Components.GDS.Footer;
 using Dfe.Testing.Pages.Public.Components.GDS.NotificationBanner;
 using Dfe.Testing.Pages.Public.Components.GDS.Panel;
 using Dfe.Testing.Pages.Public.Components.GDS.Radio;
+using Dfe.Testing.Pages.Public.Components.GDS.Table.GDSTable;
 using Dfe.Testing.Pages.Public.Components.GDS.Table.Mapper;
+using Dfe.Testing.Pages.Public.Components.GDS.Table.TableBody;
+using Dfe.Testing.Pages.Public.Components.GDS.Table.TableDataItem;
+using Dfe.Testing.Pages.Public.Components.GDS.Table.TableHead;
+using Dfe.Testing.Pages.Public.Components.GDS.Table.TableHeadingItem;
+using Dfe.Testing.Pages.Public.Components.GDS.Table.TableRow;
 using Dfe.Testing.Pages.Public.Components.GDS.TextInput;
+using Dfe.Testing.Pages.Public.Components.HiddenInput;
+using Dfe.Testing.Pages.Public.Components.Inputs;
+using Dfe.Testing.Pages.Public.Components.Label;
+using Dfe.Testing.Pages.Public.Components.Link;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.Radio;
 using Dfe.Testing.Pages.Public.Components.SelectorFactory;
+using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages;
 
@@ -28,15 +37,15 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddAngleSharp(this IServiceCollection services)
         => services
-            .AddDocumentQueryClient<AngleSharpDocumentClientProvider>()
+            .AddDocumentClientProvider<AngleSharpDocumentClientProvider>()
             .AddTransient<IHtmlDocumentProvider, HtmlDocumentProvider>()
-            .AddComponentMapping();
+            .AddComponentMappings();
 
     public static IServiceCollection AddWebDriver(this IServiceCollection services)
         => services
-            .AddDocumentQueryClient<WebDriverDocumentQueryProvider>()
+            .AddDocumentClientProvider<WebDriverDocumentClientProvider>()
             .AddWebDriverServices()
-            .AddComponentMapping();
+            .AddComponentMappings();
 
     public static IServiceCollection AddWebApplicationFactory<TApplicationProgram>(this IServiceCollection services) where TApplicationProgram : class
         => services
@@ -46,7 +55,7 @@ public static class DependencyInjection
             .AddScoped<IConfigureWebHostHandler, ConfigureWebHostHandler>()
             .AddTransient<IHttpRequestBuilder, HttpRequestBuilder>();
 
-    internal static IServiceCollection AddComponentMapping(this IServiceCollection services)
+    internal static IServiceCollection AddComponentMappings(this IServiceCollection services)
     {
         services
             .AddSingleton<IComponentSelectorFactory, ComponentSelectorFactory>((sp) =>
@@ -75,11 +84,11 @@ public static class DependencyInjection
                     { nameof(GDSSelectComponent), () => new CssElementSelector(".govuk-form-group:has(select)") },
                     { nameof(OptionComponent), () => new CssElementSelector("option") },
                     { nameof(GDSTableComponent), () => new CssElementSelector(".govuk-table") },
-                    { nameof(TableHead), () => new CssElementSelector("thead") },
-                    { nameof(TableBody), () => new CssElementSelector("tbody") },
-                    { nameof(TableRow), () => new CssElementSelector("tr") },
-                    { nameof(TableHeadingItem), () => new CssElementSelector("th") },
-                    { nameof(TableDataItem), () => new CssElementSelector("td") },
+                    { nameof(TableHeadComponent), () => new CssElementSelector("thead") },
+                    { nameof(TableBodyComponent), () => new CssElementSelector("tbody") },
+                    { nameof(TableRowComponent), () => new CssElementSelector("tr") },
+                    { nameof(TableHeadingItemComponent), () => new CssElementSelector("th") },
+                    { nameof(TableDataItemComponent), () => new CssElementSelector("td") },
                     { nameof(TextComponent), () => new CssElementSelector("*") },
                     { nameof(TextInputComponent), () => new CssElementSelector("input[type=text]") },
                     { nameof(HiddenInputComponent), () => new CssElementSelector("input[type=hidden]") },
@@ -88,100 +97,58 @@ public static class DependencyInjection
                 };
                 return new ComponentSelectorFactory(componentSelectorMapping);
             })
-        .AddSingleton<IDocumentSectionFinder, DocumentSectionFinder>()
-        // anchor link
-        .AddTransient<ComponentFactory<AnchorLinkComponent>>()
-        .AddTransient<IMapper<IDocumentSection, AnchorLinkComponent>, AnchorLinkMapper>()
-        // label
-        .AddTransient<ComponentFactory<LabelComponent>>()
-        .AddTransient<IMapper<IDocumentSection, LabelComponent>, LabelMapper>()
-        // form
-        .AddTransient<ComponentFactory<FormComponent>>()
-        .AddTransient<IMapper<IDocumentSection, FormComponent>, FormMapper>()
-        // table
-        .AddTransient<ComponentFactory<GDSTableComponent>>()
-        .AddTransient<IMapper<IDocumentSection, GDSTableComponent>, GDSTableMapper>()
-        // thead
-        .AddTransient<ComponentFactory<TableHead>>()
-        .AddTransient<IMapper<IDocumentSection, TableHead>, TableHeadMapper>()
-        // tbody
-        .AddTransient<ComponentFactory<TableBody>>()
-        .AddTransient<IMapper<IDocumentSection, TableBody>, TableBodyMapper>()
-        // table row
-        .AddTransient<ComponentFactory<TableRow>>()
-        .AddTransient<IMapper<IDocumentSection, TableRow>, TableRowMapper>()
-        // th
-        .AddTransient<ComponentFactory<TableHeadingItem>>()
-        .AddTransient<IMapper<IDocumentSection, TableHeadingItem>, TableHeadingMapper>()
-        // td
-        .AddTransient<ComponentFactory<TableDataItem>>()
-        .AddTransient<IMapper<IDocumentSection, TableDataItem>, TableDataItemMapper>()
-        // button
-        .AddTransient<ComponentFactory<GDSButtonComponent>>()
-        .AddTransient<IMapper<IDocumentSection, GDSButtonComponent>, GDSButtonMapper>()
-        // header
-        .AddTransient<ComponentFactory<GDSHeaderComponent>>()
-        .AddTransient<IMapper<IDocumentSection, GDSHeaderComponent>, GDSHeaderMapper>()
-        // fieldset
-        .AddTransient<ComponentFactory<GDSFieldsetComponent>>()
-        .AddTransient<IMapper<IDocumentSection, GDSFieldsetComponent>, GDSFieldsetMapper>()
-        // checkboxes
-        .AddTransient<ComponentFactory<GDSCheckboxComponent>>()
-        .AddTransient<IMapper<IDocumentSection, GDSCheckboxComponent>, GDSCheckboxMapper>()
-        // radio
-        .AddTransient<ComponentFactory<GDSRadioComponent>>()
-        .AddTransient<IMapper<IDocumentSection, GDSRadioComponent>, GDSRadioMapper>()
-        // text input
-        .AddTransient<ComponentFactory<GDSTextInputComponent>>()
-        .AddTransient<IMapper<IDocumentSection, GDSTextInputComponent>, GDSTextInputMapper>()
-        // cookie choice banner
-        .AddTransient<ComponentFactory<GDSCookieChoiceAvailableBannerComponent>>()
-        .AddTransient<IMapper<IDocumentSection, GDSCookieChoiceAvailableBannerComponent>, GDSCookieChoiceAvailableMapper>()
-        // cookie choice made banner
-        .AddTransient<ComponentFactory<GDSCookieChoiceMadeBannerComponent>>()
-        .AddTransient<IMapper<IDocumentSection, GDSCookieChoiceMadeBannerComponent>, GDSCookieChoiceMadeBannerMappper>()
-        // tabs
-        .AddTransient<ComponentFactory<GDSTabsComponent>>()
-        .AddTransient<IMapper<IDocumentSection, GDSTabsComponent>, GDSTabsMapper>()
-        // details
-        .AddTransient<IMapper<IDocumentSection, GDSDetailsComponent>, GDSDetailsMapper>()
-        .AddTransient<ComponentFactory<GDSDetailsComponent>>()
-        // error message
-        .AddTransient<IMapper<IDocumentSection, GDSErrorMessageComponent>, GDSErrorMessageMapper>()
-        .AddTransient<ComponentFactory<GDSErrorMessageComponent>>()
-        // error summary
-        .AddTransient<IMapper<IDocumentSection, GDSErrorSummaryComponent>, GDSErrorSummaryMapper>()
-        .AddTransient<ComponentFactory<GDSErrorSummaryComponent>>()
-        // footer
-        .AddTransient<IMapper<IDocumentSection, GDSFooterComponent>, GDSFooterMapper>()
-        .AddTransient<ComponentFactory<GDSFooterComponent>>()
-        // notification banner
-        .AddTransient<IMapper<IDocumentSection, GDSNotificationBannerComponent>, GDSNotificationBannerMapper>()
-        .AddTransient<ComponentFactory<GDSNotificationBannerComponent>>()
-        // panel
-        .AddTransient<IMapper<IDocumentSection, GDSPanelComponent>, GDSPanelMapper>()
-        .AddTransient<ComponentFactory<GDSPanelComponent>>()
-        // select
-        .AddTransient<IMapper<IDocumentSection, GDSSelectComponent>, GDSSelectMapper>()
-        .AddTransient<ComponentFactory<GDSSelectComponent>>()
-        // option
-        .AddTransient<IMapper<IDocumentSection, OptionComponent>, OptionsMapper>()
-        .AddTransient<ComponentFactory<OptionComponent>>()
-        // text
-        .AddTransient<IMapper<IDocumentSection, TextComponent>, TextMapper>()
-        .AddTransient<ComponentFactory<TextComponent>>()
-        // text input
-        .AddTransient<IMapper<IDocumentSection, TextInputComponent>, TextInputMapper>()
-        .AddTransient<ComponentFactory<TextInputComponent>>()
-        // hidden input
-        .AddTransient<IMapper<IDocumentSection, HiddenInputComponent>, HiddenInputMapper>()
-        .AddTransient<ComponentFactory<HiddenInputComponent>>()
-        // radio
-        .AddTransient<IMapper<IDocumentSection, RadioComponent>, RadioMapper>()
-        .AddTransient<ComponentFactory<RadioComponent>>()
-        // checkbox
-        .AddTransient<IMapper<IDocumentSection, CheckboxComponent>, CheckboxMapper>()
-        .AddTransient<ComponentFactory<CheckboxComponent>>();
+        .AddComponentMapper<AnchorLinkComponent, AnchorLinkMapper>()
+        .AddComponentMapper<LabelComponent, LabelMapper>()
+        .AddComponentMapper<FormComponent, FormMapper>()
+        .AddComponentMapper<TableHeadComponent, TableHeadMapper>()
+        .AddComponentMapper<TableBodyComponent, TableBodyMapper>()
+        .AddComponentMapper<TableRowComponent, TableRowMapper>()
+        .AddComponentMapper<TableHeadingItemComponent, TableHeadingItemMapper>()
+        .AddComponentMapper<TableDataItemComponent, TableDataItemMapper>()
+        .AddComponentMapper<OptionComponent, OptionsMapper>()
+        .AddComponentMapper<HiddenInputComponent, HiddenInputMapper>()
+        .AddComponentMapper<RadioComponent, RadioMapper>()
+        .AddComponentMapper<TextInputComponent, TextInputMapper>()
+        .AddComponentMapper<CheckboxComponent, CheckboxMapper>()
+        .AddComponentMapper<GDSCookieChoiceAvailableBannerComponent, GDSCookieChoiceAvailableMapper>()
+        .AddComponentMapper<GDSCookieChoiceMadeBannerComponent, GDSCookieChoiceMadeBannerMappper>()
+        .AddComponentMapper<TextComponent, TextMapper>()
+        // GDS
+        .AddComponentMapper<GDSButtonComponent, GDSButtonMapper>()
+        .AddComponentMapper<GDSTableComponent, GDSTableMapper>()
+        .AddComponentMapper<GDSHeaderComponent, GDSHeaderMapper>()
+        .AddComponentMapper<GDSFieldsetComponent, GDSFieldsetMapper>()
+        .AddComponentMapper<GDSCheckboxComponent, GDSCheckboxMapper>()
+        .AddComponentMapper<GDSRadioComponent, GDSRadioMapper>()
+        .AddComponentMapper<GDSTextInputComponent, GDSTextInputMapper>()
+        .AddComponentMapper<GDSTabsComponent, GDSTabsMapper>()
+        .AddComponentMapper<GDSDetailsComponent, GDSDetailsMapper>()
+        .AddComponentMapper<GDSErrorMessageComponent, GDSErrorMessageMapper>()
+        .AddComponentMapper<GDSErrorSummaryComponent, GDSErrorSummaryMapper>()
+        .AddComponentMapper<GDSFooterComponent, GDSFooterMapper>()
+        .AddComponentMapper<GDSNotificationBannerComponent, GDSNotificationBannerMapper>()
+        .AddComponentMapper<GDSPanelComponent, GDSPanelMapper>()
+        .AddComponentMapper<GDSSelectComponent, GDSSelectMapper>();
+        return services;
+    }
+}
+
+public static class ComponentExtensions
+{
+    public static IServiceCollection AddComponentMapper<TComponent, TMapperImpl>(this IServiceCollection services)
+        where TComponent : class
+        where TMapperImpl : class, IMapper<IMapRequest<IDocumentSection>, MappedResponse<TComponent>>
+    {
+        services.AddTransient<ComponentFactory<TComponent>>()
+        // decorated mapper containing validator
+            .AddSingleton<TMapperImpl>()
+            .AddSingleton(
+                (Func<IServiceProvider, IMapper<IMapRequest<IDocumentSection>, MappedResponse<TComponent>>>)((serviceProvider) =>
+                    new FindDocumentSectionEntryPointMapperDecorator<TComponent>(
+                        mapRequestFactory: serviceProvider.GetRequiredService<IMapRequestFactory>(),
+                        decoratedMapper: serviceProvider.GetRequiredService<TMapperImpl>(),
+                        componentSelectorFactory: serviceProvider.GetRequiredService<IComponentSelectorFactory>(),
+                        mappingResultFactory: serviceProvider.GetRequiredService<IMappingResultFactory>())));
         return services;
     }
 }
