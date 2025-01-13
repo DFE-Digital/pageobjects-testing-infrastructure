@@ -40,10 +40,11 @@ internal sealed class AnchorLinkMapper : IMapper<IMapRequest<IDocumentSection>, 
             .Split(' ')
             .Select(t => t.Trim())
             .Where(t => !string.IsNullOrEmpty(t))
+            .Distinct()
             .ToList()
             .ForEach(attribute =>
             {
-                builder.AddRelAttribute(attribute);
+                builder.AddSecurityRelAttribute(attribute);
             });
 
         return _mappingResultFactory.Create(

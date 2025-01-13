@@ -33,7 +33,7 @@ internal sealed class GDSHeaderMapper : IMapper<IMapRequest<IDocumentSection>, M
 
         IEnumerable<MappedResponse<AnchorLinkComponent>> mappedNavigationLinks = request.FindManyDescendantsAndMap<AnchorLinkComponent>(
             _mapRequestFactory,
-            new CssElementSelector(".govuk-header nav"),
+            new CssElementSelector(".govuk-header nav a"),
             _linkMapper)
         .AddMappedResponseToResults(request.MappingResults);
 

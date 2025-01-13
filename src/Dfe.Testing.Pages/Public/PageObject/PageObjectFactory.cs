@@ -11,6 +11,6 @@ internal sealed class PageObjectFactory : IPageObjectFactory
     }
 
     public TPage Create<TPage>() where TPage : class, IPageObject
-        => (TPage)_pages.Single((page) =>
-            page.GetType().Name == typeof(TPage).Name);
+        => (TPage)_pages.Single(
+                (page) => page.GetType().Name == typeof(TPage).Name);
 }

@@ -17,7 +17,7 @@ public interface IAnchorLinkComponentBuilder
     IAnchorLinkComponentBuilder SetLink(string linkedTo);
     IAnchorLinkComponentBuilder SetText(string text);
     IAnchorLinkComponentBuilder SetOpensInNewTab(bool opensInNewTab);
-    IAnchorLinkComponentBuilder AddRelAttribute(string attribute);
+    IAnchorLinkComponentBuilder AddSecurityRelAttribute(string attribute);
 }
 
 internal sealed class AnchorLinkComponentBuilder : IAnchorLinkComponentBuilder
@@ -58,7 +58,7 @@ internal sealed class AnchorLinkComponentBuilder : IAnchorLinkComponentBuilder
         return this;
     }
 
-    public IAnchorLinkComponentBuilder AddRelAttribute(string attribute)
+    public IAnchorLinkComponentBuilder AddSecurityRelAttribute(string attribute)
     {
         ArgumentException.ThrowIfNullOrEmpty(attribute);
         if (!AnchorLinkComponent.RelKnownAttributes.Contains(attribute, StringComparer.OrdinalIgnoreCase))
