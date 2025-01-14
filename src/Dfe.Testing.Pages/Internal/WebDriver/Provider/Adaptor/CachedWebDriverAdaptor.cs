@@ -83,18 +83,21 @@ internal class CachedWebDriverAdaptor : IWebDriverAdaptor, IDisposable, IAsyncDi
     {
         if (disposing)
         {
-            using (Driver)
+            using (_webDriver)
             {
-                Driver?.Quit();
+                _webDriver?.Quit();
             }
         }
     }
 
     protected virtual async ValueTask DisposeAsyncCore()
     {
-        using (Driver)
+        using (_webDriver)
         {
-            await Driver.Manage().Network.StopMonitoring().ConfigureAwait(false);
+            if (_webDriver != null)
+            {
+                await _webDriver.Manage().Network.StopMonitoring().ConfigureAwait(false);
+            }
         }
     }
 
