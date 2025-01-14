@@ -7,4 +7,5 @@ internal sealed class WebDriverSessionOptions
     public bool IsNetworkInterceptionEnabled { get; set; }
     // TODO should the options be a list or dict<list> mapping? { chrome: { ... }, { edge: { ... }, {default: {...}
     public IDictionary<BrowserType, IEnumerable<string>> BrowserOptions { get; set; } = new Dictionary<BrowserType, IEnumerable<string>>();
+    public IReadOnlyCollection<string> Options { get; set; } = [];
 }

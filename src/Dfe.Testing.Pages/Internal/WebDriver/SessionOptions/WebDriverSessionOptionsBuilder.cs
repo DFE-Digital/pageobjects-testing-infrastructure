@@ -1,10 +1,12 @@
-﻿namespace Dfe.Testing.Pages.Internal.WebDriver.SessionOptions;
+﻿
+namespace Dfe.Testing.Pages.Internal.WebDriver.SessionOptions;
 
 internal sealed class WebDriverSessionOptionsBuilder : IWebDriverSessionOptionsBuilder
 {
     private int? _pageLoadTimeoutSeconds = default;
     private int? _requestTimeoutSeconds = default;
     private bool _enableNetworkInterception = false;
+    private IList<string> _customOptions = [];
     public WebDriverSessionOptions Build()
     {
         WebDriverSessionOptions options = new();
@@ -44,6 +46,16 @@ internal sealed class WebDriverSessionOptionsBuilder : IWebDriverSessionOptionsB
     public IWebDriverSessionOptionsBuilder WithRequestTimeout(int requestTimeoutSeconds)
     {
         _requestTimeoutSeconds = requestTimeoutSeconds;
+        return this;
+    }
+
+    public IWebDriverSessionOptionsBuilder WithBrowserOption(params string[] options)
+    {
+        options.ToList().ForEach(t =>
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(t);
+            _customOptions.Add(t);
+        });
         return this;
     }
 

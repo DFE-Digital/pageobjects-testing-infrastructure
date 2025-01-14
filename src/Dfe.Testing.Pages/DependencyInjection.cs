@@ -54,7 +54,7 @@ public sealed class BrowserOptions
     public int PageLoadTimeoutSeconds { get; set; } = 45;
     public int ViewportWidth { get; set; } = 1920;
     public int ViewportHeight { get; set; } = 1080;
-    public IEnumerable<string> CustomOptions { get; set; } = [];
+    public IList<string> CustomOptions { get; set; } = [];
     public bool EnableIncongnito { get; set; } = true;
     public bool EnableAuthenticationBypass { get; set; } = false;
     //public bool EnableJavascript { get; set; } = true;

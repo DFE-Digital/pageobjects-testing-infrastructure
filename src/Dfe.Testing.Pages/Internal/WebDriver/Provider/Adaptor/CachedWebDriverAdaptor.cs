@@ -42,15 +42,18 @@ internal class CachedWebDriverAdaptor : IWebDriverAdaptor, IDisposable, IAsyncDi
 
     private async Task StartDriverSessionAsync(WebDriverOptions options)
     {
-        WebDriverSessionOptions sessionOptions = _webDriverSessionOptionsBuilder
+        _webDriverSessionOptionsBuilder
             .WithBrowserType(options.Browser.BrowserName)
             .WithNetworkInterception(options.Browser.EnableAuthenticationBypass)
             .WithPageLoadTimeout(options.Browser.PageLoadTimeoutSeconds)
-            .WithRequestTimeout(options.RequestTimeoutSeconds)
-            .Build();
+            .WithRequestTimeout(options.RequestTimeoutSeconds);
 
-        _webDriver = await _browserFactories.Single(t => t.Key == sessionOptions.BrowserType)
-            .Create(sessionOptions);
+        options.Browser.CustomOptions.Select(option => _webDriverSessionOptionsBuilder.WithBrowserOption(option));
+
+        WebDriverSessionOptions builtWebDriverOptions = _webDriverSessionOptionsBuilder.Build();
+
+        _webDriver = await _browserFactories.Single(t => t.Key == builtWebDriverOptions.BrowserType)
+            .Create(builtWebDriverOptions);
 
         if (options.Browser.EnableAuthenticationBypass)
         {
