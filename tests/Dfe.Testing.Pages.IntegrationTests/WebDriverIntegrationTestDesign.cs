@@ -78,7 +78,11 @@ public static class MockServiceCollection
     internal static IServiceScope WithWebDriver()
     {
         return new ServiceCollection()
-            .AddWebDriver(t => t.Browser.CustomOptions.Add("--disable-dev-shm-usage"))
+            .AddWebDriver(t =>
+            {
+                t.Browser.CustomOptions.Add("--disable-dev-shm-usage");
+                t.Browser.ShowBrowser = false;
+            })
             .AddTransient<IPageObject, SearchPage>()
             .BuildServiceProvider()
             .CreateScope();

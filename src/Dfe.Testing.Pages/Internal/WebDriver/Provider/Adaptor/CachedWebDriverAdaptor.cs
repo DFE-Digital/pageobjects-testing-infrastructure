@@ -11,19 +11,16 @@ internal class CachedWebDriverAdaptor : IWebDriverAdaptor, IDisposable, IAsyncDi
 {
     // TODO move factory selection and provide -  behind higher order factory
     private readonly IEnumerable<IBrowserFactory> _browserFactories;
-    private readonly IWebDriverSessionOptionsBuilder _webDriverSessionOptionsBuilder;
     private readonly WebDriverOptions _webDriverOptions;
     private IWebDriver? _webDriver;
 
     public CachedWebDriverAdaptor(
         IEnumerable<IBrowserFactory> browserFactories,
-        WebDriverOptions webDriverOptions,
-        IWebDriverSessionOptionsBuilder webDriverSessionOptionsBuilder)
+        WebDriverOptions webDriverOptions)
     {
         ArgumentNullException.ThrowIfNull(browserFactories, nameof(browserFactories));
         _browserFactories = browserFactories;
         _webDriverOptions = webDriverOptions;
-        _webDriverSessionOptionsBuilder = webDriverSessionOptionsBuilder;
     }
     private IWebDriver Driver => _webDriver ?? throw new ArgumentNullException(nameof(_webDriver));
 
@@ -42,18 +39,15 @@ internal class CachedWebDriverAdaptor : IWebDriverAdaptor, IDisposable, IAsyncDi
 
     private async Task StartDriverSessionAsync(WebDriverOptions options)
     {
-        _webDriverSessionOptionsBuilder
-            .WithBrowserType(options.Browser.BrowserName)
-            .WithNetworkInterception(options.Browser.EnableAuthenticationBypass)
-            .WithPageLoadTimeout(options.Browser.PageLoadTimeoutSeconds)
-            .WithRequestTimeout(options.RequestTimeoutSeconds);
+        BrowserType normalisedType = (options.Browser.BrowserName?.ToLowerInvariant() ?? string.Empty) switch
+        {
+            "chrome" => BrowserType.Chrome,
+            "edge" => BrowserType.Edge,
+            "firefox" => BrowserType.Firefox,
+            _ => BrowserType.Chrome
+        };
 
-        options.Browser.CustomOptions.Select(option => _webDriverSessionOptionsBuilder.WithBrowserOption(option));
-
-        WebDriverSessionOptions builtWebDriverOptions = _webDriverSessionOptionsBuilder.Build();
-
-        _webDriver = await _browserFactories.Single(t => t.Key == builtWebDriverOptions.BrowserType)
-            .Create(builtWebDriverOptions);
+        _webDriver = await _browserFactories.Single(t => t.Key == normalisedType).Create(options);
 
         if (options.Browser.EnableAuthenticationBypass)
         {

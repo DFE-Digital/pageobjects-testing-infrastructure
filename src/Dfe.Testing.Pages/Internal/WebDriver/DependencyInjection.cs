@@ -6,8 +6,7 @@ internal static class DependencyInjection
 {
     internal static IServiceCollection AddWebDriverServices(this IServiceCollection services)
         => services
-            .AddPublicAPI()
-            .AddInternals();
+            .AddPublicAPI();
 
     private static IServiceCollection AddPublicAPI(this IServiceCollection services)
         =>
@@ -15,9 +14,4 @@ internal static class DependencyInjection
             .AddScoped<IWebDriverAdaptor, CachedWebDriverAdaptor>()
             .AddSingleton<IBrowserFactory, ChromeDriverFactory>();
     //.AddScoped<IWebDriverAdaptorProvider, CachedWebDriverAdaptorProvider>();
-
-
-    private static IServiceCollection AddInternals(this IServiceCollection services)
-        => services
-            .AddTransient<IWebDriverSessionOptionsBuilder, WebDriverSessionOptionsBuilder>();
 }

@@ -2,5 +2,5 @@
 internal interface IBrowserFactory
 {
     BrowserType Key { get; }
-    Task<IWebDriver> Create(WebDriverSessionOptions sessionOptions);
+    Task<IWebDriver> Create(WebDriverOptions sessionOptions);
 }
