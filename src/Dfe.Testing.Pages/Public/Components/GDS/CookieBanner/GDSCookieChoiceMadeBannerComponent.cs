@@ -14,31 +14,21 @@ public record GDSCookieChoiceMadeBannerComponent
 public interface IGDSCookieChoiceMadeBannerComponentBuilder
 {
     IGDSCookieChoiceMadeBannerComponentBuilder SetHideCookiesButton(GDSButtonComponent button);
-    IGDSCookieChoiceMadeBannerComponentBuilder SetHideCookiesButton(Action<IGDSButtonBuilder> configureButton);
     IGDSCookieChoiceMadeBannerComponentBuilder SetChangeYourCookieSettingsLink(AnchorLinkComponent link);
-    IGDSCookieChoiceMadeBannerComponentBuilder SetChangeYourCookieSettingsLink(Action<IAnchorLinkComponentBuilder> configureLink);
     IGDSCookieChoiceMadeBannerComponentBuilder SetMessage(string message);
     GDSCookieChoiceMadeBannerComponent Build();
 }
 
 internal sealed class GDSCookieChoiceMadeBannerComponentBuilder : IGDSCookieChoiceMadeBannerComponentBuilder
 {
-    private readonly IGDSButtonBuilder _buttonBuilder;
-    private readonly IAnchorLinkComponentBuilder _linkBuilder;
     private string _message = string.Empty;
-
-    public GDSCookieChoiceMadeBannerComponentBuilder(
-        IGDSButtonBuilder buttonBuilder,
-        IAnchorLinkComponentBuilder linkBuilder)
-    {
-        _buttonBuilder = buttonBuilder;
-        _linkBuilder = linkBuilder;
-    }
+    private GDSButtonComponent? _button = null;
+    private AnchorLinkComponent? _link = null;
     public GDSCookieChoiceMadeBannerComponent Build()
         => new()
         {
-            ChangeYourCookieSettingsLink = _linkBuilder.Build(),
-            HideCookies = _buttonBuilder.Build(),
+            ChangeYourCookieSettingsLink = _link,
+            HideCookies = _button,
             Message = new()
             {
                 Text = _message
@@ -48,28 +38,14 @@ internal sealed class GDSCookieChoiceMadeBannerComponentBuilder : IGDSCookieChoi
     public IGDSCookieChoiceMadeBannerComponentBuilder SetHideCookiesButton(GDSButtonComponent button)
     {
         ArgumentNullException.ThrowIfNull(button);
-        _buttonBuilder.SetButtonStyle(button.ButtonStyle)
-            .SetEnabled(button.IsEnabled)
-            .SetName(button.Name)
-            .SetValue(button.Value)
-            .SetType(button.Type)
-            .SetText(button.Text.Text);
+        _button = button;
         return this;
     }
 
     public IGDSCookieChoiceMadeBannerComponentBuilder SetChangeYourCookieSettingsLink(AnchorLinkComponent link)
     {
         ArgumentNullException.ThrowIfNull(link);
-        _linkBuilder.SetLink(link.Link)
-            .SetOpensInNewTab(link.OpensInNewTab)
-            .SetText(link.Text!.Text);
-        return this;
-    }
-
-    public IGDSCookieChoiceMadeBannerComponentBuilder SetChangeYourCookieSettingsLink(Action<IAnchorLinkComponentBuilder> configureLink)
-    {
-        ArgumentNullException.ThrowIfNull(configureLink);
-        configureLink(_linkBuilder);
+        _link = link;
         return this;
     }
 
@@ -77,13 +53,6 @@ internal sealed class GDSCookieChoiceMadeBannerComponentBuilder : IGDSCookieChoi
     {
         ArgumentNullException.ThrowIfNull(message);
         _message = message;
-        return this;
-    }
-
-    public IGDSCookieChoiceMadeBannerComponentBuilder SetHideCookiesButton(Action<IGDSButtonBuilder> configureButton)
-    {
-        ArgumentNullException.ThrowIfNull(configureButton);
-        configureButton(_buttonBuilder);
         return this;
     }
 }

@@ -2,7 +2,8 @@
 using Dfe.Testing.Pages.Public.Components.SelectorFactory;
 
 namespace Dfe.Testing.Pages.Public.Components.MappingAbstraction;
-public sealed class FindDocumentSectionEntryPointMapperDecorator<TComponent> : IMapper<IMapRequest<IDocumentSection>, MappedResponse<TComponent>>
+
+public sealed class FindMappingEntrypointFromDocumentSectionMapperDecorator<TComponent> : IMapper<IMapRequest<IDocumentSection>, MappedResponse<TComponent>>
     where TComponent : class
 {
     private readonly IMapRequestFactory _mapRequestFactory;
@@ -10,7 +11,7 @@ public sealed class FindDocumentSectionEntryPointMapperDecorator<TComponent> : I
     private readonly IComponentSelectorFactory _componentSelectorFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
 
-    internal FindDocumentSectionEntryPointMapperDecorator(
+    internal FindMappingEntrypointFromDocumentSectionMapperDecorator(
         IMapRequestFactory mapRequestFactory,
         IMapper<IMapRequest<IDocumentSection>, MappedResponse<TComponent>> decoratedMapper,
         IComponentSelectorFactory componentSelectorFactory,

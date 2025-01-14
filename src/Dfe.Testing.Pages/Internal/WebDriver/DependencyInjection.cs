@@ -12,11 +12,8 @@ internal static class DependencyInjection
     private static IServiceCollection AddPublicAPI(this IServiceCollection services)
         =>
         services
-            // TODO expose this as a transient builder
-            .AddScoped<WebDriverClientSessionOptions>()
             .AddScoped<IWebDriverAdaptor, CachedWebDriverAdaptor>()
             .AddSingleton<IBrowserFactory, ChromeDriverFactory>();
-    // TODO WebDriverApplicationOptions Domain, Port, Scheme - a mapper from provided ApplicationOptions to WebDriverApplicationOptions
     //.AddScoped<IWebDriverAdaptorProvider, CachedWebDriverAdaptorProvider>();
 
 

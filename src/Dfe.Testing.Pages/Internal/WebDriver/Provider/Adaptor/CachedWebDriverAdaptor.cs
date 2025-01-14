@@ -2,59 +2,66 @@
 
 namespace Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;
 
-// Wraps WebDriver operations with lazy init
+
 // TODO should this be a command boundary, intake commands which can be stored to replay, observed on, logged
 
-// IDisposable on concrete type to allow DI to manage Dispose() without exposing it on the interface
+// NOTE Wraps WebDriver operations with lazy driver init
+// NOTE IDisposable on concrete type to allow DI to Dispose() without it appearing on the interface
 internal class CachedWebDriverAdaptor : IWebDriverAdaptor, IDisposable, IAsyncDisposable
 {
-    // TODO 
-    //private static readonly SemaphoreSlim _semaphore = new(1, 1);
     // TODO move factory selection and provide -  behind higher order factory
     private readonly IEnumerable<IBrowserFactory> _browserFactories;
-    private readonly WebDriverClientSessionOptions _webDriverClientSessionOptions;
     private readonly IWebDriverSessionOptionsBuilder _webDriverSessionOptionsBuilder;
+    private readonly WebDriverOptions _webDriverOptions;
     private IWebDriver? _webDriver;
 
     public CachedWebDriverAdaptor(
         IEnumerable<IBrowserFactory> browserFactories,
-        WebDriverClientSessionOptions webDriverClientSessionOptions,
+        WebDriverOptions webDriverOptions,
         IWebDriverSessionOptionsBuilder webDriverSessionOptionsBuilder)
     {
         ArgumentNullException.ThrowIfNull(browserFactories, nameof(browserFactories));
-        ArgumentNullException.ThrowIfNull(webDriverClientSessionOptions, nameof(webDriverClientSessionOptions));
         _browserFactories = browserFactories;
-        _webDriverClientSessionOptions = webDriverClientSessionOptions;
+        _webDriverOptions = webDriverOptions;
         _webDriverSessionOptionsBuilder = webDriverSessionOptionsBuilder;
     }
     private IWebDriver Driver => _webDriver ?? throw new ArgumentNullException(nameof(_webDriver));
 
     public async Task StartAsync()
     {
-        // Use the factory with mapper putting in the default client options
+        await StartDriverSessionAsync(_webDriverOptions);
+    }
+
+    public async Task StartAsync(Action<WebDriverOptions> configureOptions)
+    {
+        ArgumentNullException.ThrowIfNull(configureOptions);
+        WebDriverOptions options = new();
+        configureOptions.Invoke(options);
+        await StartDriverSessionAsync(options);
+    }
+
+    private async Task StartDriverSessionAsync(WebDriverOptions options)
+    {
         WebDriverSessionOptions sessionOptions = _webDriverSessionOptionsBuilder
-            .WithBrowserType(_webDriverClientSessionOptions.BrowserName)
-            .WithNetworkInterception(_webDriverClientSessionOptions.EnableNetworkInterception)
-            .WithPageLoadTimeout(_webDriverClientSessionOptions.PageLoadTimeout)
-            .WithRequestTimeout(_webDriverClientSessionOptions.RequestTimeout)
+            .WithBrowserType(options.Browser.BrowserName)
+            .WithNetworkInterception(options.Browser.EnableAuthenticationBypass)
+            .WithPageLoadTimeout(options.Browser.PageLoadTimeoutSeconds)
+            .WithRequestTimeout(options.RequestTimeoutSeconds)
             .Build();
 
-        _webDriver = await _browserFactories.Single(t => t.Key == sessionOptions.BrowserType).Create(sessionOptions);
-        if (_webDriverClientSessionOptions.EnableNetworkInterception)
+        _webDriver = await _browserFactories.Single(t => t.Key == sessionOptions.BrowserType)
+            .Create(sessionOptions);
+
+        if (options.Browser.EnableAuthenticationBypass)
         {
             await Driver.Manage().Network.StartMonitoring();
         }
     }
 
-    public async Task StartAsync(Action<WebDriverClientSessionOptions> configureSessionOptions)
+    public async Task NavigateToAsync(Uri uri)
     {
-        // Use the factory with mapper putting in overriden client options
-        await Task.CompletedTask;
-
+        await Driver.Navigate().GoToUrlAsync(uri);
     }
-
-    public async Task NavigateToAsync(Uri uri) => await Driver.Navigate().GoToUrlAsync(uri);
-
     public void Dispose()
     {
         Dispose(disposing: true);

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.Design;
 using Dfe.Testing.Pages.Public.PageObject;
 
-namespace Dfe.Testing.Pages.IntegrationTests.Component;
+namespace Dfe.Testing.Pages.IntegrationTests.Component.Helper;
 internal static class ComponentTestHelper
 {
     internal static async Task<TPage> RequestPage<TPage>(string path) where TPage : class, IPageObject
@@ -19,7 +19,7 @@ internal static class ComponentTestHelper
             .BuildServiceProvider()
             .CreateScope();
 
-        IDocumentService session = scopedContainerWithPage.ServiceProvider.GetRequiredService<IDocumentService>();
+        var session = scopedContainerWithPage.ServiceProvider.GetRequiredService<IDocumentService>();
         await session.RequestDocumentAsync(httpRequest);
         return scopedContainerWithPage.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<TPage>();
     }

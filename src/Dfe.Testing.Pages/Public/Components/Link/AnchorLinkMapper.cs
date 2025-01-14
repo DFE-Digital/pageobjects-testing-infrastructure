@@ -7,17 +7,14 @@ internal sealed class AnchorLinkMapper : IMapper<IMapRequest<IDocumentSection>, 
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
     private readonly IMappingResultFactory _mappingResultFactory;
-    private readonly IAnchorLinkComponentBuilder _anchorLinkComponentBuilder;
 
     public AnchorLinkMapper(
         IMapRequestFactory mapRequestFactory,
         IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
-        IMappingResultFactory mappingResultFactory,
-        IAnchorLinkComponentBuilder anchorLinkComponentBuilder)
+        IMappingResultFactory mappingResultFactory)
     {
         _textMapper = textMapper;
         _mappingResultFactory = mappingResultFactory;
-        _anchorLinkComponentBuilder = anchorLinkComponentBuilder;
         _mapRequestFactory = mapRequestFactory;
     }
 
@@ -29,26 +26,21 @@ internal sealed class AnchorLinkMapper : IMapper<IMapRequest<IDocumentSection>, 
                 request.MappingResults))
             .AddMappedResponseToResults(request.MappingResults);
 
+        IAnchorLinkComponentBuilder linkBuilder = new AnchorLinkComponentBuilder()
+            .SetLink(request.From.GetAttribute("href") ?? string.Empty)
+            .SetOpensInNewTab(request.From.GetAttribute("target") == "_blank")
+            .SetText(mappedText.Mapped!.Text);
 
-        IAnchorLinkComponentBuilder builder =
-            _anchorLinkComponentBuilder
-                .SetLink(request.From.GetAttribute("href") ?? string.Empty)
-                .SetOpensInNewTab(request.From.GetAttribute("target") == "_blank")
-                .SetText(mappedText.Mapped!.Text);
-
-        request.From.GetAttribute("rel")?
+        IEnumerable<string> relAttributes = request.From.GetAttribute("rel")?
             .Split(' ')
             .Select(t => t.Trim())
-            .Where(t => !string.IsNullOrEmpty(t))
             .Distinct()
-            .ToList()
-            .ForEach(attribute =>
-            {
-                builder.AddSecurityRelAttribute(attribute);
-            });
+            .Where(t => !string.IsNullOrEmpty(t)) ?? [];
+
+        relAttributes.ToList().ForEach(attribute => linkBuilder.AddSecurityRelAttribute(attribute));
 
         return _mappingResultFactory.Create(
-            builder.Build(),
+            linkBuilder.Build(),
             MappingStatus.Success,
             request.From);
     }

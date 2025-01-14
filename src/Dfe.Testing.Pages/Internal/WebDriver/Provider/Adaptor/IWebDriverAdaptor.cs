@@ -2,7 +2,7 @@
 public interface IWebDriverAdaptor : IApplicationNavigator
 {
     Task StartAsync();
-    Task StartAsync(Action<WebDriverClientSessionOptions> configureOptions);
+    Task StartAsync(Action<WebDriverOptions> configureOptions);
     Cookie? GetCookie(string cookieName);
     IEnumerable<Cookie?> GetCookies();
     Task TakeScreenshotAsync();

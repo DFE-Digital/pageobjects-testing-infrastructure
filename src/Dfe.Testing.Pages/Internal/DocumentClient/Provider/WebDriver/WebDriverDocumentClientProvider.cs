@@ -23,7 +23,8 @@ internal sealed class WebDriverDocumentClientProvider : BaseDocumentClientProvid
         ArgumentNullException.ThrowIfNull(httpRequestMessage, nameof(httpRequestMessage));
         ArgumentNullException.ThrowIfNull(httpRequestMessage.RequestUri, nameof(httpRequestMessage.RequestUri));
         ArgumentNullException.ThrowIfNull(_webDriverAdaptor, nameof(_webDriverAdaptor));
-        // TODO options will determine if we navigate
+        // session may have already been started by the client with a configured webdriver
+        await _webDriverAdaptor.StartAsync();
         await _webDriverAdaptor.NavigateToAsync(httpRequestMessage.RequestUri);
         return new WebDriverDocumentClient(
             _webDriverAdaptor,

@@ -5,10 +5,10 @@ using Dfe.Testing.Pages.Public.Components.SelectorFactory;
 namespace Dfe.Testing.Pages.Public.Components;
 public class ComponentFactory<T> where T : class
 {
-    private readonly IComponentSelectorFactory _componentSelectorFactory;
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IDocumentService _documentClient;
     private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<T>> _mapper;
+    private readonly IComponentSelectorFactory _componentSelectorFactory;
 
     public ComponentFactory(
         IMapRequestFactory mapRequestFactory,

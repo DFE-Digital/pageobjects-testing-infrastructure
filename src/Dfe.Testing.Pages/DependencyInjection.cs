@@ -1,4 +1,5 @@
 ﻿using Dfe.Testing.Pages.Internal;
+using Dfe.Testing.Pages.Internal.DocumentClient.Options;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.AngleSharp;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.WebDriver;
 using Dfe.Testing.Pages.Public.Components;
@@ -30,22 +31,75 @@ using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
 using Dfe.Testing.Pages.Public.Components.Radio;
 using Dfe.Testing.Pages.Public.Components.SelectorFactory;
 using Dfe.Testing.Pages.Public.Components.Text;
+using Microsoft.Extensions.Options;
 
 namespace Dfe.Testing.Pages;
 
+
+public class AngleSharpOptions : DocumentClientOptions
+{
+
+}
+
+public class WebDriverOptions : DocumentClientOptions
+{
+    public BrowserOptions Browser { get; set; } = new BrowserOptions();
+}
+
+public sealed class BrowserOptions
+{
+    public string BrowserName { get; set; } = "chrome";
+    public string BrowserVersionMajor { get; set; } = string.Empty; // e.g chrome 121. empty string uses system latest supported driver
+    public bool ShowBrowser { get; set; } = true; // headless
+    public int PageLoadTimeoutSeconds { get; set; } = 45;
+    public int ViewportWidth { get; set; } = 1920;
+    public int ViewportHeight { get; set; } = 1080;
+    public IEnumerable<string> CustomOptions { get; set; } = [];
+    public bool EnableIncongnito { get; set; } = true;
+    public bool EnableAuthenticationBypass { get; set; } = false;
+    //public bool EnableJavascript { get; set; } = true;
+}
+
 public static class DependencyInjection
 {
-    public static IServiceCollection AddAngleSharp(this IServiceCollection services)
-        => services
+    public static IServiceCollection AddAngleSharp(this IServiceCollection services, Action<AngleSharpOptions>? configureOptions = null)
+    {
+        // Add mapping for AngleSharpOptions to DocumentClientOptions
+        services.AddOptions<AngleSharpOptions>();
+        if (configureOptions is not null)
+        {
+            services.Configure(configureOptions);
+        }
+        // register the Options type without IOptions wrapper
+        services.AddSingleton<AngleSharpOptions>(t => t.GetRequiredService<IOptions<AngleSharpOptions>>().Value);
+
+
+        services
             .AddDocumentClientProvider<AngleSharpDocumentClientProvider>()
             .AddTransient<IHtmlDocumentProvider, HtmlDocumentProvider>()
             .AddComponentMappings();
 
-    public static IServiceCollection AddWebDriver(this IServiceCollection services)
-        => services
+        return services;
+    }
+
+    public static IServiceCollection AddWebDriver(this IServiceCollection services, Action<WebDriverOptions>? configureOptions = null)
+    {
+        services.AddOptions<WebDriverOptions>();
+        if (configureOptions is not null)
+        {
+            services.Configure(configureOptions);
+        }
+        // register the Options type without IOptions wrapper
+        services.AddSingleton<WebDriverOptions>(t => t.GetRequiredService<IOptions<WebDriverOptions>>().Value);
+
+
+        services
             .AddDocumentClientProvider<WebDriverDocumentClientProvider>()
             .AddWebDriverServices()
             .AddComponentMappings();
+
+        return services;
+    }
 
     public static IServiceCollection AddWebApplicationFactory<TApplicationProgram>(this IServiceCollection services) where TApplicationProgram : class
         => services
@@ -147,15 +201,14 @@ internal static class ComponentExtensions
         where TMapperImpl : class, IMapper<IMapRequest<IDocumentSection>, MappedResponse<TComponent>>
     {
         services.AddTransient<ComponentFactory<TComponent>>()
-        // decorated mapper containing validator
-            .AddSingleton<TMapperImpl>()
-            .AddSingleton(
-                (Func<IServiceProvider, IMapper<IMapRequest<IDocumentSection>, MappedResponse<TComponent>>>)((serviceProvider) =>
-                    new FindDocumentSectionEntryPointMapperDecorator<TComponent>(
+        // decorated mapper
+            .AddTransient<TMapperImpl>()
+            .AddTransient<IMapper<IMapRequest<IDocumentSection>, MappedResponse<TComponent>>>((serviceProvider) =>
+                    new FindMappingEntrypointFromDocumentSectionMapperDecorator<TComponent>(
                         mapRequestFactory: serviceProvider.GetRequiredService<IMapRequestFactory>(),
                         decoratedMapper: serviceProvider.GetRequiredService<TMapperImpl>(),
                         componentSelectorFactory: serviceProvider.GetRequiredService<IComponentSelectorFactory>(),
-                        mappingResultFactory: serviceProvider.GetRequiredService<IMappingResultFactory>())));
+                        mappingResultFactory: serviceProvider.GetRequiredService<IMappingResultFactory>()));
         return services;
     }
 }

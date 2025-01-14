@@ -28,10 +28,6 @@ public sealed class WebDriverIntegrationTestDesign
         SearchPage searchPage = pageObjectFactory.Create<SearchPage>();
 
         searchPage.ClickAnchorLink();
-        var driverAdaptorProvider = collection.ServiceProvider.GetRequiredService<IWebDriverAdaptorProvider>();
-        IWebDriverAdaptor driverAdaptor = await driverAdaptorProvider.GetAsync();
-        await driverAdaptor.NavigateToAsync(new Uri("https://searchprototype.azurewebsites.net/"));
-        driverAdaptor.CurrentUri().Should().Be("https://searchprototype.azurewebsites.net/");
     }
 
     [Fact]

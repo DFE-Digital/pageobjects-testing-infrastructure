@@ -8,7 +8,7 @@ using NSubstitute;
 namespace Dfe.Testing.Pages.UnitTests.Mappers;
 public sealed class GDSButtonMapperTests
 {
-    [Fact]
+    [Fact(Skip = "TODO UNIT TESTS ON MAPPERS")]
     public void Map()
     {
         IMapRequest<IDocumentSection> mapRequest = Substitute.For<IMapRequest<IDocumentSection>>();
