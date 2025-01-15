@@ -4,9 +4,9 @@ To support building .NET tests for web applications with composable PageObjects.
 
 Goals include;
 
-- Provide testers with GDS components and access to use them in tests.
+- Provide testers with access to GDS components so they can be used as building blocks for PageObjects.
 
-- Ensure different types of tests for a web application can use the same PageObjects
+- Ensure different types of tests for a web application can use the same PageObjects.
 
 - Ensure separation of concerns is followed closer between Test, PageObject, Document
 
@@ -21,6 +21,8 @@ Goals include;
 4) Use [library provided Components](#components-available-to-use) in your pages with `ComponentFactory<TComponent>`
 
 5) Access pages [in your tests](#use-pages-in-your-tests) with `IPageObjectFactory`
+
+6) For further help see [docs](./docs/pageobjects-usecases.md) or reach out on dfe-slack  `public-pageobjects-testing-library`
 
 ## Choosing and configuring a library to query for you
 
