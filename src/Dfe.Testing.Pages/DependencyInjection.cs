@@ -2,6 +2,7 @@
 using Dfe.Testing.Pages.Internal.DocumentClient.Options;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.AngleSharp;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.WebDriver;
+using Dfe.Testing.Pages.Public.AngleSharp.Options;
 using Dfe.Testing.Pages.Public.Components;
 using Dfe.Testing.Pages.Public.Components.Checkbox;
 using Dfe.Testing.Pages.Public.Components.Form;
@@ -35,36 +36,10 @@ using Microsoft.Extensions.Options;
 
 namespace Dfe.Testing.Pages;
 
-
-public class AngleSharpOptions : DocumentClientOptions
-{
-
-}
-
-public class WebDriverOptions : DocumentClientOptions
-{
-    public BrowserOptions Browser { get; set; } = new BrowserOptions();
-}
-
-public sealed class BrowserOptions
-{
-    public string BrowserName { get; set; } = "chrome";
-    public string BrowserVersionMajor { get; set; } = string.Empty; // e.g chrome 121. empty string uses system latest supported driver
-    public bool ShowBrowser { get; set; } = true; // headless
-    public int PageLoadTimeoutSeconds { get; set; } = 45;
-    public int ViewportWidth { get; set; } = 1920;
-    public int ViewportHeight { get; set; } = 1080;
-    public IList<string> CustomOptions { get; set; } = [];
-    public bool EnableIncongnito { get; set; } = true;
-    public bool EnableAuthenticationBypass { get; set; } = false;
-    //public bool EnableJavascript { get; set; } = true;
-}
-
 public static class DependencyInjection
 {
     public static IServiceCollection AddAngleSharp(this IServiceCollection services, Action<AngleSharpOptions>? configureOptions = null)
     {
-        // Add mapping for AngleSharpOptions to DocumentClientOptions
         services.AddOptions<AngleSharpOptions>();
         if (configureOptions is not null)
         {

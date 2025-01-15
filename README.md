@@ -1,12 +1,14 @@
 # Who is this library for
 
-To support .NET Developers and Testers in building Web application tests with composable PageObjects;
+To support building .NET tests for web applications with composable PageObjects. This library targets usage of [GDS components](https://design-system.service.gov.uk/components/) in those applications.
 
-- Removing PageObject and Test references to external query libraries with access to them behind an abstraction. (*e.g* WebDriver, AngleSharp... )
+Goals include;
 
-- Provide common GDS components with default mappings
+- Provide testers with GDS components and access to use them in tests.
 
-- Encourage composition of PageObjects so that different types of tests can use the same PageObjects.
+- Ensure different types of tests for a web application can use the same PageObjects
+
+- Ensure separation of concerns is followed closer between Test, PageObject, Document
 
 ## Getting started
 
@@ -18,194 +20,81 @@ To support .NET Developers and Testers in building Web application tests with co
 
 4) Use [library provided Components](#components-available-to-use) in your pages with `ComponentFactory<TComponent>`
 
-5) Access pages [in your tests](#use-pages-in-your-tests) with `IDocumentSessionClient`
+5) Access pages [in your tests](#use-pages-in-your-tests) with `IPageObjectFactory`
 
 ## Choosing and configuring a library to query for you
-
-// TODO document configuration options for each provider; WebDriverSession, AngleSharpParseOptions (AlwaysUseContext, TextReplacement) - needs to be decoratable for retrypolicy
 
 ### AngleSharp
 
 ```cs
+// to use default AngleSharpOptions
 services.AddAngleSharp(); 
 services.AddWebApplicationFactory<TApplicationProgram>(); // TApplicationProgram is your Program class from your .NET Web Application
+
+// to configure WebDriverOptions
+services.AddAngleSharp(t => {
+
+});
 ```
 
 ### WebDriver
 
 ```cs
+// to use default WebDriverOptions
 services.AddWebDriver();
 
-// configure default WebDriverSessionOptions from configuration
-services.ConfigureWebDriverSession(t => {
-    t.BrowserType = configuration.BrowserType
-    t.Headless = configuration.Headless;
-    t.BrowserOptions = configuration.BrowserOptions
+// to configure WebDriverOptions
+services.AddWebDriver(t => {
+    t.Browser.BrowserName = "edge"; // browser being used
+    t.Browser.BrowserMajorVersion = "131"; // version of browser
+    t.Browser.ShowBrowser = false; // should the browser display a screen or be headless
+    t.Browser.PageLoadTimeoutSeconds = 30; // how long should WebDriver wait for the page to load
+    t.Browser.ViewportHeight = 1080;
+    t.Browser.ViewportWidth = 1920; // the dimensions of the browser
+    t.Browser.EnableIncognito = false; // should the browser start as in incognito mode
+    t.Browser.EnableAuthenticationBypass = false; // enable the network interception module
 });
 
-// OR bind options against the WebDriverSessionOptions object
-services.Configure<WebDriverSessionOptions>(configuration);
-services.AddSingleton<WebDriverSessionOptions>(sp => sp.GetRequireService<IOptions<WebDriverSessionOptions>>.Value); // ensure non-options is registered
+// TODO suggest to tester managing configuration through Binding? Provide a default JSON?
 ```
 
 ## Components available to use
 
-`ComponentFactory<IComponent>` *Role:* create components with this
-`IComponent` *Role:* marks components available
+`ComponentFactory<TComponent>` *Role:* create components with this
 
 ```cs
 // example of using library
 public sealed class MyPage : IPageObject
 {
-    ComponentFactory<HeaderComponent> _headerFactory
+    ComponentFactory<GDSHeaderComponent> _headerFactory
   // constructor
-  public MyPage(ComponentFactory<HeaderComponent> headerFactory)
+  public MyPage(ComponentFactory<GDSHeaderComponent> headerFactory)
   {
     _headerFactory = headerFactory;
   }
 
-  // simplest usage exposing the library type to tests
-  public HeaderComponent => _headerFactory.Get(... options)
+  // simplest usage of creating a GDSHeaderComponent
+  public GDSHeaderComponent => _headerFactory.Create(... options).Created
 }
 
 ```
 
-The library supports below components (GDS and supporting *e.g* AnchorLink `<a>`)
-
-GDS Header
-
-- [GDS](https://design-system.service.gov.uk/components/header/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Header/GDSHeaderComponent.cs)
-
-GDS Footer
-
-- [GDS](https://design-system.service.gov.uk/components/footer/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Footer/GDSFooterComponent.cs)
-
-GDS Button
-
-- [GDS](https://design-system.service.gov.uk/components/button/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Button/GDSButtonComponent.cs)
-
-GDS Checkboxes
-
-- [GDS](https://design-system.service.gov.uk/components/checkboxes/)
-- [Library component](/src/Dfe.Testing.Pages/Public/Components/GDS/Checkbox/GDSCheckboxComponent.cs)
-
-GDS Radio
-
-- [GDS](https://design-system.service.gov.uk/components/radios/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Radio/GDSRadioComponent.cs)
-
-GDS Fieldset
-
-- [GDS](https://design-system.service.gov.uk/components/fieldset/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Fieldset/GDSFieldsetComponent.cs)
-
-GDS CookieBanner
-
-- [GDS](https://design-system.service.gov.uk/components/cookie-banner/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/CookieBanner/GDSCookieBannerComponent.cs)
-
-GDS TextInput
-
-- [GDS](https://design-system.service.gov.uk/components/text-input)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/TextInput/GDSTextInputComponent.cs)
-
-GDS DateInput
-
-- [GDS](https://design-system.service.gov.uk/components/date-input)
-- Library use Fieldset
-
-GDS Tabs
-
-- [GDS](https://design-system.service.gov.uk/components/tabs/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Tabs/GDSTabsComponent.cs)
-
-GDS Details
-
-- [GDS](https://design-system.service.gov.uk/components/details/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Details/GDSDetailsComponent.cs)
-
-GDS ErrorMessage
-
-- [GDS](https://design-system.service.gov.uk/components/error-message/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/ErrorMessage/GDSErrorMessageComponent.cs)
-
-GDS ErrorSummary
-
-- [GDS](https://design-system.service.gov.uk/components/error-summary/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/ErrorSummary/GDSErrorSummaryComponent.cs)
-
-GDS Pagination
-
-- [GDS](https://design-system.service.gov.uk/components/pagination/)
-- Library use AnchorLink
-
-GDS Panel
-
-- [GDS](https://design-system.service.gov.uk/components/panel/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Panel/GDSPanelComponent.cs)
-
-GDS Select
-
-- [GDS](https://design-system.service.gov.uk/components/select/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Select/GDSSelectComponent.cs)
-
-GDS Table
-
-- [GDS](https://design-system.service.gov.uk/components/table/)
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Table/GDSTableComponent.cs)
-
-- GDS Password TODO
-- GDS Tag TODO
-
----END GDS---
-
-**TODO** ensure all supporting components are referenced here and reside outside of the GDSComponents folder
-
-Anchor Link
-
-- [Library](/src/Dfe.Testing.Pages/Public/Components/Link/AnchorLinkComponent.cs)
-
-Form
-
-- [Library](/src/Dfe.Testing.Pages/Public/Components/Form/FormComponent.cs)
-
-Label
-
-- [Library](/src/Dfe.Testing.Pages/Public/Components/Label/LabelComponent.cs)
-
-Option
-
-- [Library](/src/Dfe.Testing.Pages/Public/Components/GDS/Select/OptionComponent.cs)
-
-Table parts
-
-- [Library TableHead](/src/Dfe.Testing.Pages/Public/Components/GDS/Table/Parts/TableHead.cs)
-- [Library TableBody](/src/Dfe.Testing.Pages/Public/Components/GDS/Table/Parts/TableBody.cs)
-- [Library TableRow](/src/Dfe.Testing.Pages/Public/Components/GDS/Table/Parts/TableRow.cs)
-- [Library TableHeadingItem](/src/Dfe.Testing.Pages/Public/Components/GDS/Table/Parts/TableHeadingItem.cs)
-- [Library TableDataItem](/src/Dfe.Testing.Pages/Public/Components/GDS/Table/Parts/TableDataItem.cs)
-
 ## Adding your own pages
 
-When building your PageObjects you want to:
+`IPageObject` - *Role:* mark your pages with this
 
-`IPageObject` - *Role:* mark pages with this
-
-`IDocumentSessionClient` - *Role:* create pages with this
+`IPageObjectFactory` - *Role:* create your pages with this
 
 ```cs
 public sealed class HomePage : IPageObject
 
 ```
 
-**Important** register your pages and application components in your DI!
+### Important! register your pages and application components in your DI
 
 ```cs
     testServices...
-    // top level PageObject
+    // PageObject to be created with `IPageObjectFactory`
     testServices.AddTransient<IPageObject, HomePage>();
     testServices.AddTransient<NavigationBarComponent>(); // reusable application component
 
@@ -239,64 +128,17 @@ public sealed class MyTestClass : BaseTest
     [Fact]
     public async Task MyTest()
     {
-        // create document
-        IDocumentSessionClient documentSessionClient = await GetTestService<IDocumentSessionClient>();
-
-        // pageobjects are not coupled to the path request made for a document
-        await documentSession.RequestDocumentAsync(
+        // create document that the page will use
+        IDocumentService documentService = GetTestService<IDocumentService>();
+        IPageObjectFactory pageObjectFactory = GetTestService<IPageObjectFactory>();
+        
+        // pageobjects use an document to fulfil their query requests
+        await documentService.RequestDocumentAsync(
             (t) => t.SetPath("/"));
 
         // create page from the documentSession
-        HomePage page = documentSession.GetPage<HomePage>();
+        HomePage page = pageObjectFactory.Create<HomePage>();
     }
-}
-
-```
-
-*Note* You could aggregate a/multiple components to your own tests type e.g `Facets` or `SearchResults` being made up of multiple GDS components to make your PageObject API more domain centric
-
-```cs
-// Basic types example
-homePage.GetHeading().Should().Be("Heading"); 
-
-public sealed class HomePage
-{
-    public string GetHeading() => _headingFactory.GetHeadings().Where(t => t.Type == H1).Text;
-}
-```
-
-```cs
-// Library types example
-
-// GDSComponent provided by the library - record to give value-object semantics (immutable, attribute comparisons, no identity)
-public record GDSTextInput
-{
-    public required string Name { get; init; }
-    public required string Value { get; init; }
-    public required string? PlaceHolder { get; init; } = null;
-    public required string? Type { get; init; } = null;
-}
-
-// Page
-public sealed class HomePage
-{
-    public HomePage(ComponentFactory<GDSTextInput> inputFactory)
-    
-    public GDSTextInput GetSearchInput() => inputFactory.Get(...);
-}
-
-// Test
-[Fact]
-public async Test()
-{
-    GDSTextInput expectedTextInput = new()
-    {
-        Name = "searchKeyWord",
-        Value = "",
-        PlaceHolder = "Search by keyword",
-        Type = "text"
-    };
-    homePage.GetSearchInput().Should().Be(expectedTextInput);
 }
 
 ```
@@ -358,7 +200,9 @@ public abstract class BaseTest : IDisposable
     }
 }
 
-// Any test class you inherit from BaseTest gets access to the container and a new scope is created per test
+// Any test class you inherit from BaseTest gets access to the container and a new scope is created per test.
+// NOTE by inheriting - this does making overriding your container configuration not possible as the BaseTest is created (and it's ServiceProvider built) 
+// before you can override parts of it in your test.
 
 public sealed class MyTestClass : BaseTest
 {
