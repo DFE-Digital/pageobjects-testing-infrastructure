@@ -3,6 +3,7 @@
 namespace Dfe.Testing.Pages.Public;
 public interface IHttpRequestBuilder
 {
+    public IHttpRequestBuilder SetCookie(System.Net.Cookie cookie);
     public IHttpRequestBuilder SetMethod(HttpMethod method);
     public IHttpRequestBuilder SetMethod(string method);
     public IHttpRequestBuilder SetDomain(string baseUri);

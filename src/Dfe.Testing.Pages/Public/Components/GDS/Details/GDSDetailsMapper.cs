@@ -1,40 +1,33 @@
-﻿using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Details;
-internal sealed class GDSDetailsMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSDetailsComponent>>
+internal sealed class GDSDetailsMapper : IComponentMapper<GDSDetailsComponent>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
+    private readonly IComponentMapper<TextComponent> _textMapper;
 
     public GDSDetailsMapper(
         IMapRequestFactory mapRequestFactory,
         IMappingResultFactory mappingResultFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper)
+        IComponentMapper<TextComponent> textMapper)
     {
+        _mapRequestFactory = mapRequestFactory;
         _mappingResultFactory = mappingResultFactory;
         _textMapper = textMapper;
-        _mapRequestFactory = mapRequestFactory;
     }
 
     public MappedResponse<GDSDetailsComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        MappedResponse<TextComponent> summary = _textMapper.Map(
-            _mapRequestFactory.Create(
-            request.From,
-            request.MappingResults,
-            new CssElementSelector(".govuk-details__summary")));
+        MappedResponse<TextComponent> summary =
+            _textMapper.Map(
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSDetailsComponent.Summary)))
+            .AddToMappingResults(request.MappedResults);
 
-        request.MappingResults.Add(summary.MappingResult);
-
-
-        MappedResponse<TextComponent> content = _textMapper.Map(_mapRequestFactory.Create(
-            request.From,
-            request.MappingResults,
-            new CssElementSelector(".govuk-details__text")));
-
-        request.MappingResults.Add(content.MappingResult);
+        MappedResponse<TextComponent> content =
+            _textMapper.Map(
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSDetailsComponent.Content)))
+            .AddToMappingResults(request.MappedResults);
 
         GDSDetailsComponent component = new()
         {
@@ -45,6 +38,6 @@ internal sealed class GDSDetailsMapper : IMapper<IMapRequest<IDocumentSection>, 
         return _mappingResultFactory.Create(
             component,
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

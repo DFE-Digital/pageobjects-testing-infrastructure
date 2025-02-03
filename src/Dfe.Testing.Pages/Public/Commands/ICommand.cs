@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Shared.Contracts;
+﻿namespace Dfe.Testing.Pages.Public.Commands;
 public interface ICommand
 {
     public IElementSelector Selector { get; set; }

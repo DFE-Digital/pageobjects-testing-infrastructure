@@ -1,28 +1,19 @@
-﻿using Dfe.Testing.Pages.Public.Components.SelectorFactory;
-
-namespace Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+﻿namespace Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
 internal static class MapRequestExtensions
 {
-    internal static IEnumerable<MappedResponse<TOut>> FindManyDescendantsAndMap<TOut>(
+    internal static IEnumerable<MappedResponse<TOut>> FindManyDescendantsAndMapToComponent<TOut>(
         this IMapRequest<IDocumentSection> request,
-        IMapRequestFactory mapRequestFactory,
-        IElementSelector selector,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TOut>> mapper) where TOut : class
-    {
-        return request.FindManyDescendants(selector)
-            .Select((componentSection)
-                => mapper.Map(
-                    mapRequestFactory.Create(componentSection, request.MappingResults)));
-    }
-
-    private static IEnumerable<IDocumentSection> FindManyDescendants<T>(this IMapRequest<IDocumentSection> request, IComponentSelectorFactory selector) where T : class
-        => FindManyDescendants(request, selector.GetSelector<T>());
-
-    private static IEnumerable<IDocumentSection> FindManyDescendants(this IMapRequest<IDocumentSection> request, IElementSelector selector)
+        IMapRequestFactory requestFactory,
+        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TOut>> mapper,
+        IElementSelector? overrideEntrypointForComponent = null) where TOut : class
     {
         ArgumentNullException.ThrowIfNull(request);
-        ArgumentNullException.ThrowIfNull(request.From);
-        ArgumentNullException.ThrowIfNull(selector);
-        return request.From.FindDescendants(selector);
+        ArgumentNullException.ThrowIfNull(request.Document);
+        return request.Document.FindDescendants(
+                overrideEntrypointForComponent ??
+                request.Options.OverrideMapperEntrypoint ??
+                    throw new ArgumentException("unable to get entrypoint for descendants from request inputs"))
+            .Select((descendantDocumentSection) => requestFactory.CreateRequestWithDocumentFrom(request, descendantDocumentSection))
+            .Select(mapper.Map);
     }
 }

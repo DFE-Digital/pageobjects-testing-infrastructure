@@ -1,16 +1,6 @@
 ﻿using Dfe.Testing.Pages.Public.Components.Checkbox;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Checkbox;
-public interface IGDSCheckboxBuilder
-{
-    public IGDSCheckboxBuilder SetCheckbox(CheckboxComponent checkbox);
-    public IGDSCheckboxBuilder SetCheckbox(Action<ICheckboxBuilder> configure);
-    public IGDSCheckboxBuilder SetErrorMessage(string error);
-    public IGDSCheckboxBuilder SetLabelText(string text);
-    public IGDSCheckboxBuilder SetLabelFor(string text);
-    GDSCheckboxComponent Build();
-}
-
 internal sealed class GDSCheckboxBuilder : IGDSCheckboxBuilder
 {
     private readonly ICheckboxBuilder _checkboxBuilder;

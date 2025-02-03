@@ -139,5 +139,6 @@ internal sealed class WebDriverDocumentClient : IDocumentClient
         private ReadOnlyCollection<IWebElement> FindMany(By by) => _wrappedElement.FindElements(by) ?? Array.Empty<IWebElement>().AsReadOnly();
 
         public void Click() => _wrappedElement.Click();
+        public override string ToString() => Document;
     }
 }

@@ -4,35 +4,31 @@ using Dfe.Testing.Pages.Public.Components.GDS.Fieldset;
 using Dfe.Testing.Pages.Public.Components.GDS.Radio;
 using Dfe.Testing.Pages.Public.Components.GDS.TextInput;
 using Dfe.Testing.Pages.Public.Components.HiddenInput;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.SelectorFactory;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace Dfe.Testing.Pages.Public.Components.Form;
-internal sealed class FormMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<FormComponent>>
+internal sealed class FormMapper : IComponentMapper<FormComponent>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
-    private readonly IComponentSelectorFactory _componentSelectorFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSFieldsetComponent>> _GdsfieldsetMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSButtonComponent>> _GdsButtonMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSTextInputComponent>> _GdsTextInputMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSCheckboxComponent>> _GdsCheckboxMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSRadioComponent>> _GdsRadioMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSSelectComponent>> _GdsSelectMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<HiddenInputComponent>> _hiddenInputMapper;
+    private readonly IComponentMapper<GDSFieldsetComponent> _GdsfieldsetMapper;
+    private readonly IComponentMapper<GDSButtonComponent> _GdsButtonMapper;
+    private readonly IComponentMapper<GDSTextInputComponent> _GdsTextInputMapper;
+    private readonly IComponentMapper<GDSCheckboxComponent> _GdsCheckboxMapper;
+    private readonly IComponentMapper<GDSRadioComponent> _GdsRadioMapper;
+    private readonly IComponentMapper<GDSSelectComponent> _GdsSelectMapper;
+    private readonly IComponentMapper<HiddenInputComponent> _hiddenInputMapper;
 
     public FormMapper(
-        IMapRequestFactory mapRequestFactory,
-        IComponentSelectorFactory componentSelectorFactory,
         IMappingResultFactory mappingResultFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSFieldsetComponent>> GdsfieldsetMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSButtonComponent>> GdsbuttonMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSTextInputComponent>> GdsTextInputMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSCheckboxComponent>> GdsCheckboxMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSRadioComponent>> GdsRadioMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSSelectComponent>> GdsSelectMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<HiddenInputComponent>> hiddenInputFactory)
+        IComponentMapper<GDSFieldsetComponent> GdsfieldsetMapper,
+        IComponentMapper<GDSButtonComponent> GdsbuttonMapper,
+        IComponentMapper<GDSTextInputComponent> GdsTextInputMapper,
+        IComponentMapper<GDSCheckboxComponent> GdsCheckboxMapper,
+        IComponentMapper<GDSRadioComponent> GdsRadioMapper,
+        IComponentMapper<GDSSelectComponent> GdsSelectMapper,
+        IComponentMapper<HiddenInputComponent> hiddenInputFactory,
+        IMapRequestFactory mapRequestFactory)
     {
         ArgumentNullException.ThrowIfNull(GdsfieldsetMapper);
         ArgumentNullException.ThrowIfNull(GdsbuttonMapper);
@@ -41,7 +37,6 @@ internal sealed class FormMapper : IMapper<IMapRequest<IDocumentSection>, Mapped
         ArgumentNullException.ThrowIfNull(GdsRadioMapper);
         ArgumentNullException.ThrowIfNull(GdsSelectMapper);
         ArgumentNullException.ThrowIfNull(hiddenInputFactory);
-        _componentSelectorFactory = componentSelectorFactory;
         _GdsfieldsetMapper = GdsfieldsetMapper;
         _GdsButtonMapper = GdsbuttonMapper;
         _GdsTextInputMapper = GdsTextInputMapper;
@@ -55,67 +50,50 @@ internal sealed class FormMapper : IMapper<IMapRequest<IDocumentSection>, Mapped
 
     public MappedResponse<FormComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        IEnumerable<MappedResponse<GDSFieldsetComponent>> mappedFieldsets =
-            request.FindManyDescendantsAndMap<GDSFieldsetComponent>(
-                _mapRequestFactory,
-                _componentSelectorFactory.GetSelector<GDSFieldsetComponent>(),
-                _GdsfieldsetMapper)
-            .AddMappedResponseToResults(request.MappingResults);
+        IEnumerable<MappedResponse<GDSFieldsetComponent>> fieldsets =
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Fieldsets))
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsfieldsetMapper)
+                .AddToMappingResults(request.MappedResults);
 
-        IEnumerable<MappedResponse<GDSButtonComponent>> mappedButtons
-            = request.FindManyDescendantsAndMap<GDSButtonComponent>(
-                _mapRequestFactory,
-                _componentSelectorFactory.GetSelector<GDSButtonComponent>(),
-                _GdsButtonMapper)
-            .AddMappedResponseToResults(request.MappingResults);
+        IEnumerable<MappedResponse<GDSButtonComponent>> mappedButtons =
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Buttons))
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsButtonMapper)
+                .AddToMappingResults(request.MappedResults);
 
         IEnumerable<MappedResponse<HiddenInputComponent>> mappedHiddenInputs =
-            request.FindManyDescendantsAndMap<HiddenInputComponent>(
-                _mapRequestFactory,
-                _componentSelectorFactory.GetSelector<HiddenInputComponent>(),
-                _hiddenInputMapper)
-        .AddMappedResponseToResults(request.MappingResults);
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.HiddenInputs))
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _hiddenInputMapper)
+                .AddToMappingResults(request.MappedResults);
 
-        IEnumerable<MappedResponse<GDSTextInputComponent>> mappedTextInputs
-            = request.FindManyDescendantsAndMap<GDSTextInputComponent>(
-                _mapRequestFactory,
-                _componentSelectorFactory.GetSelector<GDSTextInputComponent>(),
-                _GdsTextInputMapper)
-        .AddMappedResponseToResults(request.MappingResults);
+        IEnumerable<MappedResponse<GDSTextInputComponent>> mappedTextInputs =
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.TextInputs))
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsTextInputMapper)
+                .AddToMappingResults(request.MappedResults);
 
-        // GDSCheckboxes
-        IEnumerable<MappedResponse<GDSCheckboxComponent>> mappedCheckboxes
-            = request.FindManyDescendantsAndMap<GDSCheckboxComponent>(
-                _mapRequestFactory,
-                _componentSelectorFactory.GetSelector<GDSCheckboxComponent>(),
-                _GdsCheckboxMapper)
-            .AddMappedResponseToResults(request.MappingResults);
+        IEnumerable<MappedResponse<GDSCheckboxComponent>> mappedCheckboxes =
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Checkboxes))
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsCheckboxMapper)
+                .AddToMappingResults(request.MappedResults);
 
-        // GDSRadios
-        IEnumerable<MappedResponse<GDSRadioComponent>> mappedRadios
-            = request.FindManyDescendantsAndMap<GDSRadioComponent>(
-                _mapRequestFactory,
-                _componentSelectorFactory.GetSelector<GDSRadioComponent>(),
-                _GdsRadioMapper)
-            .AddMappedResponseToResults(request.MappingResults);
+        IEnumerable<MappedResponse<GDSRadioComponent>> mappedRadios =
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Radios))
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsRadioMapper)
+                .AddToMappingResults(request.MappedResults);
 
-        // GDSSelects
-        IEnumerable<MappedResponse<GDSSelectComponent>> mappedSelects
-            = request.FindManyDescendantsAndMap<GDSSelectComponent>(
-                _mapRequestFactory,
-                _componentSelectorFactory.GetSelector<GDSSelectComponent>(),
-                _GdsSelectMapper)
-            .AddMappedResponseToResults(request.MappingResults);
+        IEnumerable<MappedResponse<GDSSelectComponent>> mappedSelects =
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Selects))
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsSelectMapper)
+                .AddToMappingResults(request.MappedResults);
 
         FormComponent form = new()
         {
             // form attributes
             // Default method is GET if not specified
-            Method = HttpMethod.Parse(request.From.GetAttribute("method") ?? "get"),
-            Action = request.From.GetAttribute("action") ?? string.Empty,
-            IsFormValidated = !request.From.HasAttribute("novalidate"),
+            Method = HttpMethod.Parse(request.Document.GetAttribute("method") ?? "get"),
+            Action = request.Document.GetAttribute("action") ?? string.Empty,
+            IsFormValidated = !request.Document.HasAttribute("novalidate"),
             // form parts
-            FieldSets = mappedFieldsets.Select(t => t.Mapped),
+            Fieldsets = fieldsets.Select(t => t.Mapped),
             Buttons = mappedButtons.Select(t => t.Mapped),
             HiddenInputs = mappedHiddenInputs.Select(t => t.Mapped),
             TextInputs = mappedTextInputs.Select(t => t.Mapped),
@@ -127,6 +105,6 @@ internal sealed class FormMapper : IMapper<IMapRequest<IDocumentSection>, Mapped
         return _mappingResultFactory.Create(
             mapped: form,
             status: MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

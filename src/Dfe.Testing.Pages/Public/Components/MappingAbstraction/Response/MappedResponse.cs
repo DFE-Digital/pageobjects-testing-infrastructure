@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public.Components.MappingAbstraction;
+﻿namespace Dfe.Testing.Pages.Public.Components.MappingAbstraction.Response;
 public record MappedResponse<T> where T : class
 {
     public T? Mapped { get; init; } = null!;
@@ -7,7 +7,7 @@ public record MappedResponse<T> where T : class
 
 public interface IMappingResult
 {
-    // TODO how do we uniquely identify and set MappingResult information {FactoryCreateNumber}.{ChildComponent}.{Attribute}? public string Key { get; }
+    // TODO how do we uniquely identify and set MappingResult information {TopLevelMapAttempt}.{MapChainKey}
     public MappingStatus Status { get; }
     public string AttemptedToMapFrom { get; }
     public string Message { get; }
@@ -21,7 +21,7 @@ public enum MappingStatus
 
 internal static class MappedResponseExtensions
 {
-    internal static IEnumerable<MappedResponse<T>> AddMappedResponseToResults<T>(this IEnumerable<MappedResponse<T>> responses, IList<IMappingResult> results) where T : class
+    internal static IEnumerable<MappedResponse<T>> AddToMappingResults<T>(this IEnumerable<MappedResponse<T>> responses, IList<IMappingResult> results) where T : class
     {
         ArgumentNullException.ThrowIfNull(responses);
         ArgumentNullException.ThrowIfNull(results);
@@ -29,6 +29,6 @@ internal static class MappedResponseExtensions
         return responses;
     }
 
-    internal static MappedResponse<T> AddMappedResponseToResults<T>(this MappedResponse<T> response, IList<IMappingResult> results) where T : class
-        => AddMappedResponseToResults(new List<MappedResponse<T>> { response }, results).Single();
+    internal static MappedResponse<T> AddToMappingResults<T>(this MappedResponse<T> response, IList<IMappingResult> results) where T : class
+        => new List<MappedResponse<T>> { response }.AddToMappingResults(results).Single();
 }

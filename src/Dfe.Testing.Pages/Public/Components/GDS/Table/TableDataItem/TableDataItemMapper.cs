@@ -1,31 +1,29 @@
-﻿using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Table.TableDataItem;
-internal class TableDataItemMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableDataItemComponent>>
+internal class TableDataItemMapper : IComponentMapper<TableDataItemComponent>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
+    private readonly IComponentMapper<TextComponent> _textMapper;
     private readonly IMappingResultFactory _mappingResultFactory;
 
     public TableDataItemMapper(
         IMapRequestFactory mapRequestFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
+        IComponentMapper<TextComponent> textMapper,
         IMappingResultFactory mappingResultFactory)
     {
         ArgumentNullException.ThrowIfNull(textMapper);
-        _mapRequestFactory = mapRequestFactory;
         _textMapper = textMapper;
         _mappingResultFactory = mappingResultFactory;
+        _mapRequestFactory = mapRequestFactory;
     }
 
     public MappedResponse<TableDataItemComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        MappedResponse<TextComponent> mappedText = _textMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults))
-        .AddMappedResponseToResults(request.MappingResults);
+        MappedResponse<TextComponent> mappedText =
+            _textMapper.Map(
+                _mapRequestFactory.CreateRequestFrom(request, nameof(TableDataItemComponent.Text)))
+            .AddToMappingResults(request.MappedResults);
 
         TableDataItemComponent tableDataItemComponent = new()
         {
@@ -35,6 +33,6 @@ internal class TableDataItemMapper : IMapper<IMapRequest<IDocumentSection>, Mapp
         return _mappingResultFactory.Create(
             tableDataItemComponent,
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

@@ -1,17 +1,21 @@
 ﻿namespace Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-public interface IMapRequest<Tin>
+internal interface IMapRequest<Tin>
 {
-    Tin From { get; }
-    IElementSelector? EntryPoint { get; }
-    IList<IMappingResult> MappingResults { get; }
-    // TODO shallow clone with overrideable ComponentEntryPoint?
+    Tin Document { get; }
+    MappingOptions Options { get; }
+    List<IMappingResult> MappedResults { get; }
 }
 
-// TODO generic so that any TIn can be passed.
-public interface IMapRequestFactory
+public sealed class MappingOptions
 {
-    IMapRequest<IDocumentSection> Create(
-        IDocumentSection mapFrom,
-        IList<IMappingResult> mappings,
-        IElementSelector? mappingEntryPoint = null);
+    public required MapKey MapConfigurationKey { get; init; }
+    public IDictionary<string, IElementSelector> OverrideMapperConfiguration { get; init; } = new Dictionary<string, IElementSelector>();
+    public IElementSelector? OverrideMapperEntrypoint { get; init; } = null;
+}
+
+internal sealed class DocumentSectionMapRequest : IMapRequest<IDocumentSection>
+{
+    public required IDocumentSection Document { get; init; }
+    public required MappingOptions Options { get; init; }
+    public List<IMappingResult> MappedResults { get; init; } = [];
 }

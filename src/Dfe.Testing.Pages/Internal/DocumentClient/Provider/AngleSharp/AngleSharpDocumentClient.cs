@@ -120,7 +120,7 @@ internal class AngleSharpDocumentClient : IDocumentClient
 
         public string Text
         {
-            get => _getTextProcessingHandler.Handle(_wrappedElement.TextContent);
+            get => _getTextProcessingHandler.Handle(_wrappedElement.Text());
             set => _wrappedElement.TextContent = value;
         }
 
@@ -156,6 +156,7 @@ internal class AngleSharpDocumentClient : IDocumentClient
             => AsDocumentParts(
                 _wrappedElement.QuerySelectorAll(selector?.ToSelector() ?? throw new ArgumentNullException("selector when queryAll children is null")),
                 _getTextProcessingHandler);
+        public override string ToString() => Document;
     }
 
 }

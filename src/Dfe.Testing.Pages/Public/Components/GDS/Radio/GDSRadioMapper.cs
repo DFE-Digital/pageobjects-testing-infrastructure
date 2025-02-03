@@ -1,51 +1,43 @@
 ﻿using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
 using Dfe.Testing.Pages.Public.Components.Label;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
 using Dfe.Testing.Pages.Public.Components.Radio;
-using Dfe.Testing.Pages.Public.Components.SelectorFactory;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Radio;
-internal sealed class GDSRadioMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSRadioComponent>>
+internal sealed class GDSRadioMapper : IComponentMapper<GDSRadioComponent>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
-    private readonly IComponentSelectorFactory _componentSelectorFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<LabelComponent>> _labelMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<RadioComponent>> _radioMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>> _errorMessageMapper;
+    private readonly IComponentMapper<LabelComponent> _labelMapper;
+    private readonly IComponentMapper<RadioComponent> _radioMapper;
+    private readonly IComponentMapper<GDSErrorMessageComponent> _errorMessageMapper;
 
     public GDSRadioMapper(
         IMapRequestFactory mapRequestFactory,
         IMappingResultFactory mappingResultFactory,
-        IComponentSelectorFactory componentSelectorFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<LabelComponent>> labelMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<RadioComponent>> radioMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>> errorMessageMapper)
+        IComponentMapper<LabelComponent> labelMapper,
+        IComponentMapper<RadioComponent> radioMapper,
+        IComponentMapper<GDSErrorMessageComponent> errorMessageMapper)
     {
         _mappingResultFactory = mappingResultFactory;
         _labelMapper = labelMapper;
         _radioMapper = radioMapper;
         _errorMessageMapper = errorMessageMapper;
-        _componentSelectorFactory = componentSelectorFactory;
         _mapRequestFactory = mapRequestFactory;
     }
+
     public MappedResponse<GDSRadioComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        MappedResponse<LabelComponent> mappedLabel = _labelMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults,
-                request.EntryPoint ?? _componentSelectorFactory.GetSelector<LabelComponent>()))
-            .AddMappedResponseToResults(request.MappingResults);
+        MappedResponse<LabelComponent> mappedLabel =
+            _labelMapper.Map(
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSRadioComponent.Label)))
+            .AddToMappingResults(request.MappedResults);
 
-        MappedResponse<RadioComponent> mappedRadio = _radioMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults,
-                request.EntryPoint ?? _componentSelectorFactory.GetSelector<RadioComponent>()))
-            .AddMappedResponseToResults(request.MappingResults);
+        MappedResponse<RadioComponent> mappedRadio =
+            _radioMapper.Map(
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSRadioComponent.Radio)))
+            .AddToMappingResults(request.MappedResults);
 
-        GDSRadioComponent radio = new()
+        GDSRadioComponent output = new()
         {
             Label = mappedLabel.Mapped,
             Radio = mappedRadio.Mapped,
@@ -53,8 +45,8 @@ internal sealed class GDSRadioMapper : IMapper<IMapRequest<IDocumentSection>, Ma
         };
 
         return _mappingResultFactory.Create(
-            radio,
+            output,
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

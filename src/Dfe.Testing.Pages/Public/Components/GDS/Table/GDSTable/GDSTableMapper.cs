@@ -1,52 +1,46 @@
-﻿using Dfe.Testing.Pages.Public.Components.GDS.Table.GDSTable;
-using Dfe.Testing.Pages.Public.Components.GDS.Table.TableBody;
+﻿using Dfe.Testing.Pages.Public.Components.GDS.Table.TableBody;
 using Dfe.Testing.Pages.Public.Components.GDS.Table.TableHead;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
 using Dfe.Testing.Pages.Public.Components.Text;
 
-namespace Dfe.Testing.Pages.Public.Components.GDS.Table.Mapper;
-internal sealed class GDSTableMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSTableComponent>>
+namespace Dfe.Testing.Pages.Public.Components.GDS.Table.GDSTable;
+internal sealed class GDSTableMapper : IComponentMapper<GDSTableComponent>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableHeadComponent>> _tableHeadMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableBodyComponent>> _tableBodyMapper;
+    private readonly IComponentMapper<TextComponent> _textMapper;
+    private readonly IComponentMapper<TableHeadComponent> _tableHeadMapper;
+    private readonly IComponentMapper<TableBodyComponent> _tableBodyMapper;
 
     public GDSTableMapper(
         IMapRequestFactory mapRequestFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableHeadComponent>> tableHeadMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableBodyComponent>> tableBodyMapper,
+        IComponentMapper<TextComponent> textMapper,
+        IComponentMapper<TableHeadComponent> tableHeadMapper,
+        IComponentMapper<TableBodyComponent> tableBodyMapper,
         IMappingResultFactory mappingResultFactory)
     {
         ArgumentNullException.ThrowIfNull(textMapper);
         ArgumentNullException.ThrowIfNull(tableHeadMapper);
         ArgumentNullException.ThrowIfNull(tableBodyMapper);
-        _mapRequestFactory = mapRequestFactory;
         _textMapper = textMapper;
         _tableHeadMapper = tableHeadMapper;
         _tableBodyMapper = tableBodyMapper;
         _mappingResultFactory = mappingResultFactory;
+        _mapRequestFactory = mapRequestFactory;
     }
+
     public MappedResponse<GDSTableComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        MappedResponse<TextComponent> mappedHeading = _textMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults,
-                new CssElementSelector("caption")))
-            .AddMappedResponseToResults(request.MappingResults);
+        var mappedHeading = _textMapper.Map(
+            _mapRequestFactory.CreateRequestFrom(request, nameof(GDSTableComponent.Heading)))
+                .AddToMappingResults(request.MappedResults);
 
-        MappedResponse<TableHeadComponent> mappedTableHead = _tableHeadMapper.Map(_mapRequestFactory.Create(
-                request.From,
-                request.MappingResults))
-            .AddMappedResponseToResults(request.MappingResults);
+        var mappedTableHead = _tableHeadMapper.Map(
+            _mapRequestFactory.CreateRequestFrom(request, nameof(GDSTableComponent.Head)))
+                .AddToMappingResults(request.MappedResults);
 
-        MappedResponse<TableBodyComponent> mappedTableBody = _tableBodyMapper.Map(_mapRequestFactory.Create(
-                request.From,
-                request.MappingResults))
-            .AddMappedResponseToResults(request.MappingResults);
+        var mappedTableBody = _tableBodyMapper.Map(
+            _mapRequestFactory.CreateRequestFrom(request, nameof(GDSTableComponent.Body)))
+                .AddToMappingResults(request.MappedResults);
 
         GDSTableComponent tableBody = new()
         {
@@ -58,6 +52,6 @@ internal sealed class GDSTableMapper : IMapper<IMapRequest<IDocumentSection>, Ma
         return _mappingResultFactory.Create(
             tableBody,
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

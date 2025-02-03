@@ -1,40 +1,38 @@
-﻿using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Select;
-internal sealed class OptionsMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<OptionComponent>>
+internal sealed class OptionsMapper : IComponentMapper<OptionComponent>
 {
+    private readonly IComponentMapper<TextComponent> _textMapper;
     private readonly IMapRequestFactory _mapRequestFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
     private readonly IMappingResultFactory _mappingResultFactory;
 
     public OptionsMapper(
         IMapRequestFactory mapRequestFactory,
         IMappingResultFactory mappingResultFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper)
+        IComponentMapper<TextComponent> textMapper)
     {
         _textMapper = textMapper;
-        _mappingResultFactory = mappingResultFactory;
         _mapRequestFactory = mapRequestFactory;
+        _mappingResultFactory = mappingResultFactory;
     }
+
     public MappedResponse<OptionComponent> Map(IMapRequest<IDocumentSection> request)
     {
         MappedResponse<TextComponent> mappedText = _textMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults))
-            .AddMappedResponseToResults(request.MappingResults);
+            _mapRequestFactory.CreateRequestFrom(request, nameof(OptionComponent.Text)))
+                .AddToMappingResults(request.MappedResults);
 
         OptionComponent option = new()
         {
-            IsSelected = request.From.HasAttribute("selected"),
+            IsSelected = request.Document.HasAttribute("selected"),
             Text = mappedText.Mapped,
-            Value = request.From.GetAttribute("value") ?? string.Empty
+            Value = request.Document.GetAttribute("value") ?? string.Empty
         };
 
         return _mappingResultFactory.Create(
             option,
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

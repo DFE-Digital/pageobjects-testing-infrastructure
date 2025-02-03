@@ -20,6 +20,7 @@ internal sealed class GDSButtonBuilder : IGDSButtonBuilder
         _enabled = true;
         _buttonType = ButtonStyleType.Primary;
     }
+
     public GDSButtonComponent Build() => new()
     {
         Text = new TextComponent()
@@ -32,8 +33,6 @@ internal sealed class GDSButtonBuilder : IGDSButtonBuilder
         Value = _value,
         IsEnabled = _enabled
     };
-
-    public IGDSButtonBuilder Reset() => new GDSButtonBuilder();
 
     public IGDSButtonBuilder SetType(string type)
     {

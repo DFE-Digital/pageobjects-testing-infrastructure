@@ -1,16 +1,15 @@
-﻿using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Panel;
-internal sealed class GDSPanelMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSPanelComponent>>
+internal sealed class GDSPanelMapper : IComponentMapper<GDSPanelComponent>
 {
-    private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IComponentMapper<TextComponent> _textMapper;
 
     public GDSPanelMapper(
         IMapRequestFactory mapRequestFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
+        IComponentMapper<TextComponent> textMapper,
         IMappingResultFactory mappingResultFactory)
     {
         ArgumentNullException.ThrowIfNull(textMapper);
@@ -22,30 +21,26 @@ internal sealed class GDSPanelMapper : IMapper<IMapRequest<IDocumentSection>, Ma
     public MappedResponse<GDSPanelComponent> Map(IMapRequest<IDocumentSection> request)
     {
         // Heading
-        MappedResponse<TextComponent> mappedHeading = _textMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults,
-                new CssElementSelector(".govuk-panel__title")))
-            .AddMappedResponseToResults(request.MappingResults);
+        MappedResponse<TextComponent> mappedHeading =
+            _textMapper.Map(
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSPanelComponent.Heading)))
+            .AddToMappingResults(request.MappedResults);
 
         // Content
-        MappedResponse<TextComponent> mappedContent = _textMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults,
-                new CssElementSelector(".govuk-panel__body")))
-            .AddMappedResponseToResults(request.MappingResults);
+        MappedResponse<TextComponent> mappedContent =
+            _textMapper.Map(
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSPanelComponent.Content)))
+            .AddToMappingResults(request.MappedResults);
 
         GDSPanelComponent panel = new()
         {
             Heading = mappedHeading.Mapped,
-            Content = mappedContent.Mapped
+            Content = mappedContent.Mapped,
         };
 
         return _mappingResultFactory.Create(
             panel,
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

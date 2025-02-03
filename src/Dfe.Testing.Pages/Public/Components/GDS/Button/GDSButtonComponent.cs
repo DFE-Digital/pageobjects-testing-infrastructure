@@ -29,5 +29,4 @@ public interface IGDSButtonBuilder
     IGDSButtonBuilder SetName(string name);
     IGDSButtonBuilder SetText(string text);
     IGDSButtonBuilder SetValue(string value);
-    IGDSButtonBuilder Reset();
 }

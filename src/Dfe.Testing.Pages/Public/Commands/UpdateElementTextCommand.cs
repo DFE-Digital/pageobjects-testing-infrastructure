@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public;
+﻿namespace Dfe.Testing.Pages.Public.Commands;
 public sealed class UpdateElementTextCommand : ICommand
 {
     public IElementSelector Selector { get; set; } = null!;

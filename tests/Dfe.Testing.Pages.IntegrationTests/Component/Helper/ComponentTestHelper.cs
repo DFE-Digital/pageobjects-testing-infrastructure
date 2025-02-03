@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.Design;
-using Dfe.Testing.Pages.Public.PageObject;
-
-namespace Dfe.Testing.Pages.IntegrationTests.Component.Helper;
+﻿namespace Dfe.Testing.Pages.IntegrationTests.Component.Helper;
 internal static class ComponentTestHelper
 {
-    internal static async Task<TPage> RequestPage<TPage>(string path) where TPage : class, IPageObject
+    internal static async Task<TPage> RequestPage<TPage>(string path) where TPage : class
     {
         ArgumentNullException.ThrowIfNull(path);
         using HttpRequestMessage httpRequest = new()
@@ -15,21 +12,21 @@ internal static class ComponentTestHelper
         var scopedContainerWithPage = new ServiceCollection()
             .AddAngleSharp()
             .AddWebApplicationFactory<Program>()
-            .AddTransient<IPageObject, TPage>()
+            .AddTransient<TPage>()
             .BuildServiceProvider()
             .CreateScope();
 
         var session = scopedContainerWithPage.ServiceProvider.GetRequiredService<IDocumentService>();
         await session.RequestDocumentAsync(httpRequest);
-        return scopedContainerWithPage.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<TPage>();
+        return scopedContainerWithPage.ServiceProvider.GetRequiredService<TPage>();
     }
 
-    internal static IServiceScope GetServices<TPage>(Action<IServiceCollection>? configure = null) where TPage : class, IPageObject
+    internal static IServiceScope GetServices<TPage>(Action<IServiceCollection>? configure = null) where TPage : class
     {
         var scopedContainerWithPage = new ServiceCollection()
             .AddAngleSharp()
             .AddWebApplicationFactory<Program>()
-            .AddTransient<IPageObject, TPage>();
+            .AddTransient<TPage>();
 
         configure?.Invoke(scopedContainerWithPage);
 

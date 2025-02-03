@@ -1,4 +1,5 @@
-﻿using HttpMethod = System.Net.Http.HttpMethod;
+﻿using Cookie = System.Net.Cookie;
+using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace Dfe.Testing.Pages.Internal.WebApplicationFactory;
 internal sealed class HttpRequestBuilder : IHttpRequestBuilder
@@ -9,6 +10,7 @@ internal sealed class HttpRequestBuilder : IHttpRequestBuilder
     private readonly List<KeyValuePair<string, string>> _query = [];
     private object? _body = null;
     private ushort _port = 443;
+    private Cookie? _cookie;
 
     public IHttpRequestBuilder SetMethod(string method) => SetMethod(HttpMethod.Parse(method));
 
@@ -54,6 +56,13 @@ internal sealed class HttpRequestBuilder : IHttpRequestBuilder
         return this;
     }
 
+    public IHttpRequestBuilder SetCookie(Cookie cookie)
+    {
+        ArgumentNullException.ThrowIfNull(cookie);
+        _cookie = cookie;
+        return this;
+    }
+
     public HttpRequestMessage Build()
     {
         UriBuilder uri = new()
@@ -81,6 +90,11 @@ internal sealed class HttpRequestBuilder : IHttpRequestBuilder
         if (_body != null)
         {
             requestMessage.Content = new StringContent(JsonConvert.SerializeObject(_body));
+        }
+
+        if (_cookie != null)
+        {
+            requestMessage.Headers.Add("Cookie", _cookie.ToString());
         }
 
         return requestMessage;

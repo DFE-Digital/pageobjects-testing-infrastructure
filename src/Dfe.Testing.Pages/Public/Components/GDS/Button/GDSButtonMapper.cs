@@ -1,57 +1,52 @@
-﻿using Dfe.Testing.Pages.Public.Components.Link;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Button;
-internal class GDSButtonMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSButtonComponent>>
+internal class GDSButtonMapper : IComponentMapper<GDSButtonComponent>
 {
-    private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
+    private readonly IMapRequestFactory _mapRequestFactory;
+    private readonly IComponentMapper<TextComponent> _textMapper;
     private readonly IGDSButtonBuilder _buttonBuilder;
 
     public GDSButtonMapper(
         IMapRequestFactory mapRequestFactory,
-        IMappingResultFactory mappingResultFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
-        IGDSButtonBuilder buttonBuilder)
+        IComponentMapper<TextComponent> textMapper,
+        IGDSButtonBuilder buttonBuilder,
+        IMappingResultFactory mappingResultFactory)
     {
         ArgumentNullException.ThrowIfNull(textMapper);
         ArgumentNullException.ThrowIfNull(buttonBuilder);
-        _mapRequestFactory = mapRequestFactory;
         _mappingResultFactory = mappingResultFactory;
+        _mapRequestFactory = mapRequestFactory;
         _textMapper = textMapper;
         _buttonBuilder = buttonBuilder;
     }
 
     public MappedResponse<GDSButtonComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        MappedResponse<TextComponent> text = _textMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults));
+        MappedResponse<TextComponent> text =
+            _textMapper.Map(
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSButtonComponent.Text)))
+            .AddToMappingResults(request.MappedResults);
 
-        request.MappingResults.Add(text.MappingResult);
-
-        string buttonStyles = request.From.GetAttribute("class") ?? string.Empty;
+        string buttonStyles = request.Document.GetAttribute("class") ?? string.Empty;
 
         ButtonStyleType buttonType =
                 buttonStyles.Contains("govuk-button--secondary") ? ButtonStyleType.Secondary :
                 buttonStyles.Contains("govuk-button--warning") ? ButtonStyleType.Warning
                     : ButtonStyleType.Primary;
 
-        _buttonBuilder.SetValue(request.From.GetAttribute("value") ?? string.Empty)
-            .SetName(request.From.GetAttribute("name") ?? string.Empty)
+        _buttonBuilder.SetValue(request.Document.GetAttribute("value") ?? string.Empty)
+            .SetName(request.Document.GetAttribute("name") ?? string.Empty)
             .SetText(text.Mapped?.Text ?? string.Empty)
-            .SetEnabled(!request.From.HasAttribute("disabled"))
+            .SetEnabled(!request.Document.HasAttribute("disabled"))
             .SetButtonStyle(buttonType)
-            .SetType(request.From.GetAttribute("type") ?? string.Empty)
+            .SetType(request.Document.GetAttribute("type") ?? string.Empty)
             .Build();
 
         return _mappingResultFactory.Create(
                 mapped: _buttonBuilder.Build(),
                 status: MappingStatus.Success,
-                section: request.From);
+                section: request.Document);
     }
 }

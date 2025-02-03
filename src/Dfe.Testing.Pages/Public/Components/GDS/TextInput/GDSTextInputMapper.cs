@@ -1,55 +1,46 @@
 ﻿using Dfe.Testing.Pages.Public.Components.GDS.ErrorMessage;
-using Dfe.Testing.Pages.Public.Components.Inputs;
 using Dfe.Testing.Pages.Public.Components.Label;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.SelectorFactory;
+using Dfe.Testing.Pages.Public.Components.TextInput;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.TextInput;
-internal sealed class GDSTextInputMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSTextInputComponent>>
+internal sealed class GDSTextInputMapper : IComponentMapper<GDSTextInputComponent>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
-    private readonly IComponentSelectorFactory _componentSelectorFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextInputComponent>> _textInputMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<LabelComponent>> _labelMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>> _errorMessageMapper;
+    private readonly IComponentMapper<TextInputComponent> _textInputMapper;
+    private readonly IComponentMapper<LabelComponent> _labelMapper;
+    private readonly IComponentMapper<GDSErrorMessageComponent> _errorMessageMapper;
 
     public GDSTextInputMapper(
         IMapRequestFactory mapRequestFactory,
-        IComponentSelectorFactory componentSelectorFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextInputComponent>> textInputMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<LabelComponent>> labelMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<GDSErrorMessageComponent>> errorMessageMapper,
+        IComponentMapper<TextInputComponent> textInputMapper,
+        IComponentMapper<LabelComponent> labelMapper,
+        IComponentMapper<GDSErrorMessageComponent> errorMessageMapper,
         IMappingResultFactory mappingResultFactory)
     {
         ArgumentNullException.ThrowIfNull(textInputMapper);
         ArgumentNullException.ThrowIfNull(labelMapper);
         ArgumentNullException.ThrowIfNull(errorMessageMapper);
-        _mapRequestFactory = mapRequestFactory;
         _textInputMapper = textInputMapper;
         _labelMapper = labelMapper;
         _errorMessageMapper = errorMessageMapper;
         _mappingResultFactory = mappingResultFactory;
-        _componentSelectorFactory = componentSelectorFactory;
+        _mapRequestFactory = mapRequestFactory;
     }
 
     public MappedResponse<GDSTextInputComponent> Map(IMapRequest<IDocumentSection> request)
     {
         MappedResponse<LabelComponent> label = _labelMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults,
-                _componentSelectorFactory.GetSelector<LabelComponent>()));
+            _mapRequestFactory.CreateRequestFrom(request, nameof(GDSTextInputComponent.Label)))
+                .AddToMappingResults(request.MappedResults);
 
         MappedResponse<TextInputComponent> text = _textInputMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults));
+            _mapRequestFactory.CreateRequestFrom(request, nameof(GDSTextInputComponent.TextInput)))
+                .AddToMappingResults(request.MappedResults);
 
         MappedResponse<GDSErrorMessageComponent> errorMessage = _errorMessageMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults));
+            _mapRequestFactory.CreateRequestFrom(request, nameof(GDSTextInputComponent.ErrorMessage)))
+                .AddToMappingResults(request.MappedResults);
 
         GDSTextInputComponent component = new()
         {
@@ -61,6 +52,6 @@ internal sealed class GDSTextInputMapper : IMapper<IMapRequest<IDocumentSection>
         return _mappingResultFactory.Create(
             component,
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

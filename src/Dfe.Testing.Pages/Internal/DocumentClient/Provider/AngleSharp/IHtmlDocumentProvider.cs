@@ -22,8 +22,7 @@ internal sealed class HtmlDocumentProvider : IHtmlDocumentProvider
     {
         var content = await response.Content.ReadAsStringAsync();
         var config = Configuration.Default
-            .WithDefaultLoader(new LoaderOptions { IsResourceLoadingEnabled = true })
-            .WithCss();
+            .WithDefaultLoader(new LoaderOptions { IsResourceLoadingEnabled = true });
 
         var document = await
             BrowsingContext.New(config)

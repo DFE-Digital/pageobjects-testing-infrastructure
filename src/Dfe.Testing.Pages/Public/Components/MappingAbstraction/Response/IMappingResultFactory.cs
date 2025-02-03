@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public.Components.MappingAbstraction;
+﻿namespace Dfe.Testing.Pages.Public.Components.MappingAbstraction.Response;
 public interface IMappingResultFactory
 {
     MappedResponse<TOut> Create<TOut>(

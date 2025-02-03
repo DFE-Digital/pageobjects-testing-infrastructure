@@ -2,13 +2,14 @@
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider;
 
 namespace Dfe.Testing.Pages.Public;
+// TODO needs refactor to handle document control and repository, consider separate ComponentFactory pieces
 public interface IDocumentService
 {
     // Test controls to interact with page
     Task RequestDocumentAsync(Action<IHttpRequestBuilder> configureDocumentRequest);
     Task RequestDocumentAsync(HttpRequestMessage documentRequest);
 
-    //TODO store document into a repository so session controls aren't available in componentfactory with documentKey so pageObjectResolver can decorate the right document
+    //TODO store document into a repository passing optional documentKey so PageObjectResolver can be created from the right document
 
     // ComponentFactory access to query document
     IEnumerable<IDocumentSection> ExecuteQuery(FindOptions query);

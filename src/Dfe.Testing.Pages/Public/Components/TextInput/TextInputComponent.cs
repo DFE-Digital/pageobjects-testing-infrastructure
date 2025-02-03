@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Public.Components.Inputs;
+﻿namespace Dfe.Testing.Pages.Public.Components.TextInput;
 public record TextInputComponent
 {
     public required string Name { get; init; }

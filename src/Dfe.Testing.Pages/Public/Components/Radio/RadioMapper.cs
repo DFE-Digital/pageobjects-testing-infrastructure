@@ -1,8 +1,5 @@
-﻿using Dfe.Testing.Pages.Public.Components.Link;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-
-namespace Dfe.Testing.Pages.Public.Components.Radio;
-internal sealed class RadioMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<RadioComponent>>
+﻿namespace Dfe.Testing.Pages.Public.Components.Radio;
+internal sealed class RadioMapper : IComponentMapper<RadioComponent>
 {
     private readonly IMappingResultFactory _mappingResultFactory;
 
@@ -15,15 +12,15 @@ internal sealed class RadioMapper : IMapper<IMapRequest<IDocumentSection>, Mappe
     {
         RadioComponent radio = new()
         {
-            Id = request.From.GetAttribute("id") ?? string.Empty,
-            Value = request.From.GetAttribute("value") ?? string.Empty,
-            Name = request.From.GetAttribute("name") ?? string.Empty,
-            IsRequired = request.From.HasAttribute("required")
+            Id = request.Document.GetAttribute("id") ?? string.Empty,
+            Value = request.Document.GetAttribute("value") ?? string.Empty,
+            Name = request.Document.GetAttribute("name") ?? string.Empty,
+            IsRequired = request.Document.HasAttribute("required")
         };
 
         return _mappingResultFactory.Create(
             radio,
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

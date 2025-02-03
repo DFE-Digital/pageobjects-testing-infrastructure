@@ -1,30 +1,33 @@
 ﻿using Dfe.Testing.Pages.Internal.DocumentClient;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.SelectorFactory;
+using Dfe.Testing.Pages.Public.Components.EntrypointSelectorFactory;
 
 namespace Dfe.Testing.Pages.Public.Components;
-public class ComponentFactory<T> where T : class
+
+public interface IComponentFactory<T> where T : class
 {
-    private readonly IMapRequestFactory _mapRequestFactory;
+    CreatedComponentResponse<T> Create(CreateComponentRequest? request = null);
+    IEnumerable<CreatedComponentResponse<T>> CreateMany(CreateComponentRequest? request = null);
+}
+
+internal sealed class ComponentFactory<T> : IComponentFactory<T> where T : class
+{
     private readonly IDocumentService _documentClient;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<T>> _mapper;
-    private readonly IComponentSelectorFactory _componentSelectorFactory;
+    private readonly IComponentMapper<T> _mapper;
+    private readonly IEntrypointSelectorFactory _componentSelectorFactory;
 
     public ComponentFactory(
-        IMapRequestFactory mapRequestFactory,
         IDocumentService documentClient,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<T>> mapper,
-        IComponentSelectorFactory componentSelectorFactory)
+        IComponentMapper<T> mapper,
+        IEntrypointSelectorFactory componentSelectorFactory)
     {
-        _mapRequestFactory = mapRequestFactory;
         _documentClient = documentClient;
         _mapper = mapper;
         _componentSelectorFactory = componentSelectorFactory;
     }
 
-    public virtual CreatedComponentResponse<T> Create(CreateComponentRequest? request = null) => CreateMany(request).Single();
+    public CreatedComponentResponse<T> Create(CreateComponentRequest? request = null) => CreateMany(request).Single();
 
-    public virtual IList<CreatedComponentResponse<T>> CreateMany(CreateComponentRequest? request = null)
+    public IEnumerable<CreatedComponentResponse<T>> CreateMany(CreateComponentRequest? request = null)
     {
         FindOptions mergedFindOptions = new()
         {
@@ -35,15 +38,29 @@ public class ComponentFactory<T> where T : class
         // Query
         IEnumerable<IDocumentSection> documentSections = _documentClient.ExecuteQuery(mergedFindOptions) ?? [];
 
+
         // Map
         IEnumerable<MappedResponse<T>> mappedComponentResponsesFromDocumentSections =
             documentSections.Select((section) =>
             {
                 ArgumentNullException.ThrowIfNull(section, $"section returned as null in DocumentClient query");
-                MappedResponse<T> response = _mapper.Map(
-                    _mapRequestFactory.Create(
-                        mapFrom: section,
-                        mappings: []));
+                string componentRequestedType = typeof(T).Name;
+                DocumentSectionMapRequest mapRequest = new()
+                {
+                    Document = section,
+                    MappedResults = [],
+                    Options = new()
+                    {
+                        // adds requested component as type to fulfil MapConfiguration override
+                        // e.g {TopLevelComponent e.g FormComponent}{Separator}{Attribute}{Separator}{Attribute} is structure of key looked up in mappers
+                        // e.g FormComponent.ViewCookiesLink.Text - TextMapper will use current ChainedLookupKey using the attribute it's currently mapping. This could be a top level map / a nested map.
+                        MapConfigurationKey = new MapKey([componentRequestedType]),
+                        OverrideMapperConfiguration = request?.Mapping ?? [],
+                        // top level entrypoint not changed as Query finds section
+                        OverrideMapperEntrypoint = null,
+                    }
+                };
+                MappedResponse<T> response = _mapper.Map(mapRequest);
                 return response;
             });
 
@@ -59,6 +76,6 @@ public class ComponentFactory<T> where T : class
                     Created = mappedResponse.Mapped!,
                     CreatingComponentResults = outputResults
                 };
-            }).ToList();
+            });
     }
 }

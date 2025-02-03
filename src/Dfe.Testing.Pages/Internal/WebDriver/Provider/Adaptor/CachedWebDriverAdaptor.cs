@@ -110,7 +110,7 @@ internal class CachedWebDriverAdaptor : IWebDriverAdaptor, IDisposable, IAsyncDi
     public Cookie GetCookie(string cookieName)
     {
         var webDriverCookie = _webDriver!.Manage().Cookies.GetCookieNamed(cookieName);
-        return new Cookie(name: webDriverCookie.Name, value: webDriverCookie.Value);
+        return new Cookie(name: webDriverCookie!.Name, value: webDriverCookie.Value);
     }
 
     public IEnumerable<Cookie?> GetCookies()

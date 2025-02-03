@@ -1,18 +1,20 @@
-﻿using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.Link;
-internal sealed class AnchorLinkMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<AnchorLinkComponent>>
+internal sealed class AnchorLinkMapper : IComponentMapper<AnchorLinkComponent>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> _textMapper;
+    private readonly IAnchorLinkComponentBuilder _anchorLinkBuilder;
+    private readonly IComponentMapper<TextComponent> _textMapper;
     private readonly IMappingResultFactory _mappingResultFactory;
 
     public AnchorLinkMapper(
-        IMapRequestFactory mapRequestFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TextComponent>> textMapper,
-        IMappingResultFactory mappingResultFactory)
+        IAnchorLinkComponentBuilder anchrLinkBuilder,
+        IComponentMapper<TextComponent> textMapper,
+        IMappingResultFactory mappingResultFactory,
+        IMapRequestFactory mapRequestFactory)
     {
+        _anchorLinkBuilder = anchrLinkBuilder;
         _textMapper = textMapper;
         _mappingResultFactory = mappingResultFactory;
         _mapRequestFactory = mapRequestFactory;
@@ -20,28 +22,28 @@ internal sealed class AnchorLinkMapper : IMapper<IMapRequest<IDocumentSection>, 
 
     public MappedResponse<AnchorLinkComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        MappedResponse<TextComponent> mappedText = _textMapper.Map(
-            _mapRequestFactory.Create(
-                request.From,
-                request.MappingResults))
-            .AddMappedResponseToResults(request.MappingResults);
+        MappedResponse<TextComponent> mappedText =
+            _textMapper.Map(
+                _mapRequestFactory.CreateRequestFrom(request, nameof(AnchorLinkComponent.Text)));
 
-        IAnchorLinkComponentBuilder linkBuilder = new AnchorLinkComponentBuilder()
-            .SetLink(request.From.GetAttribute("href") ?? string.Empty)
-            .SetOpensInNewTab(request.From.GetAttribute("target") == "_blank")
+        _anchorLinkBuilder
+            .SetLink(request.Document.GetAttribute("href") ?? string.Empty)
+            .SetOpensInNewTab(request.Document.GetAttribute("target") == "_blank")
             .SetText(mappedText.Mapped!.Text);
 
-        IEnumerable<string> relAttributes = request.From.GetAttribute("rel")?
+        request.Document.GetAttribute("rel")?
             .Split(' ')
             .Select(t => t.Trim())
             .Distinct()
-            .Where(t => !string.IsNullOrEmpty(t)) ?? [];
-
-        relAttributes.ToList().ForEach(attribute => linkBuilder.AddSecurityRelAttribute(attribute));
+            .Where(t => !string.IsNullOrEmpty(t))
+            .ToList().ForEach((rellAttribute) =>
+            {
+                _anchorLinkBuilder.AddSecurityRelAttribute(rellAttribute);
+            });
 
         return _mappingResultFactory.Create(
-            linkBuilder.Build(),
+            _anchorLinkBuilder.Build(),
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

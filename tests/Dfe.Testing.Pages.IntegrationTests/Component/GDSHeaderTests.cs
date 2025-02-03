@@ -2,7 +2,6 @@
 using Dfe.Testing.Pages.Public.Components;
 using Dfe.Testing.Pages.Public.Components.GDS.Header;
 using Dfe.Testing.Pages.Public.Components.Link;
-using Dfe.Testing.Pages.Public.PageObject;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component;
 public sealed class GDSHeaderTests
@@ -13,12 +12,11 @@ public sealed class GDSHeaderTests
         // Arrange
         using var scope = ComponentTestHelper.GetServices<GDSHeaderPage>();
         var docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
-        var pageObjectFactory = scope.ServiceProvider.GetRequiredService<IPageObjectFactory>();
 
         // Act
         await docService.RequestDocumentAsync((t) => t.SetPath("/component/header/header"));
 
-        var headerPage = pageObjectFactory.Create<GDSHeaderPage>();
+        var headerPage = scope.ServiceProvider.GetRequiredService<GDSHeaderPage>();
 
         var govUkLink = scope.ServiceProvider.GetRequiredService<IAnchorLinkComponentBuilder>()
             .SetLink("#")
@@ -45,11 +43,11 @@ public sealed class GDSHeaderTests
 }
 
 
-internal sealed class GDSHeaderPage : IPageObject
+internal sealed class GDSHeaderPage
 {
-    private readonly ComponentFactory<GDSHeaderComponent> _headerFactory;
+    private readonly IComponentFactory<GDSHeaderComponent> _headerFactory;
 
-    public GDSHeaderPage(ComponentFactory<GDSHeaderComponent> headerFactory)
+    public GDSHeaderPage(IComponentFactory<GDSHeaderComponent> headerFactory)
     {
         _headerFactory = headerFactory;
     }

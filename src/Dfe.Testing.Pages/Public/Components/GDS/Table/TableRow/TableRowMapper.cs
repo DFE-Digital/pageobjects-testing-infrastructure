@@ -1,29 +1,21 @@
 ﻿using Dfe.Testing.Pages.Public.Components.GDS.Table.TableDataItem;
 using Dfe.Testing.Pages.Public.Components.GDS.Table.TableHeadingItem;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.SelectorFactory;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Table.TableRow;
-internal sealed class TableRowMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableRowComponent>>
+internal sealed class TableRowMapper : IComponentMapper<TableRowComponent>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
-    private readonly IComponentSelectorFactory _componentSelectorFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableHeadingItemComponent>> _tableHeadingItemMapper;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableDataItemComponent>> _tableDataItemMapper;
+    private readonly IComponentMapper<TableHeadingItemComponent> _tableHeadingItemMapper;
+    private readonly IComponentMapper<TableDataItemComponent> _tableDataItemMapper;
     private readonly IMappingResultFactory _mappingResultFactory;
 
     public TableRowMapper(
         IMapRequestFactory mapRequestFactory,
-        IComponentSelectorFactory componentSelectorFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableHeadingItemComponent>> tableHeadingItemMapper,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableDataItemComponent>> tableDataItemMapper,
+        IComponentMapper<TableHeadingItemComponent> tableHeadingItemMapper,
+        IComponentMapper<TableDataItemComponent> tableDataItemMapper,
         IMappingResultFactory mappingResultFactory)
     {
-        ArgumentNullException.ThrowIfNull(componentSelectorFactory);
-        ArgumentNullException.ThrowIfNull(tableHeadingItemMapper);
-        ArgumentNullException.ThrowIfNull(tableDataItemMapper);
         _mapRequestFactory = mapRequestFactory;
-        _componentSelectorFactory = componentSelectorFactory;
         _tableHeadingItemMapper = tableHeadingItemMapper;
         _tableDataItemMapper = tableDataItemMapper;
         _mappingResultFactory = mappingResultFactory;
@@ -31,25 +23,27 @@ internal sealed class TableRowMapper : IMapper<IMapRequest<IDocumentSection>, Ma
 
     public MappedResponse<TableRowComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        IEnumerable<TableHeadingItemComponent> tableHeadingItems = request.FindManyDescendantsAndMap(
-            _mapRequestFactory,
-            _componentSelectorFactory.GetSelector<TableHeadingItemComponent>(),
-            _tableHeadingItemMapper).Select(t => t.Mapped!);
+        IEnumerable<TableHeadingItemComponent> tableHeadingItems =
+            _mapRequestFactory.CreateRequestFrom(request, nameof(TableRowComponent.Headings))
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _tableHeadingItemMapper)
+                .AddToMappingResults(request.MappedResults)
+                .Select(t => t.Mapped!);
 
-        IEnumerable<TableDataItemComponent> tableDataItems = request.FindManyDescendantsAndMap(
-            _mapRequestFactory,
-            _componentSelectorFactory.GetSelector<TableDataItemComponent>(),
-            _tableDataItemMapper).Select(t => t.Mapped!);
+        IEnumerable<TableDataItemComponent> tableDataItems =
+            _mapRequestFactory.CreateRequestFrom(request, nameof(TableRowComponent.DataItems))
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _tableDataItemMapper)
+                .AddToMappingResults(request.MappedResults)
+                .Select(t => t.Mapped!);
 
         TableRowComponent tableRowComponent = new()
         {
             Headings = tableHeadingItems,
-            DataItem = tableDataItems
+            DataItems = tableDataItems
         };
 
         return _mappingResultFactory.Create(
             tableRowComponent,
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

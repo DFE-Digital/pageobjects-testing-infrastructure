@@ -1,23 +1,29 @@
-﻿using Dfe.Testing.Pages.Public.Components.GDS.Button;
+﻿using Dfe.Testing.Pages.Public.Components.Form;
+using Dfe.Testing.Pages.Public.Components.GDS.Button;
 using Dfe.Testing.Pages.Public.Components.Link;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.CookieBanner;
 internal sealed class GDSCookieChoiceAvailableBannerComponentBuilder : IGDSCookieChoiceAvailableBannerComponentBuilder
 {
     private string _heading = string.Empty;
-    private AnchorLinkComponent anchorLinkComponent = null!;
+    private AnchorLinkComponent? anchorLinkComponent = null!;
+    private FormComponent? _form;
     private readonly List<GDSButtonComponent> _cookieChoiceButtons = [];
     private readonly IAnchorLinkComponentBuilder _anchorLinkBuilder;
+    private readonly IFormBuilder _formBuilder;
 
-    public GDSCookieChoiceAvailableBannerComponentBuilder(IAnchorLinkComponentBuilder anchorLink)
+    public GDSCookieChoiceAvailableBannerComponentBuilder(
+        IAnchorLinkComponentBuilder anchorLink,
+        IFormBuilder builder)
     {
         _anchorLinkBuilder = anchorLink;
+        _formBuilder = builder;
     }
     public GDSCookieChoiceAvailableBannerComponent Build()
     {
         return new()
         {
-            CookieChoiceButtons = _cookieChoiceButtons,
+            CookieChoiceForm = _form ?? _formBuilder.Build(),
             Heading = new()
             {
                 Text = _heading
@@ -26,11 +32,10 @@ internal sealed class GDSCookieChoiceAvailableBannerComponentBuilder : IGDSCooki
         };
     }
 
-
-    public IGDSCookieChoiceAvailableBannerComponentBuilder AddCookieChoiceButton(GDSButtonComponent button)
+    public IGDSCookieChoiceAvailableBannerComponentBuilder SetForm(FormComponent form)
     {
-        ArgumentNullException.ThrowIfNull(button);
-        _cookieChoiceButtons.Add(button);
+        ArgumentNullException.ThrowIfNull(form);
+        _form = form;
         return this;
     }
 

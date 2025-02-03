@@ -1,8 +1,6 @@
-﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;
+﻿using Dfe.Testing.Pages.Public.Commands;
 using Dfe.Testing.Pages.Public.Components;
 using Dfe.Testing.Pages.Public.Components.Link;
-using Dfe.Testing.Pages.Public.PageObject;
-using Dfe.Testing.Pages.Shared.Contracts;
 using Dfe.Testing.Pages.Shared.Selector;
 using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
 
@@ -17,7 +15,6 @@ public sealed class WebDriverIntegrationTestDesign
         using var collection = MockServiceCollection.WithWebDriver();
 
         IDocumentService documentService = collection.ServiceProvider.GetRequiredService<IDocumentService>();
-        IPageObjectFactory pageObjectFactory = collection.ServiceProvider.GetRequiredService<IPageObjectFactory>();
 
         await documentService.RequestDocumentAsync(
             (t) =>
@@ -25,9 +22,9 @@ public sealed class WebDriverIntegrationTestDesign
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        SearchPage searchPage = pageObjectFactory.Create<SearchPage>();
+        SearchPage page = collection.ServiceProvider.GetRequiredService<SearchPage>();
 
-        searchPage.ClickAnchorLink();
+        page.ClickAnchorLink();
     }
 
     [Fact]
@@ -36,7 +33,6 @@ public sealed class WebDriverIntegrationTestDesign
         using var collection = MockServiceCollection.WithWebDriver();
 
         IDocumentService documentService = collection.ServiceProvider.GetRequiredService<IDocumentService>();
-        IPageObjectFactory pageObjectFactory = collection.ServiceProvider.GetRequiredService<IPageObjectFactory>();
 
         await documentService.RequestDocumentAsync(
             (t) =>
@@ -44,18 +40,18 @@ public sealed class WebDriverIntegrationTestDesign
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        SearchPage page = pageObjectFactory.Create<SearchPage>();
+        SearchPage page = collection.ServiceProvider.GetRequiredService<SearchPage>();
         page.GetLinks().Should().HaveCount(3);
     }
 
-    public sealed class SearchPage : IPageObject
+    public sealed class SearchPage
     {
         private readonly ICommandHandler<ClickElementCommand> _clickElementHandler;
-        private readonly ComponentFactory<AnchorLinkComponent> _anchorLink;
+        private readonly IComponentFactory<AnchorLinkComponent> _anchorLink;
 
         public SearchPage(
             ICommandHandler<ClickElementCommand> clickElementHandler,
-            ComponentFactory<AnchorLinkComponent> anchorLink)
+            IComponentFactory<AnchorLinkComponent> anchorLink)
         {
             _clickElementHandler = clickElementHandler;
             _anchorLink = anchorLink;
@@ -83,7 +79,7 @@ public static class MockServiceCollection
                 t.Browser.CustomOptions.Add("--disable-dev-shm-usage");
                 t.Browser.ShowBrowser = false;
             })
-            .AddTransient<IPageObject, SearchPage>()
+            .AddTransient<SearchPage>()
             .BuildServiceProvider()
             .CreateScope();
     }

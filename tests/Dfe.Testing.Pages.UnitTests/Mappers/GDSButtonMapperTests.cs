@@ -1,6 +1,6 @@
 ﻿using Dfe.Testing.Pages.Public;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction;
 using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Response;
 using Dfe.Testing.Pages.Public.Components.Text;
 using FluentAssertions;
 using NSubstitute;
@@ -13,12 +13,11 @@ public sealed class GDSButtonMapperTests
     {
         IMapRequest<IDocumentSection> mapRequest = Substitute.For<IMapRequest<IDocumentSection>>();
         IDocumentSection section = Substitute.For<IDocumentSection>();
-        mapRequest.From.Returns(section);
+        mapRequest.Document.Returns(section);
         section.Text.Returns("blah");
         section.Document.Returns(string.Empty);
 
         TextMapper textMapper = new(
-            Substitute.For<IMapRequestFactory>(),
             Substitute.For<IMappingResultFactory>());
 
         MappedResponse<TextComponent> response = textMapper.Map(mapRequest);

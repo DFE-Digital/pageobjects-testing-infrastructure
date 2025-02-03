@@ -1,10 +1,10 @@
 ﻿using Dfe.Testing.Pages.Internal;
-using Dfe.Testing.Pages.Internal.DocumentClient.Options;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.AngleSharp;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.WebDriver;
 using Dfe.Testing.Pages.Public.AngleSharp.Options;
 using Dfe.Testing.Pages.Public.Components;
 using Dfe.Testing.Pages.Public.Components.Checkbox;
+using Dfe.Testing.Pages.Public.Components.EntrypointSelectorFactory;
 using Dfe.Testing.Pages.Public.Components.Form;
 using Dfe.Testing.Pages.Public.Components.GDS.Button;
 using Dfe.Testing.Pages.Public.Components.GDS.Checkbox;
@@ -15,9 +15,9 @@ using Dfe.Testing.Pages.Public.Components.GDS.Fieldset;
 using Dfe.Testing.Pages.Public.Components.GDS.Footer;
 using Dfe.Testing.Pages.Public.Components.GDS.NotificationBanner;
 using Dfe.Testing.Pages.Public.Components.GDS.Panel;
+using Dfe.Testing.Pages.Public.Components.GDS.PhaseBanner;
 using Dfe.Testing.Pages.Public.Components.GDS.Radio;
 using Dfe.Testing.Pages.Public.Components.GDS.Table.GDSTable;
-using Dfe.Testing.Pages.Public.Components.GDS.Table.Mapper;
 using Dfe.Testing.Pages.Public.Components.GDS.Table.TableBody;
 using Dfe.Testing.Pages.Public.Components.GDS.Table.TableDataItem;
 using Dfe.Testing.Pages.Public.Components.GDS.Table.TableHead;
@@ -25,13 +25,11 @@ using Dfe.Testing.Pages.Public.Components.GDS.Table.TableHeadingItem;
 using Dfe.Testing.Pages.Public.Components.GDS.Table.TableRow;
 using Dfe.Testing.Pages.Public.Components.GDS.TextInput;
 using Dfe.Testing.Pages.Public.Components.HiddenInput;
-using Dfe.Testing.Pages.Public.Components.Inputs;
 using Dfe.Testing.Pages.Public.Components.Label;
 using Dfe.Testing.Pages.Public.Components.Link;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
 using Dfe.Testing.Pages.Public.Components.Radio;
-using Dfe.Testing.Pages.Public.Components.SelectorFactory;
 using Dfe.Testing.Pages.Public.Components.Text;
+using Dfe.Testing.Pages.Public.Components.TextInput;
 using Microsoft.Extensions.Options;
 
 namespace Dfe.Testing.Pages;
@@ -52,7 +50,7 @@ public static class DependencyInjection
         services
             .AddDocumentClientProvider<AngleSharpDocumentClientProvider>()
             .AddTransient<IHtmlDocumentProvider, HtmlDocumentProvider>()
-            .AddComponentMappings();
+            .AddComponents();
 
         return services;
     }
@@ -71,7 +69,7 @@ public static class DependencyInjection
         services
             .AddDocumentClientProvider<WebDriverDocumentClientProvider>()
             .AddWebDriverServices()
-            .AddComponentMappings();
+            .AddComponents();
 
         return services;
     }
@@ -84,106 +82,173 @@ public static class DependencyInjection
             .AddScoped<IConfigureWebHostHandler, ConfigureWebHostHandler>()
             .AddTransient<IHttpRequestBuilder, HttpRequestBuilder>();
 
-    internal static IServiceCollection AddComponentMappings(this IServiceCollection services)
+    internal static IServiceCollection AddComponents(this IServiceCollection services)
     {
         services
-            .AddSingleton<IComponentSelectorFactory, ComponentSelectorFactory>((sp) =>
+            .AddSingleton<IEntrypointSelectorFactory, EntrypointSelectorFactory>((sp) =>
             {
-                Dictionary<string, Func<IElementSelector>> componentSelectorMapping = new()
+                static IElementSelector getFieldSet() => new CssElementSelector("fieldset");
+                static IElementSelector getGdsCheckbox() => new CssElementSelector(".govuk-checkboxes__item");
+                static IElementSelector getGdsRadio() => new CssElementSelector(".govuk-radios__item");
+                static IElementSelector getGdsTextInput() => new CssElementSelector(".govuk-form-group:has(input[type=text])");
+                static IElementSelector getGdsButton() => new CssElementSelector("button");
+                static IElementSelector getGdsSelect() => new CssElementSelector(".govuk-form-group:has(select)");
+
+                static IElementSelector getTextInput() => new CssElementSelector("input[type=text]");
+                static IElementSelector getHiddenInput() => new CssElementSelector("input[type=hidden]");
+                static IElementSelector getCookieBanner() => new CssElementSelector(".govuk-cookie-banner");
+                static IElementSelector getRadio() => new CssElementSelector("input[type=radio]");
+                static IElementSelector getCheckbox() => new CssElementSelector("input[type=checkbox]");
+                static IElementSelector getLink() => new CssElementSelector("a");
+                static IElementSelector getForm() => new CssElementSelector("form");
+
+                Dictionary<string, Func<IElementSelector?>> componentDefaultSelectorMapping = new()
                 {
-                    { nameof(AnchorLinkComponent), () => new CssElementSelector("a")},
-                    // may not be approp default if multiple forms on page?
-                    { nameof(FormComponent), () => new CssElementSelector("form")},
-                    { nameof(LabelComponent), () => new CssElementSelector("label") },
-                    { nameof(GDSHeaderComponent), () => new CssElementSelector(".govuk-header")},
-                    { nameof(GDSFieldsetComponent), () => new CssElementSelector("fieldset")},
-                    { nameof(GDSCheckboxComponent), () => new CssElementSelector(".govuk-checkboxes__item")},
-                    { nameof(GDSRadioComponent), () => new CssElementSelector(".govuk-radios__item") },
-                    { nameof(GDSTextInputComponent), () => new CssElementSelector(".govuk-form-group:has(input[type=text])")},
-                    { nameof(GDSButtonComponent), () => new CssElementSelector("button")},
-                    { nameof(GDSCookieChoiceAvailableBannerComponent), () => new CssElementSelector(".govuk-cookie-banner")},
-                    { nameof(GDSCookieChoiceMadeBannerComponent), () => new CssElementSelector(".govuk-cookie-banner")},
-                    { nameof(GDSTabsComponent), () => new CssElementSelector(".govuk-tabs")},
-                    { nameof(GDSDetailsComponent), () => new CssElementSelector(".govuk-details") },
-                    { nameof(GDSErrorSummaryComponent), () => new CssElementSelector(".govuk-error-summary") },
-                    { nameof(GDSErrorMessageComponent), () => new CssElementSelector(".govuk-error-message") },
-                    { nameof(GDSFooterComponent), () => new CssElementSelector(".govuk-footer") },
-                    { nameof(GDSNotificationBannerComponent), () => new CssElementSelector(".govuk-notification-banner") },
-                    { nameof(GDSPanelComponent), () => new CssElementSelector(".govuk-panel") },
-                    { nameof(GDSSelectComponent), () => new CssElementSelector(".govuk-form-group:has(select)") },
-                    { nameof(OptionComponent), () => new CssElementSelector("option") },
-                    { nameof(GDSTableComponent), () => new CssElementSelector(".govuk-table") },
-                    { nameof(TableHeadComponent), () => new CssElementSelector("thead") },
-                    { nameof(TableBodyComponent), () => new CssElementSelector("tbody") },
-                    { nameof(TableRowComponent), () => new CssElementSelector("tr") },
-                    { nameof(TableHeadingItemComponent), () => new CssElementSelector("th") },
-                    { nameof(TableDataItemComponent), () => new CssElementSelector("td") },
-                    { nameof(TextComponent), () => new CssElementSelector("*") },
-                    { nameof(TextInputComponent), () => new CssElementSelector("input[type=text]") },
-                    { nameof(HiddenInputComponent), () => new CssElementSelector("input[type=hidden]") },
-                    { nameof(RadioComponent), () => new CssElementSelector("input[type=radio]") },
-                    { nameof(CheckboxComponent), () => new CssElementSelector("input[type=checkbox]") },
+                    { "AnchorLinkComponent", getLink},
+                    // Form
+                    { "FormComponent", getForm },
+                    { "FormComponent.Fieldsets", getFieldSet },
+                    { "FormComponent.TextInputs", getGdsTextInput },
+                    { "FormComponent.Radios", getGdsRadio },
+                    { "FormComponent.Checkboxes", getGdsCheckbox },
+                    { "FormComponent.HiddenInputs", getHiddenInput },
+                    { "FormComponent.Selects" , getGdsSelect },
+                    { "FormComponent.Buttons", getGdsButton },
+                    { "LabelComponent", () => new CssElementSelector("label") },
+                    { "OptionComponent", () => new CssElementSelector("option") },
+                    { "TableHeadComponent", () => new CssElementSelector("thead") },
+                    { "TableBodyComponent", () => new CssElementSelector("tbody") },
+                    { "TableRowComponent", () => new CssElementSelector("tr") },
+                    { "TableHeadingItemComponent", () => new CssElementSelector("th") },
+                    { "TableDataItemComponent", () => new CssElementSelector("td") },
+                    { "TextInputComponent", getTextInput },
+                    { "HiddenInputComponent", getHiddenInput },
+                    { "RadioComponent", getRadio },
+                    { "CheckboxComponent", getCheckbox },
+                    { "GDSHeaderComponent", () => new CssElementSelector(".govuk-header")},
+                    { "GDSHeaderComponent.GovUKLink", () => new CssElementSelector(".govuk-header__link--homepage")},
+                    { "GDSHeaderComponent.NavigationLinks", () => new CssElementSelector("nav a")},
+                    { "GDSFieldsetComponent", getFieldSet},
+                    { "GDSFieldsetComponent.Legend", () => new CssElementSelector("legend") },
+                    { "GDSFieldsetComponent.TextInputs" , getGdsTextInput },
+                    { "GDSFieldsetComponent.Radios" , getGdsRadio },
+                    { "GDSFieldsetComponent.Checkboxes", getGdsCheckbox },
+                    { "GDSCheckboxComponent", getGdsCheckbox},
+                    { "GDSRadioComponent", getGdsRadio },
+                    { "GDSTextInputComponent", getGdsTextInput},
+                    { "GDSButtonComponent", getGdsButton},
+                    { "GDSCookieChoiceAvailableBannerComponent", getCookieBanner},
+                    { "GDSCookieChoiceAvailableBannerComponent.Heading", () => new CssElementSelector(".govuk-cookie-banner__heading") },
+                    { "GDSCookieChoiceAvailableBannerComponent.ViewCookiesLink", getLink  },
+                    { "GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm", getForm },
+                    { "GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm.Fieldsets", getFieldSet},
+                    { "GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm.TextInputs", getGdsTextInput },
+                    { "GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm.Radios", getGdsRadio },
+                    { "GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm.Checkboxes", getGdsCheckbox },
+                    { "GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm.HiddenInputs", getHiddenInput },
+                    { "GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm.Selects" , getGdsSelect },
+                    { "GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm.Buttons", getGdsButton },
+                    { "GDSCookieChoiceMadeBannerComponent", getCookieBanner},
+                    { "GDSCookieChoiceMadeBannerComponent.Message", () => new CssElementSelector(".govuk-cookie-banner__content")},
+                    { "GDSCookieChoiceMadeBannerComponent.ChangeYourCookieSettingsLink", () => new CssElementSelector(".govuk-cookie-banner__content a")},
+                    { "GDSCookieChoiceMadeBannerComponent.HideCookiesForm", getForm },
+                    { "GDSCookieChoiceMadeBannerComponent.HideCookiesForm.Fieldsets", getFieldSet},
+                    { "GDSCookieChoiceMadeBannerComponent.HideCookiesForm.TextInputs", getGdsTextInput },
+                    { "GDSCookieChoiceMadeBannerComponent.HideCookiesForm.Radios", getGdsRadio },
+                    { "GDSCookieChoiceMadeBannerComponent.HideCookiesForm.Checkboxes", getGdsCheckbox },
+                    { "GDSCookieChoiceMadeBannerComponent.HideCookiesForm.HiddenInputs", getHiddenInput },
+                    { "GDSCookieChoiceMadeBannerComponent.HideCookiesForm.Selects" , getGdsSelect },
+                    { "GDSCookieChoiceMadeBannerComponent.HideCookiesForm.Buttons", getGdsButton },
+                    { "GDSCookieChoiceMadeBannerComponent.Tabs", () => new CssElementSelector(".govuk-cookie-banner_content") },
+                    { "GDSTabsComponent", () => new CssElementSelector(".govuk-tabs")},
+                    { "GDSTabsComponent.Heading", () => new CssElementSelector(".govuk-tabs__title") },
+                    { "GDSTabsComponent.Tabs", () => new CssElementSelector(".govuk-tabs__list") },
+                    { "GDSDetailsComponent", () => new CssElementSelector(".govuk-details") },
+                    { "GDSDetailsComponent.Summary", () => new CssElementSelector(".govuk-details__summary") },
+                    { "GDSDetailsComponent.Content", () => new CssElementSelector(".govuk-details__text") },
+                    { "GDSErrorSummaryComponent", () => new CssElementSelector(".govuk-error-summary") },
+                    { "GDSErrorSummaryComponent.Heading", () => new CssElementSelector(".govuk-error-summary__title") },
+                    { "GDSErrorMessageComponent", () => new CssElementSelector(".govuk-error-message") },
+                    { "GDSFooterComponent", () => new CssElementSelector(".govuk-footer") },
+                    { "GDSFooterComponent.CrownCopyrightLink", () => new CssElementSelector(".govuk-footer__link .govuk-footer__copyright-logo") },
+                    { "GDSFooterComponent.LicenseLink", () => new CssElementSelector(".govuk-footer__licence-description .govuk-footer__link") },
+                    { "GDSFooterComponent.LicenseMessage", () => new CssElementSelector(".govuk-footer__licence-description") },
+                    { "GDSFooterComponent.ApplicationLinks", () => new CssElementSelector(".govuk-footer__link") },
+                    { "GDSSelectComponent", getGdsSelect },
+                    { "GDSTableComponent", () => new CssElementSelector(".govuk-table") },
+                    { "GDSPhaseBannerComponent", () => new CssElementSelector(".govuk-phase-banner") },
+                    { "GDSPhaseBannerComponent.Phase", () => new CssElementSelector(".govuk-tag") },
+                    { "GDSPhaseBannerComponent.Text", () => new CssElementSelector(".govuk-phase-banner__text") },
+                    { "GDSPhaseBannerComponent.FeedbackLink", () => new CssElementSelector(".govuk-link") },
+                    { "GDSNotificationBannerComponent", () => new CssElementSelector(".govuk-notification-banner") },
+                    { "GDSNotificationBannerComponent.Heading", () => new CssElementSelector(".govuk-notification-banner__title") },
+                    { "GDSNotificationBannerComponent.Content", () => new CssElementSelector(".govuk-notification-banner__content") },
+                    { "GDSPanelComponent", () => new CssElementSelector(".govuk-panel") },
+                    { "GDSPanelComponent.Heading", () => new CssElementSelector(".govuk-panel__title") },
+                    { "GDSPanelComponent.Content", () => new CssElementSelector(".govuk-panel__body") },
                 };
-                return new ComponentSelectorFactory(componentSelectorMapping);
+                return new EntrypointSelectorFactory(componentDefaultSelectorMapping);
             })
-        .AddComponentMapper<AnchorLinkComponent, AnchorLinkMapper>()
-        .AddComponentMapper<LabelComponent, LabelMapper>()
-        .AddComponentMapper<FormComponent, FormMapper>()
-        .AddComponentMapper<TableHeadComponent, TableHeadMapper>()
-        .AddComponentMapper<TableBodyComponent, TableBodyMapper>()
-        .AddComponentMapper<TableRowComponent, TableRowMapper>()
-        .AddComponentMapper<TableHeadingItemComponent, TableHeadingItemMapper>()
-        .AddComponentMapper<TableDataItemComponent, TableDataItemMapper>()
-        .AddComponentMapper<OptionComponent, OptionsMapper>()
-        .AddComponentMapper<HiddenInputComponent, HiddenInputMapper>()
-        .AddComponentMapper<RadioComponent, RadioMapper>()
-        .AddComponentMapper<TextInputComponent, TextInputMapper>()
-        .AddComponentMapper<CheckboxComponent, CheckboxMapper>()
-        .AddComponentMapper<GDSCookieChoiceAvailableBannerComponent, GDSCookieChoiceAvailableMapper>()
-        .AddComponentMapper<GDSCookieChoiceMadeBannerComponent, GDSCookieChoiceMadeBannerMappper>()
-        .AddComponentMapper<TextComponent, TextMapper>()
-        // GDS
-        .AddComponentMapper<GDSButtonComponent, GDSButtonMapper>()
-        .AddComponentMapper<GDSTableComponent, GDSTableMapper>()
-        .AddComponentMapper<GDSHeaderComponent, GDSHeaderMapper>()
-        .AddComponentMapper<GDSFieldsetComponent, GDSFieldsetMapper>()
-        .AddComponentMapper<GDSCheckboxComponent, GDSCheckboxMapper>()
-        .AddComponentMapper<GDSRadioComponent, GDSRadioMapper>()
-        .AddComponentMapper<GDSTextInputComponent, GDSTextInputMapper>()
-        .AddComponentMapper<GDSTabsComponent, GDSTabsMapper>()
-        .AddComponentMapper<GDSDetailsComponent, GDSDetailsMapper>()
-        .AddComponentMapper<GDSErrorMessageComponent, GDSErrorMessageMapper>()
-        .AddComponentMapper<GDSErrorSummaryComponent, GDSErrorSummaryMapper>()
-        .AddComponentMapper<GDSFooterComponent, GDSFooterMapper>()
-        .AddComponentMapper<GDSNotificationBannerComponent, GDSNotificationBannerMapper>()
-        .AddComponentMapper<GDSPanelComponent, GDSPanelMapper>()
-        .AddComponentMapper<GDSSelectComponent, GDSSelectMapper>()
-        // Builders for client to create complex objects
+        // open generic so client can use any T
+        .AddTransient(typeof(IComponentFactory<>), typeof(ComponentFactory<>))
+        .AddSingleton<IMapRequestFactory, MapRequestFactory>()
+        // Mappers
+        .AddDecoratedMapper<AnchorLinkMapper, AnchorLinkComponent>()
+        .AddDecoratedMapper<LabelMapper, LabelComponent>()
+        .AddDecoratedMapper<FormMapper, FormComponent>()
+        .AddDecoratedMapper<TableHeadMapper, TableHeadComponent>()
+        .AddDecoratedMapper<TableBodyMapper, TableBodyComponent>()
+        .AddDecoratedMapper<TableRowMapper, TableRowComponent>()
+        .AddDecoratedMapper<TableHeadingItemMapper, TableHeadingItemComponent>()
+        .AddDecoratedMapper<TableDataItemMapper, TableDataItemComponent>()
+        .AddDecoratedMapper<OptionsMapper, OptionComponent>()
+        .AddDecoratedMapper<HiddenInputMapper, HiddenInputComponent>()
+        .AddDecoratedMapper<RadioMapper, RadioComponent>()
+        .AddDecoratedMapper<TextInputMapper, TextInputComponent>()
+        .AddDecoratedMapper<CheckboxMapper, CheckboxComponent>()
+        .AddDecoratedMapper<TextMapper, TextComponent>()
+        // GDS Mappers
+        .AddDecoratedMapper<GDSCookieChoiceAvailableMapper, GDSCookieChoiceAvailableBannerComponent>()
+        .AddDecoratedMapper<GDSCookieChoiceMadeBannerComponentMapper, GDSCookieChoiceMadeBannerComponent>()
+        .AddDecoratedMapper<GDSButtonMapper, GDSButtonComponent>()
+        .AddDecoratedMapper<GDSTableMapper, GDSTableComponent>()
+        .AddDecoratedMapper<GDSHeaderMapper, GDSHeaderComponent>()
+        .AddDecoratedMapper<GDSFieldsetMapper, GDSFieldsetComponent>()
+        .AddDecoratedMapper<GDSCheckboxMapper, GDSCheckboxComponent>()
+        .AddDecoratedMapper<GDSRadioMapper, GDSRadioComponent>()
+        .AddDecoratedMapper<GDSTextInputMapper, GDSTextInputComponent>()
+        .AddDecoratedMapper<GDSTabsMapper, GDSTabsComponent>()
+        .AddDecoratedMapper<GDSDetailsMapper, GDSDetailsComponent>()
+        .AddDecoratedMapper<GDSErrorMessageMapper, GDSErrorMessageComponent>()
+        .AddDecoratedMapper<GDSErrorSummaryMapper, GDSErrorSummaryComponent>()
+        .AddDecoratedMapper<GDSFooterMapper, GDSFooterComponent>()
+        .AddDecoratedMapper<GDSNotificationBannerMapper, GDSNotificationBannerComponent>()
+        .AddDecoratedMapper<GDSPanelMapper, GDSPanelComponent>()
+        .AddDecoratedMapper<GDSSelectMapper, GDSSelectComponent>()
+        .AddDecoratedMapper<GDSPhaseBannerMapper, GDSPhaseBannerComponent>()
+        // Builders for client complex object creation
         .AddTransient<IGDSButtonBuilder, GDSButtonBuilder>()
         .AddTransient<IGDSCheckboxBuilder, GDSCheckboxBuilder>()
         .AddTransient<ICheckboxBuilder, CheckboxBuilder>()
         .AddTransient<IAnchorLinkComponentBuilder, AnchorLinkComponentBuilder>()
         .AddTransient<IGDSCookieChoiceAvailableBannerComponentBuilder, GDSCookieChoiceAvailableBannerComponentBuilder>()
-        .AddTransient<IGDSCookieChoiceMadeBannerComponentBuilder, GDSCookieChoiceMadeBannerComponentBuilder>();
+        .AddTransient<IGDSCookieChoiceMadeBannerComponentBuilder, GDSCookieChoiceMadeBannerComponentBuilder>()
+        .AddTransient<IGDSPhaseBannerBuilder, GDSPhaseBannerBuilder>()
+        .AddTransient<IFormBuilder, FormBuilder>();
         return services;
     }
-}
 
-internal static class ComponentExtensions
-{
-    public static IServiceCollection AddComponentMapper<TComponent, TMapperImpl>(this IServiceCollection services)
+    private static IServiceCollection AddDecoratedMapper<TDecoratedMapper, TComponent>(this IServiceCollection services)
+        where TDecoratedMapper : class, IComponentMapper<TComponent>
         where TComponent : class
-        where TMapperImpl : class, IMapper<IMapRequest<IDocumentSection>, MappedResponse<TComponent>>
     {
-        services.AddTransient<ComponentFactory<TComponent>>()
-        // decorated mapper
-            .AddTransient<TMapperImpl>()
-            .AddTransient<IMapper<IMapRequest<IDocumentSection>, MappedResponse<TComponent>>>((serviceProvider) =>
-                    new FindMappingEntrypointFromDocumentSectionMapperDecorator<TComponent>(
-                        mapRequestFactory: serviceProvider.GetRequiredService<IMapRequestFactory>(),
-                        decoratedMapper: serviceProvider.GetRequiredService<TMapperImpl>(),
-                        componentSelectorFactory: serviceProvider.GetRequiredService<IComponentSelectorFactory>(),
-                        mappingResultFactory: serviceProvider.GetRequiredService<IMappingResultFactory>()));
+        services.AddTransient<TDecoratedMapper>()
+            .AddTransient<IComponentMapper<TComponent>>(t =>
+            {
+                return new SearchDocumentForMappingEntrypointMappingDecorator<TComponent>(
+                    t.GetRequiredService<TDecoratedMapper>(),
+                    t.GetRequiredService<IMapRequestFactory>());
+            });
         return services;
     }
 }

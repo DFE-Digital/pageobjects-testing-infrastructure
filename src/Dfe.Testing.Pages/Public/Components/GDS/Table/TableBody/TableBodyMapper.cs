@@ -1,35 +1,29 @@
-﻿using Dfe.Testing.Pages.Public.Components.GDS.Table.GDSTable;
-using Dfe.Testing.Pages.Public.Components.GDS.Table.TableRow;
-using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-using Dfe.Testing.Pages.Public.Components.SelectorFactory;
+﻿using Dfe.Testing.Pages.Public.Components.GDS.Table.TableRow;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Table.TableBody;
-internal class TableBodyMapper : IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableBodyComponent>>
+internal class TableBodyMapper : IComponentMapper<TableBodyComponent>
 {
-    private readonly IMappingResultFactory _mappingResultFactory;
     private readonly IMapRequestFactory _mapRequestFactory;
-    private readonly IComponentSelectorFactory _componentSelectorFactory;
-    private readonly IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableRowComponent>> _rowMapper;
+    private readonly IMappingResultFactory _mappingResultFactory;
+    private readonly IComponentMapper<TableRowComponent> _rowMapper;
 
     public TableBodyMapper(
         IMapRequestFactory mapRequestFactory,
-        IComponentSelectorFactory componentSelectorFactory,
-        IMapper<IMapRequest<IDocumentSection>, MappedResponse<TableRowComponent>> rowMapper,
+        IComponentMapper<TableRowComponent> rowMapper,
         IMappingResultFactory mappingResultFactory)
     {
         ArgumentNullException.ThrowIfNull(rowMapper);
-        _mapRequestFactory = mapRequestFactory;
-        _componentSelectorFactory = componentSelectorFactory;
         _rowMapper = rowMapper;
         _mappingResultFactory = mappingResultFactory;
+        _mapRequestFactory = mapRequestFactory;
     }
 
     public MappedResponse<TableBodyComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        IEnumerable<MappedResponse<TableRowComponent>> mappedRows = request.FindManyDescendantsAndMap(
-            _mapRequestFactory,
-            _componentSelectorFactory.GetSelector<TableRowComponent>(),
-            _rowMapper);
+        IEnumerable<MappedResponse<TableRowComponent>> mappedRows =
+            _mapRequestFactory.CreateRequestFrom(request, nameof(TableBodyComponent.Rows))
+            .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _rowMapper)
+            .AddToMappingResults(request.MappedResults);
 
         TableBodyComponent tableBody = new()
         {
@@ -39,6 +33,6 @@ internal class TableBodyMapper : IMapper<IMapRequest<IDocumentSection>, MappedRe
         return _mappingResultFactory.Create(
             tableBody,
             MappingStatus.Success,
-            request.From);
+            request.Document);
     }
 }

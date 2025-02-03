@@ -1,6 +1,5 @@
 ﻿using Dfe.Testing.Pages.IntegrationTests.Component.Helper;
 using Dfe.Testing.Pages.Public.Components;
-using Dfe.Testing.Pages.Public.PageObject;
 using Dfe.Testing.Pages.Shared.Selector;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component;
@@ -13,7 +12,7 @@ public sealed class GDSButtonComponentTests
         var docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
         await docService.RequestDocumentAsync(t => t.SetPath("/component/button/button"));
 
-        var buttonPage = scope.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<GDSButtonPage>();
+        var buttonPage = scope.ServiceProvider.GetRequiredService<GDSButtonPage>();
 
         var defaultButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
             .SetText("Save and continue")
@@ -29,7 +28,7 @@ public sealed class GDSButtonComponentTests
         var docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
         await docService.RequestDocumentAsync(t => t.SetPath("/component/button/buttonnested"));
 
-        var buttonPage = scope.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<GDSButtonPage>();
+        var buttonPage = scope.ServiceProvider.GetRequiredService<GDSButtonPage>();
 
         var nestedDefaultButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
             .SetText("Nested save and continue")
@@ -46,7 +45,7 @@ public sealed class GDSButtonComponentTests
         var docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
         await docService.RequestDocumentAsync(t => t.SetPath("/component/button/buttonnested"));
 
-        var buttonPage = scope.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<GDSButtonPage>();
+        var buttonPage = scope.ServiceProvider.GetRequiredService<GDSButtonPage>();
 
         var nestedButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
             .SetText("Nested save and continue")
@@ -68,7 +67,7 @@ public sealed class GDSButtonComponentTests
         var docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
         await docService.RequestDocumentAsync(t => t.SetPath("/component/button/buttonnested"));
 
-        var buttonPage = scope.ServiceProvider.GetRequiredService<IPageObjectFactory>().Create<GDSButtonPage>();
+        var buttonPage = scope.ServiceProvider.GetRequiredService<GDSButtonPage>();
 
         var nestedButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
             .SetText("Nested save and continue")
@@ -85,11 +84,11 @@ public sealed class GDSButtonComponentTests
 }
 
 
-internal sealed class GDSButtonPage : IPageObject
+internal sealed class GDSButtonPage
 {
-    private readonly ComponentFactory<GDSButtonComponent> _buttonFactory;
+    private readonly IComponentFactory<GDSButtonComponent> _buttonFactory;
 
-    public GDSButtonPage(ComponentFactory<GDSButtonComponent> buttonFactory)
+    public GDSButtonPage(IComponentFactory<GDSButtonComponent> buttonFactory)
     {
         _buttonFactory = buttonFactory;
     }
