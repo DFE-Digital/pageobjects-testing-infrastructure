@@ -2,6 +2,7 @@
 using Dfe.Testing.Pages.Public.Components;
 using Dfe.Testing.Pages.Public.Components.GDS.Header;
 using Dfe.Testing.Pages.Public.Components.Link;
+using Shouldly;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component;
 public sealed class GDSHeaderTests
@@ -36,7 +37,7 @@ public sealed class GDSHeaderTests
             NavigationLinks = [navigationLink]
         };
 
-        headerPage.GetHeaderWithNoScope().Should().BeEquivalentTo(expectedHeader);
+        Assert.Equivalent(expectedHeader, headerPage.GetHeaderWithNoScope());
     }
 
     //TODO with scope

@@ -2,8 +2,8 @@
 using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
 using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Response;
 using Dfe.Testing.Pages.Public.Components.Text;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 
 namespace Dfe.Testing.Pages.UnitTests.Mappers;
 public sealed class GDSButtonMapperTests
@@ -21,6 +21,6 @@ public sealed class GDSButtonMapperTests
             Substitute.For<IMappingResultFactory>());
 
         MappedResponse<TextComponent> response = textMapper.Map(mapRequest);
-        response.Mapped.Text.Should().Be("blah");
+        response.Mapped.Text.ShouldBe("blah");
     }
 }

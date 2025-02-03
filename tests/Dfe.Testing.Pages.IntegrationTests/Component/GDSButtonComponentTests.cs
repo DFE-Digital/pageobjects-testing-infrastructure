@@ -1,6 +1,7 @@
 ﻿using Dfe.Testing.Pages.IntegrationTests.Component.Helper;
 using Dfe.Testing.Pages.Public.Components;
 using Dfe.Testing.Pages.Shared.Selector;
+using Shouldly;
 
 namespace Dfe.Testing.Pages.IntegrationTests.Component;
 public sealed class GDSButtonComponentTests
@@ -18,35 +19,45 @@ public sealed class GDSButtonComponentTests
             .SetText("Save and continue")
             .SetType("submit")
             .Build();
-        buttonPage.GetNoScope().Should().Be(defaultButton);
+
+        Assert.Equivalent(
+            defaultButton,
+            buttonPage.GetNoScope());
     }
 
     [Fact]
     public async Task Should_Scoped_Query_DefaultGDSButton()
     {
+        // Arrange
         using var scope = ComponentTestHelper.GetServices<GDSButtonPage>();
         var docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
+
+        // Act
         await docService.RequestDocumentAsync(t => t.SetPath("/component/button/buttonnested"));
 
-        var buttonPage = scope.ServiceProvider.GetRequiredService<GDSButtonPage>();
+        // Assert
 
         var nestedDefaultButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
             .SetText("Nested save and continue")
             .SetType("submit")
             .Build();
 
-        buttonPage.GetWithScope().Should().Be(nestedDefaultButton);
+        Assert.Equivalent(
+            nestedDefaultButton,
+            scope.ServiceProvider.GetRequiredService<GDSButtonPage>().GetWithScope());
     }
 
     [Fact]
     public async Task Should_Query_Many_DefaultGDSButton()
     {
+        // Arrange
         using var scope = ComponentTestHelper.GetServices<GDSButtonPage>();
         var docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
+
+        // Act
         await docService.RequestDocumentAsync(t => t.SetPath("/component/button/buttonnested"));
 
-        var buttonPage = scope.ServiceProvider.GetRequiredService<GDSButtonPage>();
-
+        // Assert
         var nestedButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
             .SetText("Nested save and continue")
             .SetType("submit")
@@ -57,18 +68,24 @@ public sealed class GDSButtonComponentTests
             .SetType("submit")
             .Build();
 
-        buttonPage.GetManyNoScope().Should().BeEquivalentTo([button, nestedButton]);
+        IEnumerable<GDSButtonComponent> expectedButtons = [button, nestedButton];
+
+        Assert.Equivalent(
+            expectedButtons,
+            scope.ServiceProvider.GetRequiredService<GDSButtonPage>().GetManyNoScope());
     }
 
     [Fact]
     public async Task Should_Query_Many_WithScope_DefaultGDSButton()
     {
+        // Arrange
         using var scope = ComponentTestHelper.GetServices<GDSButtonPage>();
         var docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
+
+        // Act
         await docService.RequestDocumentAsync(t => t.SetPath("/component/button/buttonnested"));
 
-        var buttonPage = scope.ServiceProvider.GetRequiredService<GDSButtonPage>();
-
+        // Assert
         var nestedButton = scope.ServiceProvider.GetRequiredService<IGDSButtonBuilder>()
             .SetText("Nested save and continue")
             .SetType("submit")
@@ -79,7 +96,11 @@ public sealed class GDSButtonComponentTests
             .SetType("submit")
             .Build();
 
-        buttonPage.GetManyNoScope().Should().BeEquivalentTo([button, nestedButton]);
+        IEnumerable<GDSButtonComponent> expectedButtons = [button, nestedButton];
+
+        Assert.Equivalent(
+            expectedButtons,
+            scope.ServiceProvider.GetRequiredService<GDSButtonPage>().GetManyWithScope());
     }
 }
 

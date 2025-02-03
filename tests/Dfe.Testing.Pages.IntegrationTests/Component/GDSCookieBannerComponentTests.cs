@@ -10,10 +10,14 @@ public sealed class GDSCookieBannerComponentTests
     [Fact]
     public async Task Should_Query_DefaultGDSCookieBanner()
     {
+        // Arrange
         using var scope = ComponentTestHelper.GetServices<GDSCookieBannerPage>();
         var docService = scope.ServiceProvider.GetRequiredService<IDocumentService>();
+
+        // Act
         await docService.RequestDocumentAsync(t => t.SetPath("/component/cookiebanner"));
 
+        // Assert
         AnchorLinkComponent viewCookies = scope.ServiceProvider.GetRequiredService<IAnchorLinkComponentBuilder>()
             .SetText("View cookies")
             .SetLink("#")
@@ -42,9 +46,9 @@ public sealed class GDSCookieBannerComponentTests
                 .SetViewCookiesLink(viewCookies)
                 .Build();
 
-        scope.ServiceProvider.GetRequiredService<GDSCookieBannerPage>().GetBannerNoScope()
-            .Should()
-                .BeEquivalentTo(expectedCookieChoiceBannerComponent);
+        Assert.Equivalent(
+            expectedCookieChoiceBannerComponent,
+            scope.ServiceProvider.GetRequiredService<GDSCookieBannerPage>().GetBannerNoScope());
     }
 }
 

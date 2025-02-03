@@ -2,6 +2,7 @@
 using Dfe.Testing.Pages.Public.Components;
 using Dfe.Testing.Pages.Public.Components.Link;
 using Dfe.Testing.Pages.Shared.Selector;
+using Shouldly;
 using static Dfe.Testing.Pages.IntegrationTests.WebDriverIntegrationTestDesign;
 
 namespace Dfe.Testing.Pages.IntegrationTests;
@@ -12,19 +13,23 @@ public sealed class WebDriverIntegrationTestDesign
     [Fact]
     public async Task WebDriver_Click_Handler_Works()
     {
+        // Arrange
         using var collection = MockServiceCollection.WithWebDriver();
 
         IDocumentService documentService = collection.ServiceProvider.GetRequiredService<IDocumentService>();
 
+        // Act
         await documentService.RequestDocumentAsync(
             (t) =>
                 t.SetDomain("searchprototype.azurewebsites.net")
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        SearchPage page = collection.ServiceProvider.GetRequiredService<SearchPage>();
+        collection.ServiceProvider
+            .GetRequiredService<SearchPage>()
+            .ClickAnchorLink();
 
-        page.ClickAnchorLink();
+        // Assert
     }
 
     [Fact]
@@ -40,8 +45,8 @@ public sealed class WebDriverIntegrationTestDesign
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        SearchPage page = collection.ServiceProvider.GetRequiredService<SearchPage>();
-        page.GetLinks().Should().HaveCount(3);
+        IEnumerable<AnchorLinkComponent> links = collection.ServiceProvider.GetRequiredService<SearchPage>().GetLinks();
+        Assert.Equal(3, links.Count());
     }
 
     public sealed class SearchPage
@@ -69,7 +74,7 @@ public sealed class WebDriverIntegrationTestDesign
     }
 }
 
-public static class MockServiceCollection
+internal static class MockServiceCollection
 {
     internal static IServiceScope WithWebDriver()
     {
