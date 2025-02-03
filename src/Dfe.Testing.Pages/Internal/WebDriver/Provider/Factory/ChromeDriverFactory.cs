@@ -12,7 +12,8 @@ internal sealed class ChromeDriverFactory : IBrowserFactory
         chromeOptions.AddArguments(sessionOptions.Browser.CustomOptions);
         if (!sessionOptions.Browser.ShowBrowser)
         {
-            chromeOptions.AddArgument("--headless");
+            // see https://www.selenium.dev/blog/2023/headless-is-going-away/
+            chromeOptions.AddArgument("--headless=new");
         }
         return Task.FromResult((IWebDriver)new ChromeDriver(driverService, chromeOptions));
     }
