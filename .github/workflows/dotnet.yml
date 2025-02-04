@@ -8,25 +8,73 @@ on:
     paths-ignore:
       - 'docs/**'
       - 'README.md'
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  
+    branches: 
+      - 'main'
+env:
+  NUGET_PACKAGE_OUTPUT_PATH: ./package
+  NUGET_FEED_URL: https://nuget.pkg.github.com/DFE-Digital/index.json
 
 jobs:
-  build:
-
+  build_test_pack:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v3.0.0
+      with:
+        versionSpec: '6.x'
+
+    - name: Determine generated version number
+      id: version_step # step id used as reference for output values
+      uses: gittools/actions/gitversion/execute@v3.0.0
+
+    - name: Determine version number to use
+      run: |
+        ## Default to using the version from GitVersion
+        version=${{ steps.version_step.outputs.fullSemVer }}
+        
+        echo "Version to use: $version"
+        echo "VERSION=$version" >> $GITHUB_ENV
     - name: Restore dependencies
       run: dotnet restore
+    
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --configuration Release --no-restore
+    
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --configuration Release --no-build --verbosity normal
+
+    - name: Pack
+      run: dotnet pack --configuration Release --no-build --output ${{ env.NUGET_PACKAGE_OUTPUT_PATH }} -p:PackageVersion=$VERSION --include-symbols
+
+    - name: Upload NuGet package (for use by later jobs)
+      uses: actions/upload-artifact@v4
+      with:
+        name: nupkg
+        path: ${{ env.NUGET_PACKAGE_OUTPUT_PATH }}/*.nupkg
+
+  publish:
+    # only publish a package on successful build
+    needs: build
+    runs-on: ubuntu-latest
+    ## Publish to GitHub Packages - including pre-release versions
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download NuGet package
+      uses: actions/download-artifact@v4
+      with:
+        name: nupkg
+        path: ${{ env.NUGET_PACKAGE_OUTPUT_PATH }}
+    
+    - name: Publish to GitHub
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet nuget push ${{ env.NUGET_PACKAGE_OUTPUT_PATH }}/*.nupkg --api-key ${{ secrets.NUGET_AUTH_TOKEN }} --source ${{ env.NUGET_FEED_URL }}
