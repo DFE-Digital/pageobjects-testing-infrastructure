@@ -15,7 +15,7 @@ env:
   NUGET_FEED_URL: https://nuget.pkg.github.com/DFE-Digital/index.json
 
 jobs:
-  build_test_pack:
+  build_test_publish:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -56,28 +56,8 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release --no-build --output ${{ env.NUGET_PACKAGE_OUTPUT_PATH }} -p:PackageVersion=$VERSION --include-symbols
 
-    - name: Upload NuGet package (for use by later jobs)
-      uses: actions/upload-artifact@v4
-      with:
-        name: nupkg
-        path: ${{ env.NUGET_PACKAGE_OUTPUT_PATH }}/*.nupkg
-
-  publish:
-    # only publish a package on successful build
-    needs: build_test_pack
-    runs-on: ubuntu-latest
-    ## Publish to GitHub Packages - including pre-release versions
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Download NuGet package
-      uses: actions/download-artifact@v4
-      with:
-        name: nupkg
-        path: ${{ env.NUGET_PACKAGE_OUTPUT_PATH }}
-    
-    - name: Publish to GitHub
+## Publish to GitHub Packages - including pre-release versions
+    - name: Publish package
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: dotnet nuget push ${{ env.NUGET_PACKAGE_OUTPUT_PATH }}/*.nupkg --api-key ${{ secrets.NUGET_AUTH_TOKEN }} --source ${{ env.NUGET_FEED_URL }}
