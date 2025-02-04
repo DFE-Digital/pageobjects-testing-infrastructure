@@ -61,7 +61,7 @@ jobs:
 
   publish:
     # only publish a package on successful build
-    needs: build
+    needs: build_test_pack
     runs-on: ubuntu-latest
     ## Publish to GitHub Packages - including pre-release versions
     steps:
