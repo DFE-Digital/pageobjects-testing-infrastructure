@@ -32,6 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Dfe.Testing.Pages.UnitTests" />
   </ItemGroup>
 </Project>
