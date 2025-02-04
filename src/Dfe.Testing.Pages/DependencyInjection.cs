@@ -179,7 +179,7 @@ public static class DependencyInjection
                     { "GDSPhaseBannerComponent", () => new CssElementSelector(".govuk-phase-banner") },
                     { "GDSPhaseBannerComponent.Phase", () => new CssElementSelector(".govuk-tag") },
                     { "GDSPhaseBannerComponent.Text", () => new CssElementSelector(".govuk-phase-banner__text") },
-                    { "GDSPhaseBannerComponent.FeedbackLink", () => new CssElementSelector(".govuk-link") },
+                    { "GDSPhaseBannerComponent.FeedbackLink", getLink },
                     { "GDSNotificationBannerComponent", () => new CssElementSelector(".govuk-notification-banner") },
                     { "GDSNotificationBannerComponent.Heading", () => new CssElementSelector(".govuk-notification-banner__title") },
                     { "GDSNotificationBannerComponent.Content", () => new CssElementSelector(".govuk-notification-banner__content") },

@@ -6,7 +6,7 @@ public sealed class IdSelector : IElementSelector
 
     public IdSelector(string selector)
     {
-        ArgumentNullException.ThrowIfNull(_selector, nameof(selector));
+        ArgumentNullException.ThrowIfNull(selector, nameof(selector));
         _selector = selector;
     }
     public string ToSelector() => _selector.StartsWith('#') ? _selector : $"#{_selector}";

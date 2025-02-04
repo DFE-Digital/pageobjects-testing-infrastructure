@@ -18,8 +18,12 @@ public sealed class MapKey
         return new MapKey(copiedKeys);
     }
 
-    public override string ToString()
+    public bool IsEmpty() => keys.Count == 0;
+
+    public override string ToString() => keys.Count switch
     {
-        return keys.Count == 0 ? string.Empty : keys.Count == 1 ? keys[0] : keys.Skip(1).Aggregate(keys[0], (acc, next) => acc + "." + next);
-    }
+        0 => string.Empty,
+        1 => keys[0],
+        _ => keys.Skip(1).Aggregate(keys[0], (acc, next) => acc + "." + next)
+    };
 }

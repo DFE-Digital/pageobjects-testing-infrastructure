@@ -9,15 +9,15 @@ public interface IComponentFactory<T> where T : class
     IEnumerable<CreatedComponentResponse<T>> CreateMany(CreateComponentRequest? request = null);
 }
 
-internal sealed class ComponentFactory<T> : IComponentFactory<T> where T : class
+internal sealed class ComponentFactory<TComponent> : IComponentFactory<TComponent> where TComponent : class
 {
     private readonly IDocumentService _documentClient;
-    private readonly IComponentMapper<T> _mapper;
+    private readonly IComponentMapper<TComponent> _mapper;
     private readonly IEntrypointSelectorFactory _componentSelectorFactory;
 
     public ComponentFactory(
         IDocumentService documentClient,
-        IComponentMapper<T> mapper,
+        IComponentMapper<TComponent> mapper,
         IEntrypointSelectorFactory componentSelectorFactory)
     {
         _documentClient = documentClient;
@@ -25,14 +25,14 @@ internal sealed class ComponentFactory<T> : IComponentFactory<T> where T : class
         _componentSelectorFactory = componentSelectorFactory;
     }
 
-    public CreatedComponentResponse<T> Create(CreateComponentRequest? request = null) => CreateMany(request).Single();
+    public CreatedComponentResponse<TComponent> Create(CreateComponentRequest? request = null) => CreateMany(request).Single();
 
-    public IEnumerable<CreatedComponentResponse<T>> CreateMany(CreateComponentRequest? request = null)
+    public IEnumerable<CreatedComponentResponse<TComponent>> CreateMany(CreateComponentRequest? request = null)
     {
         FindOptions mergedFindOptions = new()
         {
             FindInScope = request?.FindInScope ?? null,
-            Selector = request?.Selector ?? _componentSelectorFactory.GetSelector<T>()
+            Selector = request?.Selector ?? _componentSelectorFactory.GetSelector<TComponent>()
         };
 
         // Query
@@ -40,11 +40,11 @@ internal sealed class ComponentFactory<T> : IComponentFactory<T> where T : class
 
 
         // Map
-        IEnumerable<MappedResponse<T>> mappedComponentResponsesFromDocumentSections =
+        IEnumerable<MappedResponse<TComponent>> mappedComponentResponsesFromDocumentSections =
             documentSections.Select((section) =>
             {
                 ArgumentNullException.ThrowIfNull(section, $"section returned as null in DocumentClient query");
-                string componentRequestedType = typeof(T).Name;
+                string componentRequestedType = typeof(TComponent).Name;
                 DocumentSectionMapRequest mapRequest = new()
                 {
                     Document = section,
@@ -60,7 +60,7 @@ internal sealed class ComponentFactory<T> : IComponentFactory<T> where T : class
                         OverrideMapperEntrypoint = null,
                     }
                 };
-                MappedResponse<T> response = _mapper.Map(mapRequest);
+                MappedResponse<TComponent> response = _mapper.Map(mapRequest);
                 return response;
             });
 
@@ -71,7 +71,7 @@ internal sealed class ComponentFactory<T> : IComponentFactory<T> where T : class
                 List<IMappingResult> outputResults = [];
                 outputResults.Add(mappedResponse.MappingResult);
 
-                return new CreatedComponentResponse<T>()
+                return new CreatedComponentResponse<TComponent>()
                 {
                     Created = mappedResponse.Mapped!,
                     CreatingComponentResults = outputResults
