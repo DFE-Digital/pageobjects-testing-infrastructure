@@ -42,6 +42,7 @@ internal sealed class AnchorLinkMapper : IComponentMapper<AnchorLinkComponent>
             });
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             _anchorLinkBuilder.Build(),
             MappingStatus.Success,
             request.Document);

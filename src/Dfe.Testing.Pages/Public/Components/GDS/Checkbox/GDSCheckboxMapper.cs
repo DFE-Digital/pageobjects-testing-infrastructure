@@ -53,6 +53,7 @@ internal sealed class GDSCheckboxMapper : IComponentMapper<GDSCheckboxComponent>
                 .Build();
 
         return _mappingResultFactory.Create(
+                request.Options.MapKey,
                 component,
                 MappingStatus.Success,
                 request.Document);

@@ -23,27 +23,26 @@ internal sealed class TableRowMapper : IComponentMapper<TableRowComponent>
 
     public MappedResponse<TableRowComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        IEnumerable<TableHeadingItemComponent> tableHeadingItems =
+        IEnumerable<MappedResponse<TableHeadingItemComponent>> tableHeadingItems =
             _mapRequestFactory.CreateRequestFrom(request, nameof(TableRowComponent.Headings))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _tableHeadingItemMapper)
-                .AddToMappingResults(request.MappedResults)
-                .Select(t => t.Mapped!);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _tableHeadingItemMapper);
 
-        IEnumerable<TableDataItemComponent> tableDataItems =
+        IEnumerable<MappedResponse<TableDataItemComponent>> tableDataItems =
             _mapRequestFactory.CreateRequestFrom(request, nameof(TableRowComponent.DataItems))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _tableDataItemMapper)
-                .AddToMappingResults(request.MappedResults)
-                .Select(t => t.Mapped!);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _tableDataItemMapper);
 
         TableRowComponent tableRowComponent = new()
         {
-            Headings = tableHeadingItems,
-            DataItems = tableDataItems
+            Headings = tableHeadingItems.Select(t => t.Mapped!),
+            DataItems = tableDataItems.Select(t => t.Mapped!)
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             tableRowComponent,
             MappingStatus.Success,
-            request.Document);
+            request.Document)
+                .AddToMappingResults(tableHeadingItems.SelectMany(t => t.MappingResults))
+                .AddToMappingResults(tableDataItems.SelectMany(t => t.MappingResults));
     }
 }

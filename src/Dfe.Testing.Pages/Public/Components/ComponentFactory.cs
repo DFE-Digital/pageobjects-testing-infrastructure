@@ -54,7 +54,7 @@ internal sealed class ComponentFactory<TComponent> : IComponentFactory<TComponen
                         // adds requested component as type to fulfil MapConfiguration override
                         // e.g {TopLevelComponent e.g FormComponent}{Separator}{Attribute}{Separator}{Attribute} is structure of key looked up in mappers
                         // e.g FormComponent.ViewCookiesLink.Text - TextMapper will use current ChainedLookupKey using the attribute it's currently mapping. This could be a top level map / a nested map.
-                        MapConfigurationKey = new MapKey([componentRequestedType]),
+                        MapKey = new MapKey([componentRequestedType]),
                         OverrideMapperConfiguration = request?.Mapping ?? [],
                         // top level entrypoint not changed as Query finds section
                         OverrideMapperEntrypoint = null,
@@ -69,7 +69,7 @@ internal sealed class ComponentFactory<TComponent> : IComponentFactory<TComponen
             (mappedResponse) =>
             {
                 List<IMappingResult> outputResults = [];
-                outputResults.Add(mappedResponse.MappingResult);
+                outputResults.AddRange(mappedResponse.MappingResults);
 
                 return new CreatedComponentResponse<TComponent>()
                 {

@@ -31,6 +31,7 @@ internal sealed class OptionsMapper : IComponentMapper<OptionComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             option,
             MappingStatus.Success,
             request.Document);

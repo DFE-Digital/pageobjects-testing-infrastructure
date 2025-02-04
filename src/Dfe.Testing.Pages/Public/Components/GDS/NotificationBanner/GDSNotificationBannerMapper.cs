@@ -37,6 +37,7 @@ internal sealed class GDSNotificationBannerMapper : IComponentMapper<GDSNotifica
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             component,
             MappingStatus.Success,
             request.Document);

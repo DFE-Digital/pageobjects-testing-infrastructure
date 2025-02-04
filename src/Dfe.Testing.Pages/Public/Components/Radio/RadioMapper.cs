@@ -19,6 +19,7 @@ internal sealed class RadioMapper : IComponentMapper<RadioComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             radio,
             MappingStatus.Success,
             request.Document);

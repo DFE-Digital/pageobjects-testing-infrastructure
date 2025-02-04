@@ -31,6 +31,7 @@ internal class TableDataItemMapper : IComponentMapper<TableDataItemComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             tableDataItemComponent,
             MappingStatus.Success,
             request.Document);

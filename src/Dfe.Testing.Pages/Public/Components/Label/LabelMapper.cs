@@ -30,6 +30,7 @@ internal sealed class LabelMapper : IComponentMapper<LabelComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             component,
             MappingStatus.Success,
             request.Document);

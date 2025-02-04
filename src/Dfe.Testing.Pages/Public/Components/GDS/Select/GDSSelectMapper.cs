@@ -28,13 +28,11 @@ internal sealed class GDSSelectMapper : IComponentMapper<GDSSelectComponent>
     {
         MappedResponse<LabelComponent> mappedLabel =
             _labelMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSSelectComponent.Label)))
-            .AddToMappingResults(request.MappedResults);
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSSelectComponent.Label)));
 
         IEnumerable<MappedResponse<OptionComponent>> mappedOptions =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSSelectComponent.Options))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _optionMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _optionMapper);
 
         GDSSelectComponent select = new()
         {
@@ -44,8 +42,11 @@ internal sealed class GDSSelectMapper : IComponentMapper<GDSSelectComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             select,
             MappingStatus.Success,
-            request.Document);
+            request.Document)
+                .AddToMappingResults(mappedLabel.MappingResults)
+                .AddToMappingResults(mappedOptions.SelectMany(t => t.MappingResults));
     }
 }

@@ -17,6 +17,7 @@ internal sealed class HiddenInputMapper : IComponentMapper<HiddenInputComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             hiddenInputComponent,
             MappingStatus.Success,
             request.Document);

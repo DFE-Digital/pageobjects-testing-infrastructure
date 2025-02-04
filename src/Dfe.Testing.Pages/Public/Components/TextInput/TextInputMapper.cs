@@ -21,6 +21,7 @@ internal sealed class TextInputMapper : IComponentMapper<TextInputComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             component,
             MappingStatus.Success,
             request.Document!);

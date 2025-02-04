@@ -51,6 +51,7 @@ internal sealed class GDSCookieChoiceMadeBannerComponentMapper : IComponentMappe
             .SetMessage(mappedMessage.Mapped!.Text);
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             _gdsCookieChoiceMadeBannerBuilder.Build(),
             MappingStatus.Success,
             request.Document);

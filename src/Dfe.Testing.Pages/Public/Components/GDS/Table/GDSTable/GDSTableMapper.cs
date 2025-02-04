@@ -50,6 +50,7 @@ internal sealed class GDSTableMapper : IComponentMapper<GDSTableComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             tableBody,
             MappingStatus.Success,
             request.Document);

@@ -23,7 +23,7 @@ internal sealed class MapRequestFactory : IMapRequestFactory
     {
         // Don't modify existing request as it effects subsequent mappers using request with configKey
 
-        MapKey newMapConfigurationKey = request.Options.MapConfigurationKey.Append(attributeBeingMapped);
+        MapKey newMapConfigurationKey = request.Options.MapKey.Append(attributeBeingMapped);
         string configLookupKey = newMapConfigurationKey.ToString();
         request.Options.OverrideMapperConfiguration.TryGetValue(configLookupKey, out IElementSelector? mappingConfiguration);
         IElementSelector? overrideEntrypoint = mappingConfiguration ?? _entrypointSelectorFactory.GetSelector(configLookupKey);
@@ -31,9 +31,10 @@ internal sealed class MapRequestFactory : IMapRequestFactory
         return new DocumentSectionMapRequest()
         {
             Document = request.Document,
+            MappedResults = request.MappedResults,
             Options = new()
             {
-                MapConfigurationKey = newMapConfigurationKey,
+                MapKey = newMapConfigurationKey,
                 OverrideMapperEntrypoint = overrideEntrypoint,
                 OverrideMapperConfiguration = request.Options.OverrideMapperConfiguration
             }
@@ -47,10 +48,11 @@ internal sealed class MapRequestFactory : IMapRequestFactory
         return new DocumentSectionMapRequest()
         {
             Document = mapFromDocument,
+            MappedResults = request.MappedResults,
             Options = new()
             {
                 // Pass everything except OverrideEntrypoint as we are now mapping from a different document point
-                MapConfigurationKey = request.Options.MapConfigurationKey,
+                MapKey = request.Options.MapKey,
                 OverrideMapperConfiguration = request.Options.OverrideMapperConfiguration,
                 OverrideMapperEntrypoint = null
             }

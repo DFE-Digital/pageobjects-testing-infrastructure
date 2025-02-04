@@ -36,6 +36,7 @@ internal sealed class GDSDetailsMapper : IComponentMapper<GDSDetailsComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             component,
             MappingStatus.Success,
             request.Document);

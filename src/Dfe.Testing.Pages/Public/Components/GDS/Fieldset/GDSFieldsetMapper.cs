@@ -41,23 +41,19 @@ internal sealed class GDSFieldsetMapper : IComponentMapper<GDSFieldsetComponent>
     {
         MappedResponse<TextComponent> mappedLegend =
             _textMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFieldsetComponent.Legend)))
-            .AddToMappingResults(request.MappedResults);
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFieldsetComponent.Legend)));
 
         IEnumerable<MappedResponse<GDSTextInputComponent>> mappedTextInputs =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFieldsetComponent.TextInputs))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _textInputMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _textInputMapper);
 
         IEnumerable<MappedResponse<GDSRadioComponent>> mappedRadios =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFieldsetComponent.Radios))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _radioMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _radioMapper);
 
         IEnumerable<MappedResponse<GDSCheckboxComponent>> mappedCheckboxes =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFieldsetComponent.Checkboxes))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _checkboxMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _checkboxMapper);
 
 
         GDSFieldsetComponent component = new()
@@ -69,8 +65,13 @@ internal sealed class GDSFieldsetMapper : IComponentMapper<GDSFieldsetComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             component,
             MappingStatus.Success,
-            request.Document);
+            request.Document)
+                .AddToMappingResults(mappedLegend.MappingResults)
+                .AddToMappingResults(mappedTextInputs.SelectMany(t => t.MappingResults))
+                .AddToMappingResults(mappedRadios.SelectMany(t => t.MappingResults))
+                .AddToMappingResults(mappedCheckboxes.SelectMany(t => t.MappingResults));
     }
 }

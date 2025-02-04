@@ -25,13 +25,11 @@ internal sealed class GDSErrorSummaryMapper : IComponentMapper<GDSErrorSummaryCo
     {
         MappedResponse<TextComponent> mappedHeading =
             _textMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSErrorSummaryComponent.Heading)))
-                .AddToMappingResults(request.MappedResults);
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSErrorSummaryComponent.Heading)));
 
         IEnumerable<MappedResponse<AnchorLinkComponent>> mappedErrors =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSErrorSummaryComponent.Errors))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _anchorLinkMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _anchorLinkMapper);
 
         GDSErrorSummaryComponent component = new()
         {
@@ -39,9 +37,14 @@ internal sealed class GDSErrorSummaryMapper : IComponentMapper<GDSErrorSummaryCo
             Errors = mappedErrors.Select(t => t.Mapped)
         };
 
-        return _mappingResultFactory.Create(
+        MappedResponse<GDSErrorSummaryComponent> response = _mappingResultFactory.Create(
+            request.Options.MapKey,
             component,
             MappingStatus.Success,
-            request.Document);
+            request.Document)
+        .AddToMappingResults(mappedHeading.MappingResults)
+        .AddToMappingResults(mappedErrors.SelectMany(t => t.MappingResults));
+
+        return response;
     }
 }

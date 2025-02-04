@@ -40,6 +40,7 @@ internal sealed class GDSTabsMapper : IComponentMapper<GDSTabsComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             tabs,
             MappingStatus.Success,
             request.Document);

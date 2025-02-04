@@ -45,6 +45,7 @@ internal class GDSButtonMapper : IComponentMapper<GDSButtonComponent>
             .Build();
 
         return _mappingResultFactory.Create(
+                request.Options.MapKey,
                 mapped: _buttonBuilder.Build(),
                 status: MappingStatus.Success,
                 section: request.Document);

@@ -1,5 +1,5 @@
 ﻿namespace Dfe.Testing.Pages.Public.Components.MappingAbstraction.Request;
-public sealed class MapKey
+internal sealed class MapKey
 {
     private readonly List<string> keys = [];
     internal MapKey(IEnumerable<string> mappingKeys)

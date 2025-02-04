@@ -30,6 +30,7 @@ internal sealed class GDSErrorMessageMapper : IComponentMapper<GDSErrorMessageCo
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             component,
             MappingStatus.Success,
             request.Document);

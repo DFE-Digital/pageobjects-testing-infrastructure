@@ -4,6 +4,7 @@ using Dfe.Testing.Pages.Public.Components.GDS.Fieldset;
 using Dfe.Testing.Pages.Public.Components.GDS.Radio;
 using Dfe.Testing.Pages.Public.Components.GDS.TextInput;
 using Dfe.Testing.Pages.Public.Components.HiddenInput;
+using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Response;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace Dfe.Testing.Pages.Public.Components.Form;
@@ -52,38 +53,31 @@ internal sealed class FormMapper : IComponentMapper<FormComponent>
     {
         IEnumerable<MappedResponse<GDSFieldsetComponent>> fieldsets =
             _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Fieldsets))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsfieldsetMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsfieldsetMapper);
 
         IEnumerable<MappedResponse<GDSButtonComponent>> mappedButtons =
             _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Buttons))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsButtonMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsButtonMapper);
 
         IEnumerable<MappedResponse<HiddenInputComponent>> mappedHiddenInputs =
             _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.HiddenInputs))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _hiddenInputMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _hiddenInputMapper);
 
         IEnumerable<MappedResponse<GDSTextInputComponent>> mappedTextInputs =
             _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.TextInputs))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsTextInputMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsTextInputMapper);
 
         IEnumerable<MappedResponse<GDSCheckboxComponent>> mappedCheckboxes =
             _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Checkboxes))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsCheckboxMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsCheckboxMapper);
 
         IEnumerable<MappedResponse<GDSRadioComponent>> mappedRadios =
             _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Radios))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsRadioMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsRadioMapper);
 
         IEnumerable<MappedResponse<GDSSelectComponent>> mappedSelects =
             _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Selects))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsSelectMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsSelectMapper);
 
         FormComponent form = new()
         {
@@ -102,9 +96,19 @@ internal sealed class FormMapper : IComponentMapper<FormComponent>
             Selects = mappedSelects.Select(t => t.Mapped)
         };
 
-        return _mappingResultFactory.Create(
+        MappedResponse<FormComponent> mappedResponse = _mappingResultFactory.Create(
+            request.Options.MapKey,
             mapped: form,
             status: MappingStatus.Success,
-            request.Document);
+            request.Document)
+        .AddToMappingResults(fieldsets.SelectMany(t => t.MappingResults))
+        .AddToMappingResults(mappedButtons.SelectMany(t => t.MappingResults))
+        .AddToMappingResults(mappedHiddenInputs.SelectMany(t => t.MappingResults))
+        .AddToMappingResults(mappedTextInputs.SelectMany(t => t.MappingResults))
+        .AddToMappingResults(mappedCheckboxes.SelectMany(t => t.MappingResults))
+        .AddToMappingResults(mappedRadios.SelectMany(t => t.MappingResults))
+        .AddToMappingResults(mappedSelects.SelectMany(t => t.MappingResults));
+
+        return mappedResponse;
     }
 }

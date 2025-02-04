@@ -22,13 +22,11 @@ internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>
     {
         MappedResponse<AnchorLinkComponent> mappedGovUKLink =
             _linkMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSHeaderComponent.GovUKLink)))
-            .AddToMappingResults(request.MappedResults);
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSHeaderComponent.GovUKLink)));
 
         IEnumerable<MappedResponse<AnchorLinkComponent>> mappedNavigationLinks =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSHeaderComponent.NavigationLinks))
-                .FindManyDescendantsAndMapToComponent<AnchorLinkComponent>(_mapRequestFactory, _linkMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent<AnchorLinkComponent>(_mapRequestFactory, _linkMapper);
 
         GDSHeaderComponent component = new()
         {
@@ -37,8 +35,11 @@ internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             component,
             MappingStatus.Success,
-            request.Document);
+            request.Document)
+                .AddToMappingResults(mappedGovUKLink.MappingResults)
+                .AddToMappingResults(mappedNavigationLinks.SelectMany(t => t.MappingResults));
     }
 }

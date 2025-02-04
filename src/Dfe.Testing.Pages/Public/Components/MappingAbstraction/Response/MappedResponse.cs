@@ -1,13 +1,13 @@
 ﻿namespace Dfe.Testing.Pages.Public.Components.MappingAbstraction.Response;
-public record MappedResponse<T> where T : class
+internal record MappedResponse<T> where T : class
 {
     public T? Mapped { get; init; } = null!;
-    public required IMappingResult MappingResult { get; init; }
+    public required List<IMappingResult> MappingResults { get; init; }
 }
 
 public interface IMappingResult
 {
-    // TODO how do we uniquely identify and set MappingResult information {TopLevelMapAttempt}.{MapChainKey}
+    public string MapKey { get; }
     public MappingStatus Status { get; }
     public string AttemptedToMapFrom { get; }
     public string Message { get; }
@@ -21,14 +21,9 @@ public enum MappingStatus
 
 internal static class MappedResponseExtensions
 {
-    internal static IEnumerable<MappedResponse<T>> AddToMappingResults<T>(this IEnumerable<MappedResponse<T>> responses, IList<IMappingResult> results) where T : class
+    internal static MappedResponse<T> AddToMappingResults<T>(this MappedResponse<T> response, IEnumerable<IMappingResult> results) where T : class
     {
-        ArgumentNullException.ThrowIfNull(responses);
-        ArgumentNullException.ThrowIfNull(results);
-        responses.ToList().ForEach((mappedResponse) => results.Add(mappedResponse.MappingResult));
-        return responses;
+        response.MappingResults.AddRange(results);
+        return response;
     }
-
-    internal static MappedResponse<T> AddToMappingResults<T>(this MappedResponse<T> response, IList<IMappingResult> results) where T : class
-        => new List<MappedResponse<T>> { response }.AddToMappingResults(results).Single();
 }

@@ -36,6 +36,7 @@ internal sealed class GDSPhaseBannerMapper : IComponentMapper<GDSPhaseBannerComp
                 .AddToMappingResults(request.MappedResults);
 
         return _mapResultFactory.Create(
+            request.Options.MapKey,
             new GDSPhaseBannerComponent
             {
                 Phase = mappedPhase.Mapped!,

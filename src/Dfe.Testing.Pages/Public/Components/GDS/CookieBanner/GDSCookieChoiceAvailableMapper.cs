@@ -34,27 +34,31 @@ internal sealed class GDSCookieChoiceAvailableMapper : IComponentMapper<GDSCooki
     {
         MappedResponse<TextComponent> mappedHeading =
             _textMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceAvailableBannerComponent.Heading)))
-            .AddToMappingResults(request.MappedResults);
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceAvailableBannerComponent.Heading)));
 
         MappedResponse<AnchorLinkComponent> mappedViewCookiesLink =
             _anchorLinkMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceAvailableBannerComponent.ViewCookiesLink)))
-            .AddToMappingResults(request.MappedResults);
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceAvailableBannerComponent.ViewCookiesLink)));
 
         MappedResponse<FormComponent> mappedForm =
             _formMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm)))
-            .AddToMappingResults(request.MappedResults);
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm)));
 
         _builder
             .SetViewCookiesLink(mappedViewCookiesLink.Mapped!)
             .SetHeading(mappedHeading.Mapped!.Text)
             .SetForm(mappedForm.Mapped!);
 
-        return _mappingResultFactory.Create(
-            _builder.Build(),
-            MappingStatus.Success,
-            request.Document);
+        MappedResponse<GDSCookieChoiceAvailableBannerComponent> mappedAvailableBanner =
+            _mappingResultFactory.Create(
+                request.Options.MapKey,
+                _builder.Build(),
+                MappingStatus.Success, // TODO predicate whether this component mapping was successful
+                request.Document)
+            .AddToMappingResults(mappedHeading.MappingResults)
+            .AddToMappingResults(mappedForm.MappingResults)
+            .AddToMappingResults(mappedViewCookiesLink.MappingResults);
+
+        return mappedAvailableBanner;
     }
 }

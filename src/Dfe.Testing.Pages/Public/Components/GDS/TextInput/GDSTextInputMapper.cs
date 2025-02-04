@@ -50,6 +50,7 @@ internal sealed class GDSTextInputMapper : IComponentMapper<GDSTextInputComponen
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             component,
             MappingStatus.Success,
             request.Document);

@@ -63,5 +63,9 @@ internal sealed class GDSCookieBannerPage
         _cookieBannerFactory = cookieBannerFactory;
     }
 
-    internal GDSCookieChoiceAvailableBannerComponent GetBannerNoScope() => _cookieBannerFactory.Create().Created;
+    internal GDSCookieChoiceAvailableBannerComponent GetBannerNoScope()
+    {
+        CreatedComponentResponse<GDSCookieChoiceAvailableBannerComponent> banner = _cookieBannerFactory.Create();
+        return banner.Created;
+    }
 }

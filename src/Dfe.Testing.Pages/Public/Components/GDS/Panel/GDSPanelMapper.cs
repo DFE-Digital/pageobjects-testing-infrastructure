@@ -32,14 +32,13 @@ internal sealed class GDSPanelMapper : IComponentMapper<GDSPanelComponent>
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSPanelComponent.Content)))
             .AddToMappingResults(request.MappedResults);
 
-        GDSPanelComponent panel = new()
-        {
-            Heading = mappedHeading.Mapped,
-            Content = mappedContent.Mapped,
-        };
-
         return _mappingResultFactory.Create(
-            panel,
+            request.Options.MapKey,
+            new GDSPanelComponent()
+            {
+                Heading = mappedHeading.Mapped,
+                Content = mappedContent.Mapped,
+            },
             MappingStatus.Success,
             request.Document);
     }

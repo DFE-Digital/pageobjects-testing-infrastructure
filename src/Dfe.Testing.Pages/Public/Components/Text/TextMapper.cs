@@ -16,6 +16,7 @@ internal sealed class TextMapper : IComponentMapper<TextComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             text,
             MappingStatus.Success,
             request.Document);

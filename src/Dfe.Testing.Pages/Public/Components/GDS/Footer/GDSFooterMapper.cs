@@ -26,23 +26,19 @@ internal sealed class GDSFooterMapper : IComponentMapper<GDSFooterComponent>
     {
         MappedResponse<AnchorLinkComponent> mappedCrownCopyrightLink =
             _anchorLinkMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.CrownCopyrightLink)))
-            .AddToMappingResults(request.MappedResults);
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.CrownCopyrightLink)));
 
         MappedResponse<AnchorLinkComponent> mappedLicenseLink =
             _anchorLinkMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.LicenseLink)))
-            .AddToMappingResults(request.MappedResults);
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.LicenseLink)));
 
         MappedResponse<TextComponent> mappedLicenseMessage =
             _textComponentMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.LicenseMessage)))
-            .AddToMappingResults(request.MappedResults);
+                _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.LicenseMessage)));
 
         IEnumerable<MappedResponse<AnchorLinkComponent>> mappedApplicationLinks =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.ApplicationLinks))
-                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _anchorLinkMapper)
-                .AddToMappingResults(request.MappedResults);
+                .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _anchorLinkMapper);
 
         GDSFooterComponent component = new()
         {
@@ -53,8 +49,13 @@ internal sealed class GDSFooterMapper : IComponentMapper<GDSFooterComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             component,
             MappingStatus.Success,
-            request.Document);
+            request.Document)
+                .AddToMappingResults(mappedCrownCopyrightLink.MappingResults)
+                .AddToMappingResults(mappedLicenseLink.MappingResults)
+                .AddToMappingResults(mappedLicenseMessage.MappingResults)
+                .AddToMappingResults(mappedApplicationLinks.SelectMany(t => t.MappingResults));
     }
 }

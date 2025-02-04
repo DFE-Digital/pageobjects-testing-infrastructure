@@ -37,15 +37,14 @@ internal sealed class GDSRadioMapper : IComponentMapper<GDSRadioComponent>
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSRadioComponent.Radio)))
             .AddToMappingResults(request.MappedResults);
 
-        GDSRadioComponent output = new()
-        {
-            Label = mappedLabel.Mapped,
-            Radio = mappedRadio.Mapped,
-            Error = _errorMessageMapper.Map(request).Mapped
-        };
-
         return _mappingResultFactory.Create(
-            output,
+            request.Options.MapKey,
+            new GDSRadioComponent()
+            {
+                Label = mappedLabel.Mapped,
+                Radio = mappedRadio.Mapped,
+                Error = _errorMessageMapper.Map(request).Mapped
+            },
             MappingStatus.Success,
             request.Document);
     }

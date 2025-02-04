@@ -22,8 +22,7 @@ internal class TableBodyMapper : IComponentMapper<TableBodyComponent>
     {
         IEnumerable<MappedResponse<TableRowComponent>> mappedRows =
             _mapRequestFactory.CreateRequestFrom(request, nameof(TableBodyComponent.Rows))
-            .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _rowMapper)
-            .AddToMappingResults(request.MappedResults);
+            .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _rowMapper);
 
         TableBodyComponent tableBody = new()
         {
@@ -31,8 +30,10 @@ internal class TableBodyMapper : IComponentMapper<TableBodyComponent>
         };
 
         return _mappingResultFactory.Create(
+            request.Options.MapKey,
             tableBody,
             MappingStatus.Success,
-            request.Document);
+            request.Document)
+                .AddToMappingResults(mappedRows.SelectMany(t => t.MappingResults));
     }
 }
