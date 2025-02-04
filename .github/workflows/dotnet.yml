@@ -54,7 +54,7 @@ jobs:
       run: dotnet test --configuration Release --no-build --verbosity normal
 
     - name: Pack
-      run: dotnet pack --configuration Release --no-build --output ${{ env.NUGET_PACKAGE_OUTPUT_PATH }} -p:PackageVersion=$VERSION --include-symbols
+      run: dotnet pack --configuration Release --no-build --output ${{ env.NUGET_PACKAGE_OUTPUT_PATH }} -p:PackageVersion=$VERSION # TODO symbols for debug  --include-symbols
 
 ## Publish to GitHub Packages - including pre-release versions
     - name: Publish package

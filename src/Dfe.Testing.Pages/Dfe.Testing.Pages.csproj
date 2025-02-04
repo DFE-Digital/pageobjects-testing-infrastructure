@@ -1,8 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <!-- Package metadata -->  
+    <Company>Department for Education (DfE)</Company>
+    <Copyright>Department for Education (DfE)</Copyright>
+    <Authors>aahmed-dfe</Authors>
+		<PackageDescription>Testing library supporting pageobject composition with querying and mapping</PackageDescription>
+		<PackageProjectUrl>https://github.com/DFE-Digital/pageobjects-testing-infrastructure</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/DFE-Digital/pageobjects-testing-infrastructure</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<!-- XML Comments become required; <GenerateDocumentationFile>true</GenerateDocumentationFile>!-->
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!-- Build.targets -->  
+    <RootNamespace>Dfe.Testing.Pages</RootNamespace>
+    <PackageId>Dfe.Testing.Pages</PackageId>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Dfe.Testing.Pages</RootNamespace>
+    <PackageProjectUrl></PackageProjectUrl>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
