@@ -62,15 +62,15 @@ services.AddWebDriver(t => {
 
 ## Components available to use
 
-`ComponentFactory<TComponent>` *Role:* create components with this
+`IComponentFactory<TComponent>` *Role:* create components with this
 
 ```cs
 // example of using library
-public sealed class MyPage : IPageObject
+public sealed class MyPage
 {
-    ComponentFactory<GDSHeaderComponent> _headerFactory
+    IComponentFactory<GDSHeaderComponent> _headerFactory
   // constructor
-  public MyPage(ComponentFactory<GDSHeaderComponent> headerFactory)
+  public MyPage(IComponentFactory<GDSHeaderComponent> headerFactory)
   {
     _headerFactory = headerFactory;
   }
@@ -83,39 +83,25 @@ public sealed class MyPage : IPageObject
 
 ## Adding your own pages
 
-`IPageObject` - *Role:* mark your pages with this
-
-`IPageObjectFactory` - *Role:* create your pages with this
-
-```cs
-public sealed class HomePage : IPageObject
-
-```
-
 ### Important! register your pages and application components in your DI
 
 ```cs
-    testServices...
-    // PageObject to be created with `IPageObjectFactory`
-    testServices.AddTransient<IPageObject, HomePage>();
-    testServices.AddTransient<NavigationBarComponent>(); // reusable application component
+    testServices.AddTransient<HomePage>(); // page
+    testServices.AddTransient<NavigationBarComponent>(); // application component
 
 public sealed class HomePage
 {
     public HomePage(
         NavigationBarComponent navBar,
-        SearchComponent search, 
-        FilterComponent filter)
+        SearchComponent search)
     {
-        Search = search ?? throw new ArgumentNullException(nameof(search));
-        Filter = filter ?? throw new ArgumentNullException(nameof(filter));
         NavBar = navBar ?? throw new ArgumentNullException(nameof(navBar));
+        Search = search ?? throw new ArgumentNullException(nameof(search));
     }
 
     // Reuse these across Pages
     public NavigationBarComponent NavBar { get; }
     public SearchComponent Search { get; }
-    public FilterComponent Filter { get; }
 }
 ```
 
@@ -132,14 +118,13 @@ public sealed class MyTestClass : BaseTest
     {
         // create document that the page will use
         IDocumentService documentService = GetTestService<IDocumentService>();
-        IPageObjectFactory pageObjectFactory = GetTestService<IPageObjectFactory>();
         
         // pageobjects use an document to fulfil their query requests
         await documentService.RequestDocumentAsync(
             (t) => t.SetPath("/"));
 
-        // create page from the documentSession
-        HomePage page = pageObjectFactory.Create<HomePage>();
+        // Resolve page through DI
+        HomePage page = GetTestService<HomePage>();
     }
 }
 
