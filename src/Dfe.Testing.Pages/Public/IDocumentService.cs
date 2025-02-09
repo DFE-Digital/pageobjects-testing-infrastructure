@@ -2,16 +2,14 @@
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider;
 
 namespace Dfe.Testing.Pages.Public;
-// TODO needs refactor to handle document control and repository, consider separate ComponentFactory pieces
 public interface IDocumentService
 {
-    // Test controls to interact with page
+    //TODO consider returning the IDocumentClient or a DocumentReadOnlyModel?
     Task RequestDocumentAsync(Action<IHttpRequestBuilder> configureDocumentRequest);
     Task RequestDocumentAsync(HttpRequestMessage documentRequest);
 
-    //TODO store document into a repository passing optional documentKey so PageObjectResolver can be created from the right document
-
-    // ComponentFactory access to query document
+    // TODO store document into a repository passing optional documentKey to persist the document
+    // TODO make ComponentFactory depend only on DocumentRepository so it builds components from Documents, removing it from this interface and the client.
     IEnumerable<IDocumentSection> ExecuteQuery(FindOptions query);
     void ExecuteCommand(FindOptions options, Action<IDocumentSection> command);
 }
