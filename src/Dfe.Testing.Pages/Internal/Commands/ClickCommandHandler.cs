@@ -17,8 +17,8 @@ internal sealed class ClickElementCommandHandler : ICommandHandler<ClickElementC
 
         _documentService.ExecuteCommand(new FindOptions()
         {
-            Selector = command.Selector,
-            FindInScope = command.FindInScope
+            Find = command.Selector,
+            InScope = command.FindInScope
         }, (part) => part.Click());
     }
 }

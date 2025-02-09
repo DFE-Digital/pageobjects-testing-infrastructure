@@ -21,29 +21,29 @@ internal sealed class WebDriverDocumentClient : IDocumentClient
 
     public IDocumentSection Query(FindOptions args)
     {
-        if (args.FindInScope == null)
+        if (args.InScope == null)
         {
             var results = QueryManyGlobal(args);
 
             return results.Count == 0
-                ? throw new ArgumentException($"element not found with {args.Selector!.ToSelector()}")
+                ? throw new ArgumentException($"element not found with {args.Find!.ToSelector()}")
                 : results.Count > 1
-                ? throw new ArgumentException($"multiple elements found with query {args.Selector}, cannot query for a single element")
+                ? throw new ArgumentException($"multiple elements found with query {args.Find}, cannot query for a single element")
                 : results.Single();
         }
 
         var scope = QueryManyInScope(args);
 
         return scope.Count == 0
-            ? throw new ArgumentException($"element scope not found with {args.FindInScope!.ToSelector()}")
+            ? throw new ArgumentException($"element scope not found with {args.InScope!.ToSelector()}")
             : scope.Count > 1
-            ? throw new ArgumentException($"multiple elements found with in scope {args.FindInScope.ToSelector()}, cannot query for a single element")
-            : scope.Single().FindDescendant(args.Selector!) ??
-            throw new ArgumentNullException($"element {args.Selector!.ToSelector()} not found in scope {args.FindInScope!.ToSelector()}");
+            ? throw new ArgumentException($"multiple elements found with in scope {args.InScope.ToSelector()}, cannot query for a single element")
+            : scope.Single().FindDescendant(args.Find!) ??
+            throw new ArgumentNullException($"element {args.Find!.ToSelector()} not found in scope {args.InScope!.ToSelector()}");
     }
 
     public IEnumerable<IDocumentSection> QueryMany(FindOptions queryArgs)
-        => queryArgs.FindInScope == null ? QueryManyGlobal(queryArgs) : QueryManyInScope(queryArgs);
+        => queryArgs.InScope == null ? QueryManyGlobal(queryArgs) : QueryManyInScope(queryArgs);
 
 
     // TODO expression is evaluated immediately on IEnumerable<T> because otherwise stale references to elements that have changed...
@@ -54,9 +54,9 @@ internal sealed class WebDriverDocumentClient : IDocumentClient
 
         // find scope then query in scope
         var target =
-            _webDriverAdaptor.FindElement(queryArgs.FindInScope!)
+            _webDriverAdaptor.FindElement(queryArgs.InScope!)
                 .FindElements(
-                    WebDriverByLocatorHelpers.CreateLocator(queryArgs.Selector!));
+                    WebDriverByLocatorHelpers.CreateLocator(queryArgs.Find!));
 
         return CreateDocumentSection(target, _textProcessingHandler).ToList();
     }
@@ -65,13 +65,13 @@ internal sealed class WebDriverDocumentClient : IDocumentClient
     {
         ValidateQueryOptions(args);
 
-        return CreateDocumentSection(_webDriverAdaptor.FindElements(args.Selector!), _textProcessingHandler).ToList();
+        return CreateDocumentSection(_webDriverAdaptor.FindElements(args.Find!), _textProcessingHandler).ToList();
     }
 
     private static void ValidateQueryOptions(FindOptions args)
     {
         ArgumentNullException.ThrowIfNull(args);
-        ArgumentNullException.ThrowIfNull(args.Selector);
+        ArgumentNullException.ThrowIfNull(args.Find);
     }
 
     private static IDocumentSection CreateDocumentSection(
