@@ -102,7 +102,7 @@ public sealed class PageObjectModelToCreatedPageObjectModelMapper : IMapper<Page
             throw new ArgumentException("Mapping is null");
         }
 
-        Dictionary<string, IEnumerable<KeyValuePair<string, string>>> mappedPageObjectAttributes = input.Mapping.Select(options =>
+        IEnumerable<AttributeMappingResult> results = input.Mapping.Select(options =>
         {
             // TODO figure out if the selector is a CssSelector or XPath? Put behind an extension so can be tested
             IDocumentSection section =
@@ -110,31 +110,33 @@ public sealed class PageObjectModelToCreatedPageObjectModelMapper : IMapper<Page
                     _documentSection.FindDescendant(new CssElementSelector(options.MappingEntrypoint)) ?? throw new ArgumentException($"Unable to find mapping entrypoint with {options.MappingEntrypoint} from {_documentSection}")
                     : _documentSection;
 
-            return new DocumentSectionValuesResolver(
+            var resolver = new DocumentSectionValuesResolver(
                 section,
                 options.ToProperty,
                 options.Values);
-        })
-        .Select(t => t.ResolveValues())
-        .Aggregate(new Dictionary<string, IEnumerable<KeyValuePair<string, string>>>(), (acc, next) =>
-        {
-            // If client maps multiple items same ToProperty e.g "Heading" then append how. TODO COULD THIS CONFLICT IF @text or @id is used
-            if (acc.TryGetValue(next.Key, out IEnumerable<KeyValuePair<string, string>>? existingValues))
+
+            var resolvedAttributes = resolver.ResolveValues();
+
+            // TODO handle if the client tries to map multiple properties to the same PropertyOutKey
+            /*if (attributes.TryGetValue(resolvedAttributes.Key, out IEnumerable<KeyValuePair<string, string>>? existingValues))
             {
-                acc[next.Key] = next.Value.Concat(existingValues);
+                attributes[resolvedAttributes.Key] = attributes[resolvedAttributes.Key].Concat(existingValues);
             }
             else
             {
-                acc[next.Key] = next.Value;
-            }
-            return acc;
+                attributes[resolvedAttributes.Key] = resolvedAttributes.Value;
+            }*/
+
+            return new AttributeMappingResult()
+            {
+                Message = "Mapping success",
+                Context = section.Document.ToString(),
+                Status = MappingStatus.Success,
+                Attributes = resolvedAttributes
+            };
         });
 
-
-        CreatedPageObjectModel mappedOutput = new()
-        {
-            MappedAttributes = mappedPageObjectAttributes
-        };
+        List<CreatedPageObjectModel> childPageModels = [];
 
         // recursively handle children
         IEnumerator<PageObjectSchema> childIterator = input.Children.GetEnumerator();
@@ -146,16 +148,19 @@ public sealed class PageObjectModelToCreatedPageObjectModelMapper : IMapper<Page
                 new PageObjectModelToCreatedPageObjectModelMapper(_documentSection)
                 .Map(childIterator.Current);
 
-            mappedOutput.Children.Add(model);
+            childPageModels.Add(model);
         }
 
-        return mappedOutput;
+        return new CreatedPageObjectModel(
+            input.Id ?? string.Empty,
+            results,
+            childPageModels);
     }
 }
 
 public record PageObjectSchema
 {
-    public string Identifier { get; } = string.Empty;
+    public string Id { get; } = string.Empty;
     public IEnumerable<AttributeMapping> Mapping { get; set; } = null!;
     public IEnumerable<PageObjectSchema> Children { get; set; } = [];
 }
@@ -173,56 +178,18 @@ public record PageObjectResponse
     public IReadOnlyList<CreatedPageObjectModel> Created { get; set; } = [];
 }
 
-public interface IPageObjectMappingResult
+public record AttributeMappingResult
 {
-    string Context { get; }
-    MappingStatus Status { get; }
-    string Message { get; }
+    public string Message { get; init; } = string.Empty;
+    public required string Context { get; init; }
+    public required MappingStatus Status { get; init; }
+    public required KeyValuePair<string, IEnumerable<KeyValuePair<string, string>>> Attributes { get; init; }
 }
 
-public record CreatedPageObjectModel
-{
-    // TODO make MappedAttributes change the KeyValuePair<string, string> to include public IList<IPageObjectMappingResult> Results { get; init; } = []; based on the success/fail of every attributeMap attempt
-    // Maybe a model called AttributeMappingResult with a success/fail, value? and a message
-    public Dictionary<string, IEnumerable<KeyValuePair<string, string>>> MappedAttributes { get; init; } = [];
-    public IList<CreatedPageObjectModel> Children { get; init; } = [];
-}
-
-public sealed class SuccessfulAttributeMappingResult : IPageObjectMappingResult
-{
-    public SuccessfulAttributeMappingResult(string context)
-    {
-        if (string.IsNullOrEmpty(context))
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-        Context = context;
-    }
-
-    public string Context { get; }
-    public MappingStatus Status { get => MappingStatus.Success; }
-    public string Message { get => "Mapping successful"; }
-}
-
-public sealed class FailedAttributeMappingResult : IPageObjectMappingResult
-{
-    public FailedAttributeMappingResult(string context, string message)
-    {
-        if (string.IsNullOrEmpty(context))
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-        if (string.IsNullOrEmpty(message))
-        {
-            throw new ArgumentNullException(nameof(message));
-        }
-        Context = context;
-        Message = message;
-    }
-    public string Context { get; }
-    public MappingStatus Status { get => MappingStatus.Failed; }
-    public string Message { get; }
-}
+public record CreatedPageObjectModel(
+    string Id,
+    IEnumerable<AttributeMappingResult> Results,
+    IList<CreatedPageObjectModel> Children);
 
 
 internal sealed class DocumentSectionNotFoundException : Exception
