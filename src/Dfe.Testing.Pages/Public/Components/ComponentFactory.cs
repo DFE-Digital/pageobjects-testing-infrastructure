@@ -31,8 +31,8 @@ internal sealed class ComponentFactory<TComponent> : IComponentFactory<TComponen
     {
         FindOptions mergedFindOptions = new()
         {
-            FindInScope = request?.FindInScope ?? null,
-            Selector = request?.Selector ?? _componentSelectorFactory.GetSelector<TComponent>()
+            InScope = request?.FindInScope ?? null,
+            Find = request?.Selector ?? _componentSelectorFactory.GetSelector<TComponent>()
         };
 
         // Query
@@ -74,7 +74,7 @@ internal sealed class ComponentFactory<TComponent> : IComponentFactory<TComponen
                 return new CreatedComponentResponse<TComponent>()
                 {
                     Created = mappedResponse.Mapped!,
-                    CreatingComponentResults = outputResults
+                    CreatingComponentResults = outputResults.AsReadOnly()
                 };
             });
     }

@@ -19,22 +19,22 @@ internal class AngleSharpDocumentClient : IDocumentClient
     public void Run(FindOptions args, Action<IDocumentSection> handler)
     {
         ArgumentNullException.ThrowIfNull(args);
-        ArgumentNullException.ThrowIfNull(args.Selector);
+        ArgumentNullException.ThrowIfNull(args.Find);
 
-        if (args.FindInScope == null)
+        if (args.InScope == null)
         {
             IDocumentSection documentSection = AsDocumentPart(
-                QueryForElementInScope(_htmlDocument, args.Selector),
+                QueryForElementInScope(_htmlDocument, args.Find),
                 _getTextProcessingHandler);
 
             handler(documentSection);
             return;
         }
 
-        var scopedDocumentSection = QueryForElementInScope(scope: _htmlDocument, selector: args.FindInScope);
+        var scopedDocumentSection = QueryForElementInScope(scope: _htmlDocument, selector: args.InScope);
         IDocumentSection targetedSectionFromScope =
             AsDocumentPart(
-                QueryForElementInScope(scopedDocumentSection, args.Selector),
+                QueryForElementInScope(scopedDocumentSection, args.Find),
                 _getTextProcessingHandler);
 
         handler(targetedSectionFromScope);
@@ -43,13 +43,13 @@ internal class AngleSharpDocumentClient : IDocumentClient
     public IDocumentSection Query(FindOptions queryArgs)
     {
         ArgumentNullException.ThrowIfNull(queryArgs);
-        ArgumentNullException.ThrowIfNull(queryArgs.Selector);
-        var element = queryArgs.FindInScope == null ?
-            QueryForElementInScope(_htmlDocument, queryArgs.Selector) :
+        ArgumentNullException.ThrowIfNull(queryArgs.Find);
+        var element = queryArgs.InScope == null ?
+            QueryForElementInScope(_htmlDocument, queryArgs.Find) :
                 // find the scope and query within
                 QueryForElementInScope(
-                    scope: QueryForElementInScope(_htmlDocument, queryArgs.FindInScope),
-                    selector: queryArgs.Selector);
+                    scope: QueryForElementInScope(_htmlDocument, queryArgs.InScope),
+                    selector: queryArgs.Find);
 
         return AsDocumentPart(
                 element,
@@ -59,14 +59,14 @@ internal class AngleSharpDocumentClient : IDocumentClient
     public IEnumerable<IDocumentSection> QueryMany(FindOptions queryArgs)
     {
         ArgumentNullException.ThrowIfNull(queryArgs);
-        ArgumentNullException.ThrowIfNull(queryArgs.Selector);
+        ArgumentNullException.ThrowIfNull(queryArgs.Find);
         var elements =
-            (queryArgs.FindInScope == null ?
-                QueryForMultipleElementsFromScope(scope: _htmlDocument, selector: queryArgs.Selector) :
+            (queryArgs.InScope == null ?
+                QueryForMultipleElementsFromScope(scope: _htmlDocument, selector: queryArgs.Find) :
                     // find the scope and query within
                     QueryForMultipleElementsFromScope(
-                        scope: QueryForElementInScope(scope: _htmlDocument, selector: queryArgs.FindInScope),
-                        selector: queryArgs.Selector)).ToList();
+                        scope: QueryForElementInScope(scope: _htmlDocument, selector: queryArgs.InScope),
+                        selector: queryArgs.Find)).ToList();
 
         return AsDocumentParts(
                 elements,

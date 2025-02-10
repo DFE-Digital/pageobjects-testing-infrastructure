@@ -17,8 +17,8 @@ internal sealed class UpdateElementTextCommandHandler : ICommandHandler<UpdateEl
 
         FindOptions options = new FindOptions()
         {
-            Selector = command.Selector,
-            FindInScope = command.FindInScope
+            Find = command.Selector,
+            InScope = command.FindInScope
         };
 
         _documentService.ExecuteCommand(options,

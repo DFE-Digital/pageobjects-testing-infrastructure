@@ -8,6 +8,6 @@ internal interface IDocumentClient
 
 public sealed class FindOptions
 {
-    public IElementSelector? Selector { get; set; }
-    public IElementSelector? FindInScope { get; set; }
+    public IElementSelector? Find { get; set; }
+    public IElementSelector? InScope { get; set; }
 }
