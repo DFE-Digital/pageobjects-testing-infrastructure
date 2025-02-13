@@ -20,9 +20,7 @@ Goals include;
 
 4) Use [library provided Components](#components-available-to-use) in your pages with `ComponentFactory<TComponent>`
 
-5) Access pages [in your tests](#use-pages-in-your-tests) with `IPageObjectFactory`
-
-6) For further help see [docs](./docs/pageobjects-usecases.md) or reach out on dfe-slack  `public-pageobjects-testing-library`
+5) For further help see [docs](./docs/pageobjects-usecases.md) or reach out on dfe-slack  `public-pageobjects-testing-library`
 
 ## Choosing and configuring a library to query for you
 
@@ -51,14 +49,16 @@ services.AddWebDriver(t => {
     t.Browser.BrowserMajorVersion = "131"; // version of browser
     t.Browser.ShowBrowser = false; // should the browser display a screen or be headless
     t.Browser.PageLoadTimeoutSeconds = 30; // how long should WebDriver wait for the page to load
-    t.Browser.ViewportHeight = 1080;
-    t.Browser.ViewportWidth = 1920; // the dimensions of the browser
+    t.Browser.ViewportHeight = 1080; // the dimensions of the browser
+    t.Browser.ViewportWidth = 1920; 
     t.Browser.EnableIncognito = false; // should the browser start as in incognito mode
     t.Browser.EnableAuthenticationBypass = false; // enable the network interception module
 });
 
 // TODO suggest to tester managing configuration through Binding? Provide a default JSON?
 ```
+
+// TODO Update with CUSTOM MAPPING AND TEMPLATES 
 
 ## Components available to use
 
