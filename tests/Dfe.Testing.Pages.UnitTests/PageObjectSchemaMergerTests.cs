@@ -27,8 +27,8 @@ public class PageObjectSchemaMergerTests
                 new PageObjectSchema
                 {
                     Id = "PAGEOBJECT_ID_1",
-                    Mapping = [
-                        new AttributeMapping()
+                    Properties = [
+                        new PropertyMapping()
                         {
                             Attributes = ["text"],
                             ToProperty = "Property1"
@@ -56,8 +56,8 @@ public class PageObjectSchemaMergerTests
                 new PageObjectSchema
                 {
                     Id = "PAGEOBJECT_ID_1",
-                    Mapping = [
-                        new AttributeMapping()
+                    Properties = [
+                        new PropertyMapping()
                         {
                             Attributes = ["text"],
                             ToProperty = "Property1"
@@ -70,9 +70,9 @@ public class PageObjectSchemaMergerTests
             new PageObjectSchema()
                 {
                     Id = "PAGEOBJECT_ID_1",
-                    Mapping =
+                    Properties =
                     [
-                        new AttributeMapping()
+                        new PropertyMapping()
                         {
                             Attributes = ["value"],
                             ToProperty = "Property1"
@@ -89,8 +89,8 @@ public class PageObjectSchemaMergerTests
         Assert.Single(result);
         var elem1 = Assert.Single(result);
         elem1.Id.ShouldBe("PAGEOBJECT_ID_1");
-        elem1.Mapping.ShouldNotBeNull();
-        var mapping = elem1.Mapping.ToList()[0];
+        elem1.Properties.ShouldNotBeNull();
+        var mapping = elem1.Properties.ToList()[0];
         mapping.Attributes.ShouldBe(["value"]);
         mapping.ToProperty.ShouldBe("Property1");
     }
@@ -103,8 +103,8 @@ public class PageObjectSchemaMergerTests
             new PageObjectSchema
                     {
                         Id = "PAGEOBJECT_ID_1",
-                        Mapping = [
-                            new AttributeMapping()
+                        Properties = [
+                            new PropertyMapping()
                             {
                                 Attributes = ["text"],
                                 ToProperty = "Property1"
@@ -117,9 +117,9 @@ public class PageObjectSchemaMergerTests
             new PageObjectSchema()
                 {
                     Id = "PAGEOBJECT_ID_2",
-                    Mapping =
+                    Properties =
                     [
-                        new AttributeMapping()
+                        new PropertyMapping()
                         {
                             Attributes = ["value"],
                             ToProperty = "Property1"
@@ -138,14 +138,14 @@ public class PageObjectSchemaMergerTests
             elem1 =>
             {
                 Assert.Equal("PAGEOBJECT_ID_1", elem1.Id);
-                var mappings = elem1.Mapping.ToList();
+                var mappings = elem1.Properties.ToList();
                 Assert.Equal(["text"], mappings[0].Attributes);
                 Assert.Equal("Property1", mappings[0].ToProperty);
             },
             elem2 =>
             {
                 Assert.Equal("PAGEOBJECT_ID_2", elem2.Id);
-                var mappings = elem2.Mapping.ToList();
+                var mappings = elem2.Properties.ToList();
                 Assert.Equal(["value"], mappings[0].Attributes);
                 Assert.Equal("Property1", mappings[0].ToProperty);
             });
@@ -159,8 +159,8 @@ public class PageObjectSchemaMergerTests
             new PageObjectSchema
                     {
                         Id = "PAGEOBJECT_ID_1",
-                        Mapping = [
-                            new AttributeMapping()
+                        Properties = [
+                            new PropertyMapping()
                             {
                                 Attributes = ["text"],
                                 ToProperty = "MyOutputProperty1"
@@ -173,9 +173,9 @@ public class PageObjectSchemaMergerTests
             new PageObjectSchema()
                 {
                     Id = "PAGEOBJECT_ID_2",
-                    Mapping =
+                    Properties =
                     [
-                        new AttributeMapping()
+                        new PropertyMapping()
                         {
                             Attributes = ["value"],
                             ToProperty = "MyOutputProperty2"
@@ -186,14 +186,14 @@ public class PageObjectSchemaMergerTests
             new PageObjectSchema()
                 {
                     Id = "PAGEOBJECT_ID_1",
-                    Mapping =
+                    Properties =
                     [
-                        new AttributeMapping()
+                        new PropertyMapping()
                         {
                             Attributes = ["ATTRIBUTE1", "ATTRIBUTE@2", "1ATTRIBUTE%3"],
                             ToProperty = "MyOutputProperty1"
                         },
-                        new AttributeMapping()
+                        new PropertyMapping()
                         {
                             Attributes = ["else", "a", "£$%£$^S"],
                             ToProperty = "NotOverwrittenProperty3"
@@ -214,18 +214,18 @@ public class PageObjectSchemaMergerTests
             elem1 =>
             {
                 Assert.Equal("PAGEOBJECT_ID_1", elem1.Id);
-                var resultMappings = elem1.Mapping.ToList();
+                var resultMappings = elem1.Properties.ToList();
                 Assert.Equal(["ATTRIBUTE1", "ATTRIBUTE@2", "1ATTRIBUTE%3"], resultMappings[0].Attributes);
                 Assert.Equal("MyOutputProperty1", resultMappings[0].ToProperty);
 
-                var firstMappedAttribute = elem1.Mapping.ToList();
+                var firstMappedAttribute = elem1.Properties.ToList();
                 Assert.Equal(["else", "a", "£$%£$^S"], resultMappings[1].Attributes);
                 Assert.Equal("NotOverwrittenProperty3", resultMappings[1].ToProperty);
             },
             elem2 =>
             {
                 Assert.Equal("PAGEOBJECT_ID_2", elem2.Id);
-                var firstMappedAttribute = elem2.Mapping.ToList();
+                var firstMappedAttribute = elem2.Properties.ToList();
                 Assert.Equal(["value"], firstMappedAttribute[0].Attributes);
                 Assert.Equal("MyOutputProperty2", firstMappedAttribute[0].ToProperty);
             });

@@ -48,11 +48,10 @@ public static class DependencyInjection
         services.AddSingleton<AngleSharpOptions>(t => t.GetRequiredService<IOptions<AngleSharpOptions>>().Value);
 
 
-        services
-            .AddDocumentClientProvider<AngleSharpDocumentClientProvider>()
-            .AddTransient<IHtmlDocumentProvider, HtmlDocumentProvider>()
-            .AddComponents()
-            .AddPageObjectTemplates();
+        services.AddDocumentClientProvider<AngleSharpDocumentClientProvider>();
+        services.AddTransient<IHtmlDocumentProvider, HtmlDocumentProvider>();
+        services.AddComponents();
+        services.AddPageObjectTemplates();
 
         return services;
     }
@@ -67,12 +66,10 @@ public static class DependencyInjection
         // register the Options type without IOptions wrapper
         services.AddSingleton<WebDriverOptions>(t => t.GetRequiredService<IOptions<WebDriverOptions>>().Value);
 
-
-        services
-            .AddDocumentClientProvider<WebDriverDocumentClientProvider>()
-            .AddWebDriverServices()
-            .AddComponents()
-            .AddPageObjectTemplates();
+        services.AddDocumentClientProvider<WebDriverDocumentClientProvider>();
+        services.AddWebDriverServices();
+        services.AddComponents();
+        services.AddPageObjectTemplates();
 
         return services;
     }
@@ -85,8 +82,14 @@ public static class DependencyInjection
             .AddScoped<IConfigureWebHostHandler, ConfigureWebHostHandler>()
             .AddTransient<IHttpRequestBuilder, HttpRequestBuilder>();
 
+
     internal static IServiceCollection AddPageObjectTemplates(this IServiceCollection services)
     {
+        services.AddSingleton<IMapper<CreatedPageObjectModel, PhaseBannerComponent>, PhaseBannerComponentMapper>();
+        services.AddSingleton<IMapper<CreatedPageObjectModel, CookieChoiceAvailableBannerComponent>, CookieChoiceAvailableBannerMapper>();
+        services.AddSingleton<IMapper<CreatedPageObjectModel, CookieChoiceMadeBannerComponent>, CookieChoiceMadeBannerMapper>();
+        services.AddSingleton<IMapper<CreatedPageObjectModel, IEnumerable<TabComponent>>, TabComponentMapper>();
+
         services.AddSingleton<IPageObjectTemplate, CookieChoiceAvailableBannerPageObjectTemplate>();
         services.AddSingleton<IPageObjectTemplate, CookieChoiceMadeBannerPageObjectTemplate>();
         services.AddSingleton<IPageObjectSchemaMerger, PageObjectSchemaMerger>();
@@ -206,7 +209,7 @@ public static class DependencyInjection
         .AddSingleton<IMapRequestFactory, MapRequestFactory>()
         // Mappers
         .AddDecoratedMapper<AnchorLinkMapper, AnchorLinkComponentOld>()
-        .AddDecoratedMapper<LabelMapper, LabelComponent>()
+        .AddDecoratedMapper<LabelMapper, Public.Components.Label.LabelComponent>()
         .AddDecoratedMapper<FormMapper, FormComponentOld>()
         .AddDecoratedMapper<TableHeadMapper, TableHeadComponent>()
         .AddDecoratedMapper<TableBodyMapper, TableBodyComponent>()

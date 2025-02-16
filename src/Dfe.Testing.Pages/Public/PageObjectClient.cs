@@ -42,13 +42,13 @@ internal sealed class PageObjectSchemaMerger : IPageObjectSchemaMerger
             {
                 Id = req.Id,
                 // Merge mapping from request ontop of the template, if the client has not overridden the mapping, then retain those parts of the template mapping
-                Mapping = _seed.First(templatePageObject => templatePageObject.Id == req.Id)
-                    .Mapping
-                    .Select(templateMapping => req.Mapping
+                Properties = _seed.First(templatePageObject => templatePageObject.Id == req.Id)
+                    .Properties
+                    .Select(templateMapping => req.Properties
                         .FirstOrDefault(mapping => mapping.ToProperty == templateMapping.ToProperty) ?? templateMapping)
-                    .Union(req.Mapping
+                    .Union(req.Properties
                         .Where(mapping => !_seed.First(templatePageObject => templatePageObject.Id == req.Id)
-                            .Mapping
+                            .Properties
                             .Any(templateMapping => templateMapping.ToProperty == mapping.ToProperty)))
                     .ToList(),
                 Children = req.Children
@@ -228,14 +228,14 @@ public sealed class PageObjectModelToCreatedPageObjectModelMapper : IMapper<Page
 
     public CreatedPageObjectModel Map(PageObjectSchema input)
     {
-        if (input.Mapping == null)
+        if (input.Properties == null)
         {
             throw new ArgumentException("Mapping is null");
         }
 
         // output looks like [ "ToProperty": [ [ { "text": "value" } ], [{"text", "value2"}]]
         Dictionary<string, IEnumerable<IDictionary<string, string?>>> attributes = [];
-        input.Mapping.ToList().ForEach(options =>
+        input.Properties.ToList().ForEach(options =>
         {
             // TODO infer if selector is a CssSelector or XPath? Put behind an extension so can be tested
             IEnumerable<IDocumentSection> section =
@@ -293,11 +293,11 @@ public sealed class PageObjectModelToCreatedPageObjectModelMapper : IMapper<Page
 public record PageObjectSchema
 {
     public string Id { get; init; } = string.Empty;
-    public IEnumerable<AttributeMapping> Mapping { get; set; } = null!;
+    public IEnumerable<PropertyMapping> Properties { get; set; } = null!;
     public IEnumerable<PageObjectSchema> Children { get; set; } = [];
 }
 
-public record AttributeMapping
+public record PropertyMapping
 {
     public IEnumerable<string> Attributes { get; set; } = [];
     public string ToProperty { get; set; } = string.Empty;
