@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Public.Components;
 
 namespace Dfe.Testing.Pages.Public;
-internal interface IPageObjectClient
+public interface IPageObjectClient
 {
     PageObjectResponse Get(PageObjectRequest request);
     // TODO should there be a builder that lets the client create a PageObjectRequest given it's complex ... where client doesn't want to handle as JSON?

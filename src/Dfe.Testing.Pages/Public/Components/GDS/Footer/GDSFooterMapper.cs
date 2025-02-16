@@ -7,13 +7,13 @@ internal sealed class GDSFooterMapper : IComponentMapper<GDSFooterComponent>
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
     private readonly IComponentMapper<TextComponent> _textComponentMapper;
-    private readonly IComponentMapper<AnchorLinkComponent> _anchorLinkMapper;
+    private readonly IComponentMapper<AnchorLinkComponentOld> _anchorLinkMapper;
 
     public GDSFooterMapper(
         IMapRequestFactory mapRequestFactory,
         IMappingResultFactory mappingResultFactory,
         IComponentMapper<TextComponent> textComponentMapper,
-        IComponentMapper<AnchorLinkComponent> anchorLinKMapper)
+        IComponentMapper<AnchorLinkComponentOld> anchorLinKMapper)
     {
         ArgumentNullException.ThrowIfNull(anchorLinKMapper);
         _textComponentMapper = textComponentMapper;
@@ -24,11 +24,11 @@ internal sealed class GDSFooterMapper : IComponentMapper<GDSFooterComponent>
 
     public MappedResponse<GDSFooterComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        MappedResponse<AnchorLinkComponent> mappedCrownCopyrightLink =
+        MappedResponse<AnchorLinkComponentOld> mappedCrownCopyrightLink =
             _anchorLinkMapper.Map(
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.CrownCopyrightLink)));
 
-        MappedResponse<AnchorLinkComponent> mappedLicenseLink =
+        MappedResponse<AnchorLinkComponentOld> mappedLicenseLink =
             _anchorLinkMapper.Map(
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.LicenseLink)));
 
@@ -36,7 +36,7 @@ internal sealed class GDSFooterMapper : IComponentMapper<GDSFooterComponent>
             _textComponentMapper.Map(
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.LicenseMessage)));
 
-        IEnumerable<MappedResponse<AnchorLinkComponent>> mappedApplicationLinks =
+        IEnumerable<MappedResponse<AnchorLinkComponentOld>> mappedApplicationLinks =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSFooterComponent.ApplicationLinks))
                 .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _anchorLinkMapper);
 

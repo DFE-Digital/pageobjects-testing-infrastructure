@@ -5,8 +5,8 @@ namespace Dfe.Testing.Pages.Public.Components.GDS.CookieBanner;
 internal sealed class GDSCookieChoiceMadeBannerComponentBuilder : IGDSCookieChoiceMadeBannerComponentBuilder
 {
     private string _message = string.Empty;
-    private FormComponent? _form = null;
-    private AnchorLinkComponent? _link = null;
+    private FormComponentOld? _form = null;
+    private AnchorLinkComponentOld? _link = null;
     public GDSCookieChoiceMadeBannerComponent Build()
         => new()
         {
@@ -18,14 +18,14 @@ internal sealed class GDSCookieChoiceMadeBannerComponentBuilder : IGDSCookieChoi
             }
         };
 
-    public IGDSCookieChoiceMadeBannerComponentBuilder SetForm(FormComponent form)
+    public IGDSCookieChoiceMadeBannerComponentBuilder SetForm(FormComponentOld form)
     {
         ArgumentNullException.ThrowIfNull(form);
         _form = form;
         return this;
     }
 
-    public IGDSCookieChoiceMadeBannerComponentBuilder SetChangeYourCookieSettingsLink(AnchorLinkComponent link)
+    public IGDSCookieChoiceMadeBannerComponentBuilder SetChangeYourCookieSettingsLink(AnchorLinkComponentOld link)
     {
         ArgumentNullException.ThrowIfNull(link);
         _link = link;

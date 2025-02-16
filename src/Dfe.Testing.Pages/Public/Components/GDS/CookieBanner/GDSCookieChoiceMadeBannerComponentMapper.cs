@@ -8,16 +8,16 @@ internal sealed class GDSCookieChoiceMadeBannerComponentMapper : IComponentMappe
     private readonly IGDSCookieChoiceMadeBannerComponentBuilder _gdsCookieChoiceMadeBannerBuilder;
     private readonly IMappingResultFactory _mappingResultFactory;
     private readonly IComponentMapper<TextComponent> _textMapper;
-    private readonly IComponentMapper<AnchorLinkComponent> _linkMapper;
-    private readonly IComponentMapper<FormComponent> _formMapper;
+    private readonly IComponentMapper<AnchorLinkComponentOld> _linkMapper;
+    private readonly IComponentMapper<FormComponentOld> _formMapper;
     private readonly IMapRequestFactory _mapRequestFactory;
 
     public GDSCookieChoiceMadeBannerComponentMapper(
         IGDSCookieChoiceMadeBannerComponentBuilder builder,
         IMappingResultFactory mappingResultFactory,
         IComponentMapper<TextComponent> textMapper,
-        IComponentMapper<AnchorLinkComponent> linkMapper,
-        IComponentMapper<FormComponent> formMapper,
+        IComponentMapper<AnchorLinkComponentOld> linkMapper,
+        IComponentMapper<FormComponentOld> formMapper,
         IMapRequestFactory mapRequestFactory)
     {
         _mappingResultFactory = mappingResultFactory;
@@ -35,12 +35,12 @@ internal sealed class GDSCookieChoiceMadeBannerComponentMapper : IComponentMappe
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceMadeBannerComponent.Message)))
             .AddToMappingResults(request.MappedResults);
 
-        MappedResponse<AnchorLinkComponent> mappedChangeYourCookiesLink =
+        MappedResponse<AnchorLinkComponentOld> mappedChangeYourCookiesLink =
             _linkMapper.Map(
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceMadeBannerComponent.ChangeYourCookieSettingsLink)))
             .AddToMappingResults(request.MappedResults);
 
-        MappedResponse<FormComponent> mappedForm =
+        MappedResponse<FormComponentOld> mappedForm =
             _formMapper.Map(
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceMadeBannerComponent.HideCookiesForm)))
             .AddToMappingResults(request.MappedResults);

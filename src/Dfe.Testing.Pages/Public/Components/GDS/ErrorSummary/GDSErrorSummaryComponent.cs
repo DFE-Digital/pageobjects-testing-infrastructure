@@ -5,5 +5,5 @@ namespace Dfe.Testing.Pages.Public.Components.GDS.ErrorSummary;
 public record GDSErrorSummaryComponent
 {
     public required TextComponent? Heading { get; init; }
-    public required IEnumerable<AnchorLinkComponent?> Errors { get; init; }
+    public required IEnumerable<AnchorLinkComponentOld?> Errors { get; init; }
 }

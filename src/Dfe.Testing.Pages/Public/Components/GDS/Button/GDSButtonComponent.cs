@@ -7,7 +7,7 @@ public record GDSButtonComponent
     internal GDSButtonComponent() { }
     public required ButtonStyleType ButtonStyle { get; init; } = ButtonStyleType.Primary;
     public required TextComponent Text { get; init; }
-    public bool IsEnabled { get; init; } = false;
+    public bool IsEnabled { get; init; } = true;
     public string Type { get; init; } = "submit";
     public string Value { get; init; } = string.Empty;
     public string Name { get; init; } = string.Empty;

@@ -1,11 +1,10 @@
-﻿using Dfe.Testing.Pages.Public.Components.Link;
-using Dfe.Testing.Pages.Public.Components.Text;
+﻿using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.GDS.Footer;
 public record GDSFooterComponent
 {
     public required TextComponent? LicenseMessage { get; init; }
-    public required IEnumerable<AnchorLinkComponent?> ApplicationLinks { get; init; } = [];
-    public required AnchorLinkComponent? LicenseLink { get; init; }
-    public required AnchorLinkComponent? CrownCopyrightLink { get; init; }
+    public required IEnumerable<AnchorLinkComponentOld?> ApplicationLinks { get; init; } = [];
+    public required AnchorLinkComponentOld? LicenseLink { get; init; }
+    public required AnchorLinkComponentOld? CrownCopyrightLink { get; init; }
 }

@@ -5,13 +5,13 @@ namespace Dfe.Testing.Pages.Public.Components.GDS.Tabs;
 internal sealed class GDSTabsMapper : IComponentMapper<GDSTabsComponent>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
-    private readonly IComponentMapper<AnchorLinkComponent> _anchorLinkMapper;
+    private readonly IComponentMapper<AnchorLinkComponentOld> _anchorLinkMapper;
     private readonly IComponentMapper<TextComponent> _textMapper;
     private readonly IMappingResultFactory _mappingResultFactory;
 
     public GDSTabsMapper(
         IMapRequestFactory mapRequestFactory,
-        IComponentMapper<AnchorLinkComponent> anchorLinkFactory,
+        IComponentMapper<AnchorLinkComponentOld> anchorLinkFactory,
         IComponentMapper<TextComponent> textMapper,
         IMappingResultFactory mappingResultFactory)
     {
@@ -29,9 +29,9 @@ internal sealed class GDSTabsMapper : IComponentMapper<GDSTabsComponent>
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSTabsComponent.Heading)))
                 .AddToMappingResults(request.MappedResults);
 
-        IEnumerable<MappedResponse<AnchorLinkComponent>> links =
+        IEnumerable<MappedResponse<AnchorLinkComponentOld>> links =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSTabsComponent.Tabs))
-                .FindManyDescendantsAndMapToComponent<AnchorLinkComponent>(_mapRequestFactory, _anchorLinkMapper);
+                .FindManyDescendantsAndMapToComponent<AnchorLinkComponentOld>(_mapRequestFactory, _anchorLinkMapper);
 
         GDSTabsComponent tabs = new()
         {

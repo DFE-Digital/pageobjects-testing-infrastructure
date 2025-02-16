@@ -1,7 +1,7 @@
 ﻿using Dfe.Testing.Pages.Public.Components.Text;
 
 namespace Dfe.Testing.Pages.Public.Components.Link;
-internal sealed class AnchorLinkMapper : IComponentMapper<AnchorLinkComponent>
+internal sealed class AnchorLinkMapper : IComponentMapper<AnchorLinkComponentOld>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IAnchorLinkComponentBuilder _anchorLinkBuilder;
@@ -20,11 +20,11 @@ internal sealed class AnchorLinkMapper : IComponentMapper<AnchorLinkComponent>
         _mapRequestFactory = mapRequestFactory;
     }
 
-    public MappedResponse<AnchorLinkComponent> Map(IMapRequest<IDocumentSection> request)
+    public MappedResponse<AnchorLinkComponentOld> Map(IMapRequest<IDocumentSection> request)
     {
         MappedResponse<TextComponent> mappedText =
             _textMapper.Map(
-                _mapRequestFactory.CreateRequestFrom(request, nameof(AnchorLinkComponent.Text)));
+                _mapRequestFactory.CreateRequestFrom(request, nameof(AnchorLinkComponentOld.Text)));
 
         _anchorLinkBuilder
             .SetLink(request.Document.GetAttribute("href") ?? string.Empty)

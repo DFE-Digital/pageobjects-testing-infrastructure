@@ -3,6 +3,6 @@
 namespace Dfe.Testing.Pages.Public.Components.GDS.Header;
 public record GDSHeaderComponent
 {
-    public required AnchorLinkComponent? GovUKLink { get; init; }
-    public IEnumerable<AnchorLinkComponent?> NavigationLinks { get; init; } = [];
+    public required AnchorLinkComponentOld? GovUKLink { get; init; }
+    public IEnumerable<AnchorLinkComponentOld?> NavigationLinks { get; init; } = [];
 }

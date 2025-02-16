@@ -5,12 +5,12 @@ internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
-    private readonly IComponentMapper<AnchorLinkComponent> _linkMapper;
+    private readonly IComponentMapper<AnchorLinkComponentOld> _linkMapper;
 
     public GDSHeaderMapper(
         IMapRequestFactory mapRequestFactory,
         IMappingResultFactory mappingResultFactory,
-        IComponentMapper<AnchorLinkComponent> linkMapper)
+        IComponentMapper<AnchorLinkComponentOld> linkMapper)
     {
         ArgumentNullException.ThrowIfNull(linkMapper);
         _mapRequestFactory = mapRequestFactory;
@@ -20,13 +20,13 @@ internal sealed class GDSHeaderMapper : IComponentMapper<GDSHeaderComponent>
 
     public MappedResponse<GDSHeaderComponent> Map(IMapRequest<IDocumentSection> request)
     {
-        MappedResponse<AnchorLinkComponent> mappedGovUKLink =
+        MappedResponse<AnchorLinkComponentOld> mappedGovUKLink =
             _linkMapper.Map(
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSHeaderComponent.GovUKLink)));
 
-        IEnumerable<MappedResponse<AnchorLinkComponent>> mappedNavigationLinks =
+        IEnumerable<MappedResponse<AnchorLinkComponentOld>> mappedNavigationLinks =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSHeaderComponent.NavigationLinks))
-                .FindManyDescendantsAndMapToComponent<AnchorLinkComponent>(_mapRequestFactory, _linkMapper);
+                .FindManyDescendantsAndMapToComponent<AnchorLinkComponentOld>(_mapRequestFactory, _linkMapper);
 
         GDSHeaderComponent component = new()
         {

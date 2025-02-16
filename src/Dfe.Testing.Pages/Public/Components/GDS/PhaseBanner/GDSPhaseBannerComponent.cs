@@ -4,7 +4,7 @@ using Dfe.Testing.Pages.Public.Components.Text;
 namespace Dfe.Testing.Pages.Public.Components.GDS.PhaseBanner;
 public record GDSPhaseBannerComponent
 {
-    public required AnchorLinkComponent FeedbackLink { get; init; }
+    public required AnchorLinkComponentOld FeedbackLink { get; init; }
     public required TextComponent Text { get; init; }
     public required TextComponent Phase { get; init; }
 }
@@ -13,7 +13,7 @@ public interface IGDSPhaseBannerBuilder
 {
     IGDSPhaseBannerBuilder SetPhase(string phase);
     IGDSPhaseBannerBuilder SetBannerText(string text);
-    IGDSPhaseBannerBuilder SetFeedbackLink(AnchorLinkComponent link);
+    IGDSPhaseBannerBuilder SetFeedbackLink(AnchorLinkComponentOld link);
     GDSPhaseBannerComponent Build();
 }
 
@@ -22,7 +22,7 @@ internal sealed class GDSPhaseBannerBuilder : IGDSPhaseBannerBuilder
 {
     private string _phase;
     private string _bannerText;
-    private AnchorLinkComponent? _feedbackLink;
+    private AnchorLinkComponentOld? _feedbackLink;
 
     public GDSPhaseBannerBuilder()
     {
@@ -57,7 +57,7 @@ internal sealed class GDSPhaseBannerBuilder : IGDSPhaseBannerBuilder
         return this;
     }
 
-    public IGDSPhaseBannerBuilder SetFeedbackLink(AnchorLinkComponent link)
+    public IGDSPhaseBannerBuilder SetFeedbackLink(AnchorLinkComponentOld link)
     {
         ArgumentNullException.ThrowIfNull(link);
         _feedbackLink = link;

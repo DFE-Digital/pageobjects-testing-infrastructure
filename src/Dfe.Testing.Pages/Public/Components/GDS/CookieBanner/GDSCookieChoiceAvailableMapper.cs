@@ -8,16 +8,16 @@ internal sealed class GDSCookieChoiceAvailableMapper : IComponentMapper<GDSCooki
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IGDSCookieChoiceAvailableBannerComponentBuilder _builder;
     private readonly IMappingResultFactory _mappingResultFactory;
-    private readonly IComponentMapper<FormComponent> _formMapper;
-    private readonly IComponentMapper<AnchorLinkComponent> _anchorLinkMapper;
+    private readonly IComponentMapper<FormComponentOld> _formMapper;
+    private readonly IComponentMapper<AnchorLinkComponentOld> _anchorLinkMapper;
     private readonly IComponentMapper<TextComponent> _textMapper;
 
     public GDSCookieChoiceAvailableMapper(
         IMapRequestFactory mapRequestFactory,
         IGDSCookieChoiceAvailableBannerComponentBuilder builder,
         IMappingResultFactory mappingResultFactory,
-        IComponentMapper<FormComponent> formMapper,
-        IComponentMapper<AnchorLinkComponent> linkMapper,
+        IComponentMapper<FormComponentOld> formMapper,
+        IComponentMapper<AnchorLinkComponentOld> linkMapper,
         IComponentMapper<TextComponent> textMapper)
     {
         ArgumentNullException.ThrowIfNull(linkMapper);
@@ -36,11 +36,11 @@ internal sealed class GDSCookieChoiceAvailableMapper : IComponentMapper<GDSCooki
             _textMapper.Map(
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceAvailableBannerComponent.Heading)));
 
-        MappedResponse<AnchorLinkComponent> mappedViewCookiesLink =
+        MappedResponse<AnchorLinkComponentOld> mappedViewCookiesLink =
             _anchorLinkMapper.Map(
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceAvailableBannerComponent.ViewCookiesLink)));
 
-        MappedResponse<FormComponent> mappedForm =
+        MappedResponse<FormComponentOld> mappedForm =
             _formMapper.Map(
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSCookieChoiceAvailableBannerComponent.CookieChoiceForm)));
 
