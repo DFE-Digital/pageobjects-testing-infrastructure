@@ -7,12 +7,12 @@ internal sealed class GDSErrorSummaryMapper : IComponentMapper<GDSErrorSummaryCo
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
     private readonly IComponentMapper<TextComponent> _textMapper;
-    private readonly IComponentMapper<AnchorLinkComponent> _anchorLinkMapper;
+    private readonly IComponentMapper<AnchorLinkComponentOld> _anchorLinkMapper;
 
     public GDSErrorSummaryMapper(
         IMappingResultFactory mappingResultFactory,
         IComponentMapper<TextComponent> textMapper,
-        IComponentMapper<AnchorLinkComponent> anchorLinkMapper,
+        IComponentMapper<AnchorLinkComponentOld> anchorLinkMapper,
         IMapRequestFactory mapRequestFactory)
     {
         _mappingResultFactory = mappingResultFactory;
@@ -27,7 +27,7 @@ internal sealed class GDSErrorSummaryMapper : IComponentMapper<GDSErrorSummaryCo
             _textMapper.Map(
                 _mapRequestFactory.CreateRequestFrom(request, nameof(GDSErrorSummaryComponent.Heading)));
 
-        IEnumerable<MappedResponse<AnchorLinkComponent>> mappedErrors =
+        IEnumerable<MappedResponse<AnchorLinkComponentOld>> mappedErrors =
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSErrorSummaryComponent.Errors))
                 .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _anchorLinkMapper);
 

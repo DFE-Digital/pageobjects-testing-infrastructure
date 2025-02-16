@@ -45,18 +45,18 @@ public sealed class WebDriverIntegrationTestDesign
                     .SetPath("/")
                     .AddQueryParameter(new(key: "searchKeyWord", value: "Col")));
 
-        IEnumerable<AnchorLinkComponent> links = collection.ServiceProvider.GetRequiredService<SearchPage>().GetLinks();
+        IEnumerable<AnchorLinkComponentOld> links = collection.ServiceProvider.GetRequiredService<SearchPage>().GetLinks();
         Assert.Equal(3, links.Count());
     }
 
     public sealed class SearchPage
     {
         private readonly ICommandHandler<ClickElementCommand> _clickElementHandler;
-        private readonly IComponentFactory<AnchorLinkComponent> _anchorLink;
+        private readonly IComponentFactory<AnchorLinkComponentOld> _anchorLink;
 
         public SearchPage(
             ICommandHandler<ClickElementCommand> clickElementHandler,
-            IComponentFactory<AnchorLinkComponent> anchorLink)
+            IComponentFactory<AnchorLinkComponentOld> anchorLink)
         {
             _clickElementHandler = clickElementHandler;
             _anchorLink = anchorLink;
@@ -67,7 +67,7 @@ public sealed class WebDriverIntegrationTestDesign
             Selector = new CssElementSelector("#home-link")
         });
 
-        public IEnumerable<AnchorLinkComponent> GetLinks() => _anchorLink.CreateMany(new()
+        public IEnumerable<AnchorLinkComponentOld> GetLinks() => _anchorLink.CreateMany(new()
         {
             FindInScope = new CssElementSelector(".govuk-header")
         }).Select(t => t.Created);

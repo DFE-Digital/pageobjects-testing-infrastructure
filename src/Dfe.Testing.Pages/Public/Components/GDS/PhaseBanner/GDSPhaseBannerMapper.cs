@@ -7,12 +7,12 @@ internal sealed class GDSPhaseBannerMapper : IComponentMapper<GDSPhaseBannerComp
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMappingResultFactory _mapResultFactory;
     private readonly IComponentMapper<TextComponent> _textMapper;
-    private readonly IComponentMapper<AnchorLinkComponent> _linkMapper;
+    private readonly IComponentMapper<AnchorLinkComponentOld> _linkMapper;
 
     public GDSPhaseBannerMapper(
         IMappingResultFactory mapResultFactory,
         IComponentMapper<TextComponent> textMapper,
-        IComponentMapper<AnchorLinkComponent> linkMapper,
+        IComponentMapper<AnchorLinkComponentOld> linkMapper,
         IMapRequestFactory mapRequestFactory)
     {
         _mapResultFactory = mapResultFactory;
@@ -31,7 +31,7 @@ internal sealed class GDSPhaseBannerMapper : IComponentMapper<GDSPhaseBannerComp
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSPhaseBannerComponent.Text)))
                 .AddToMappingResults(request.MappedResults);
 
-        MappedResponse<AnchorLinkComponent> mappedFeedbackLink = _linkMapper.Map(
+        MappedResponse<AnchorLinkComponentOld> mappedFeedbackLink = _linkMapper.Map(
             _mapRequestFactory.CreateRequestFrom(request, nameof(GDSPhaseBannerComponent.FeedbackLink)))
                 .AddToMappingResults(request.MappedResults);
 

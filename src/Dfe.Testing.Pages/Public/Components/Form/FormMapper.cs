@@ -8,7 +8,7 @@ using Dfe.Testing.Pages.Public.Components.MappingAbstraction.Response;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace Dfe.Testing.Pages.Public.Components.Form;
-internal sealed class FormMapper : IComponentMapper<FormComponent>
+internal sealed class FormMapper : IComponentMapper<FormComponentOld>
 {
     private readonly IMapRequestFactory _mapRequestFactory;
     private readonly IMappingResultFactory _mappingResultFactory;
@@ -49,37 +49,37 @@ internal sealed class FormMapper : IComponentMapper<FormComponent>
         _mapRequestFactory = mapRequestFactory;
     }
 
-    public MappedResponse<FormComponent> Map(IMapRequest<IDocumentSection> request)
+    public MappedResponse<FormComponentOld> Map(IMapRequest<IDocumentSection> request)
     {
         IEnumerable<MappedResponse<GDSFieldsetComponent>> fieldsets =
-            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Fieldsets))
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponentOld.Fieldsets))
                 .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsfieldsetMapper);
 
         IEnumerable<MappedResponse<GDSButtonComponent>> mappedButtons =
-            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Buttons))
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponentOld.Buttons))
                 .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsButtonMapper);
 
         IEnumerable<MappedResponse<HiddenInputComponent>> mappedHiddenInputs =
-            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.HiddenInputs))
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponentOld.HiddenInputs))
                 .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _hiddenInputMapper);
 
         IEnumerable<MappedResponse<GDSTextInputComponent>> mappedTextInputs =
-            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.TextInputs))
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponentOld.TextInputs))
                 .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsTextInputMapper);
 
         IEnumerable<MappedResponse<GDSCheckboxComponent>> mappedCheckboxes =
-            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Checkboxes))
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponentOld.Checkboxes))
                 .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsCheckboxMapper);
 
         IEnumerable<MappedResponse<GDSRadioComponent>> mappedRadios =
-            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Radios))
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponentOld.Radios))
                 .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsRadioMapper);
 
         IEnumerable<MappedResponse<GDSSelectComponent>> mappedSelects =
-            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponent.Selects))
+            _mapRequestFactory.CreateRequestFrom(request, nameof(FormComponentOld.Selects))
                 .FindManyDescendantsAndMapToComponent(_mapRequestFactory, _GdsSelectMapper);
 
-        FormComponent form = new()
+        FormComponentOld form = new()
         {
             // form attributes
             // Default method is GET if not specified
@@ -96,7 +96,7 @@ internal sealed class FormMapper : IComponentMapper<FormComponent>
             Selects = mappedSelects.Select(t => t.Mapped)
         };
 
-        MappedResponse<FormComponent> mappedResponse = _mappingResultFactory.Create(
+        MappedResponse<FormComponentOld> mappedResponse = _mappingResultFactory.Create(
             request.Options.MapKey,
             mapped: form,
             status: MappingStatus.Success,

@@ -18,13 +18,13 @@ public sealed class GDSCookieBannerComponentTests
         await docService.RequestDocumentAsync(t => t.SetPath("/component/cookiebanner"));
 
         // Assert
-        AnchorLinkComponent viewCookies = scope.ServiceProvider.GetRequiredService<IAnchorLinkComponentBuilder>()
+        AnchorLinkComponentOld viewCookies = scope.ServiceProvider.GetRequiredService<IAnchorLinkComponentBuilder>()
             .SetText("View cookies")
             .SetLink("#")
             .SetOpensInNewTab(false)
             .Build();
 
-        FormComponent form = scope.ServiceProvider.GetRequiredService<IFormBuilder>()
+        FormComponentOld form = scope.ServiceProvider.GetRequiredService<IFormBuilder>()
             .SetAction("/cookie-choice")
             .SetMethod("post")
             .AddButton(button => button.SetText("Accept additional cookies")

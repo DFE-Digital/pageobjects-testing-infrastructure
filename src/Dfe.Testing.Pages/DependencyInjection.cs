@@ -30,6 +30,7 @@ using Dfe.Testing.Pages.Public.Components.Link;
 using Dfe.Testing.Pages.Public.Components.Radio;
 using Dfe.Testing.Pages.Public.Components.Text;
 using Dfe.Testing.Pages.Public.Components.TextInput;
+using Dfe.Testing.Pages.Public.Templates;
 using Microsoft.Extensions.Options;
 
 namespace Dfe.Testing.Pages;
@@ -50,7 +51,8 @@ public static class DependencyInjection
         services
             .AddDocumentClientProvider<AngleSharpDocumentClientProvider>()
             .AddTransient<IHtmlDocumentProvider, HtmlDocumentProvider>()
-            .AddComponents();
+            .AddComponents()
+            .AddPageObjectTemplates();
 
         return services;
     }
@@ -69,7 +71,8 @@ public static class DependencyInjection
         services
             .AddDocumentClientProvider<WebDriverDocumentClientProvider>()
             .AddWebDriverServices()
-            .AddComponents();
+            .AddComponents()
+            .AddPageObjectTemplates();
 
         return services;
     }
@@ -81,6 +84,15 @@ public static class DependencyInjection
             .AddScoped(scope => scope.GetRequiredService<WebApplicationFactory<TApplicationProgram>>().CreateClient())
             .AddScoped<IConfigureWebHostHandler, ConfigureWebHostHandler>()
             .AddTransient<IHttpRequestBuilder, HttpRequestBuilder>();
+
+    internal static IServiceCollection AddPageObjectTemplates(this IServiceCollection services)
+    {
+        services.AddSingleton<IPageObjectTemplate, CookieChoiceAvailableBannerPageObjectTemplate>();
+        services.AddSingleton<IPageObjectTemplate, CookieChoiceMadeBannerPageObjectTemplate>();
+        services.AddSingleton<IPageObjectSchemaMerger, PageObjectSchemaMerger>();
+        services.AddSingleton<IPageObjectTemplateFactory, PageObjectTemplateFactory>();
+        return services;
+    }
 
     internal static IServiceCollection AddComponents(this IServiceCollection services)
     {
@@ -193,9 +205,9 @@ public static class DependencyInjection
         .AddTransient(typeof(IComponentFactory<>), typeof(ComponentFactory<>))
         .AddSingleton<IMapRequestFactory, MapRequestFactory>()
         // Mappers
-        .AddDecoratedMapper<AnchorLinkMapper, AnchorLinkComponent>()
+        .AddDecoratedMapper<AnchorLinkMapper, AnchorLinkComponentOld>()
         .AddDecoratedMapper<LabelMapper, LabelComponent>()
-        .AddDecoratedMapper<FormMapper, FormComponent>()
+        .AddDecoratedMapper<FormMapper, FormComponentOld>()
         .AddDecoratedMapper<TableHeadMapper, TableHeadComponent>()
         .AddDecoratedMapper<TableBodyMapper, TableBodyComponent>()
         .AddDecoratedMapper<TableRowMapper, TableRowComponent>()
