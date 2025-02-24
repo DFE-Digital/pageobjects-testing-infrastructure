@@ -1,9 +1,6 @@
 ﻿using Dfe.Testing.Pages.Components.AnchorLink;
-using Dfe.Testing.Pages.Components.Button;
-using Dfe.Testing.Pages.Components.Form;
 using Dfe.Testing.Pages.Contracts.PageObjectClient.Request;
 using Dfe.Testing.Pages.Contracts.PageObjectClient.Response;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Templates;
 
 namespace Dfe.Testing.Pages.Components.CookieChoiceBanner;
 
@@ -27,8 +24,28 @@ public record CookieChoiceAvailableBannerComponent
 {
     public string? Heading { get; set; }
     public string? Content { get; set; }
-    public AnchorLinkComponent? ViewCookies { get; set; }
-    public FormComponent? ChoiceForm { get; set; }
+    public AnchorLinkComponent? ViewCookies { get; set; } = new()
+    {
+        Link = string.Empty,
+        Text = "View cookies",
+    };
+    public FormComponent? ChoiceForm { get; set; } = new()
+    {
+        Action = string.Empty,
+        Method = HttpMethod.Post,
+        Buttons = [
+            new ButtonComponent()
+            {
+                Text = "Accept analytics cookies",
+                Value = "true"
+            },
+            new ButtonComponent()
+            {
+                Text = "Reject analytics cookies",
+                Value = "true"
+            }
+        ]
+    }
 }
 
 public sealed class CookieChoiceAvailableBannerPageObjectResponseMapper : IMapper<PageObjectResponse, CookieChoiceAvailableBannerComponent>
