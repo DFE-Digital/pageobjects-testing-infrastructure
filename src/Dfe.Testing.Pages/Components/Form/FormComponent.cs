@@ -1,7 +1,4 @@
-﻿using Dfe.Testing.Pages.Components.Input;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Request;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Response;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Templates;
+﻿
 
 namespace Dfe.Testing.Pages.Components.Form;
 public record FormComponent
