@@ -1,6 +1,6 @@
-﻿using Dfe.Testing.Pages.Contracts.PageObjectClient.Request;
+﻿using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Request;
 
-namespace Dfe.Testing.Pages.Contracts.PageObjectClient.Extensions;
+namespace Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Extensions;
 public static class PageObjectSchemaExtensions
 {
     public static PageObjectSchema UpdateSchema(

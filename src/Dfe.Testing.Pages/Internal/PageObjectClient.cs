@@ -1,7 +1,9 @@
-﻿using Dfe.Testing.Pages.Contracts.Documents;
-using Dfe.Testing.Pages.Contracts.PageObjectClient;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Request;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Response;
+﻿using Dfe.Testing.Pages.Public.PageObjects;
+using Dfe.Testing.Pages.Public.PageObjects.Documents;
+using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient;
+using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Request;
+using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Response;
+using Dfe.Testing.Pages.Public.PageObjects.Selector;
 
 namespace Dfe.Testing.Pages.Internal;
 

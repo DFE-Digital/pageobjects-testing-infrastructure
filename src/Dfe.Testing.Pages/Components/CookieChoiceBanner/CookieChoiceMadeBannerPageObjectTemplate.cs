@@ -1,8 +1,9 @@
 ﻿using Dfe.Testing.Pages.Components.AnchorLink;
 using Dfe.Testing.Pages.Components.Form;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Request;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Response;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Templates;
+using Dfe.Testing.Pages.Public.PageObjects;
+using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Request;
+using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Response;
+using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Templates;
 
 namespace Dfe.Testing.Pages.Components.CookieChoiceBanner;
 

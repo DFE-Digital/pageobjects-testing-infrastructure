@@ -1,4 +1,6 @@
-﻿namespace Dfe.Testing.Pages.Internal.DocumentClient.Selector.Extensions;
+﻿using Dfe.Testing.Pages.Public.PageObjects.Selector;
+
+namespace Dfe.Testing.Pages.Internal.DocumentClient.Selector.Extensions;
 
 internal static class IElementSelectorExtensions
 {

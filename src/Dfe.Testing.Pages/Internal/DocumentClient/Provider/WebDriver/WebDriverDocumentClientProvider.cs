@@ -1,6 +1,7 @@
 ﻿using Dfe.Testing.Pages.Internal.DocumentClient.Options;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler.Factory;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler.Options;
+using Dfe.Testing.Pages.Public.PageObjects;
 
 namespace Dfe.Testing.Pages.Internal.DocumentClient.Provider.WebDriver;
 

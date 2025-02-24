@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Contracts.Documents;
+﻿namespace Dfe.Testing.Pages.Public.PageObjects.Documents;
 public interface IHttpRequestBuilder
 {
     public IHttpRequestBuilder SetCookie(System.Net.Cookie cookie);

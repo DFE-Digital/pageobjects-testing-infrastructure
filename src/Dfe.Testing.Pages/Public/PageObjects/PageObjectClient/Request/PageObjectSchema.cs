@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Contracts.PageObjectClient.Request;
+﻿namespace Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Request;
 public record PageObjectSchema
 {
     public string Id { get; set; } = string.Empty;

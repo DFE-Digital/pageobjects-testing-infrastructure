@@ -1,4 +1,6 @@
-﻿namespace Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;
+﻿using Dfe.Testing.Pages.Public.PageObjects.Selector;
+
+namespace Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;
 public interface IWebDriverAdaptor : IApplicationNavigator
 {
     Task StartAsync();

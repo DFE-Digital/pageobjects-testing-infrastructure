@@ -1,12 +1,13 @@
-﻿using Dfe.Testing.Pages.Contracts.Documents;
-using Dfe.Testing.Pages.Contracts.PageObjectClient;
-using Dfe.Testing.Pages.Internal.Commands;
+﻿using Dfe.Testing.Pages.Internal.Commands;
 using Dfe.Testing.Pages.Internal.DocumentClient.Options;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler.Factory;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler.Options;
 using Dfe.Testing.Pages.Public.Commands;
+using Dfe.Testing.Pages.Public.PageObjects;
+using Dfe.Testing.Pages.Public.PageObjects.Documents;
+using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient;
 
 namespace Dfe.Testing.Pages.Internal;
 

@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Contracts.PageObjectClient.Response;
+﻿using Dfe.Testing.Pages.Public.PageObjects;
+using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Response;
 
 namespace Dfe.Testing.Pages.Components.Button;
 public record ButtonComponent

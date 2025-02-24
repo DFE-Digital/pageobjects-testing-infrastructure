@@ -2,6 +2,7 @@
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler.Factory;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler.Options;
+using Dfe.Testing.Pages.Public.PageObjects;
 
 namespace Dfe.Testing.Pages.Internal.DocumentClient.Provider;
 internal abstract class BaseDocumentClientProvider

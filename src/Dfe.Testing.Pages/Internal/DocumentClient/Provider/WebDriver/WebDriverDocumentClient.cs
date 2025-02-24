@@ -1,6 +1,7 @@
-﻿using Dfe.Testing.Pages.Contracts.Documents;
-using Dfe.Testing.Pages.Contracts.Selector.XPath;
-using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler;
+﻿using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler;
+using Dfe.Testing.Pages.Public.PageObjects.Documents;
+using Dfe.Testing.Pages.Public.PageObjects.Selector;
+using Dfe.Testing.Pages.Public.PageObjects.Selector.XPath;
 
 namespace Dfe.Testing.Pages.Internal.DocumentClient.Provider.WebDriver;
 

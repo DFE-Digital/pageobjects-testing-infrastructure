@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Contracts.PageObjectClient.Templates;
+﻿namespace Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Templates;
 public interface IPageObjectTemplateFactory
 {
     IPageObjectTemplate GetTemplateById(string templateId);

@@ -1,6 +1,5 @@
-﻿using Dfe.Testing.Pages.Contracts.Documents;
-using Dfe.Testing.Pages.Internal.DocumentClient;
-using Dfe.Testing.Pages.Public.Commands;
+﻿using Dfe.Testing.Pages.Public.Commands;
+using Dfe.Testing.Pages.Public.PageObjects.Documents;
 
 namespace Dfe.Testing.Pages.Internal.Commands;
 internal sealed class ClickElementCommandHandler : ICommandHandler<ClickElementCommand>

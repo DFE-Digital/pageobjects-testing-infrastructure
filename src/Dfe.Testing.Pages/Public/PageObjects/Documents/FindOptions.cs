@@ -1,6 +1,6 @@
-﻿using Dfe.Testing.Pages.Contracts.Selector;
+﻿using Dfe.Testing.Pages.Public.PageObjects.Selector;
 
-namespace Dfe.Testing.Pages.Contracts.Documents;
+namespace Dfe.Testing.Pages.Public.PageObjects.Documents;
 public sealed class FindOptions
 {
     public IElementSelector? Find { get; set; }

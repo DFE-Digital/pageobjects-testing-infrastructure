@@ -1,4 +1,5 @@
 ﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Factory;
+using Dfe.Testing.Pages.Public.PageObjects.Selector;
 using OpenQA.Selenium;
 
 namespace Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;

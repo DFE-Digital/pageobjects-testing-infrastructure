@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dfe.Testing.Pages.Contracts.Extensions;
+namespace Dfe.Testing.Pages.Public.PageObjects.Extensions;
 public static class CollectionExtensions
 {
     public static TOut? TryGetOrDefault<TIn, TOut>(this IEnumerable<KeyValuePair<TIn, TOut>> input, TIn key) where TIn : notnull

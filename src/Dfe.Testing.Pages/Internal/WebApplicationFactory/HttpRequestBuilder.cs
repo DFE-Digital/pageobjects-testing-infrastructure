@@ -1,4 +1,4 @@
-﻿using Dfe.Testing.Pages.Contracts.Documents;
+﻿using Dfe.Testing.Pages.Public.PageObjects.Documents;
 using Cookie = System.Net.Cookie;
 
 namespace Dfe.Testing.Pages.Internal.WebApplicationFactory;

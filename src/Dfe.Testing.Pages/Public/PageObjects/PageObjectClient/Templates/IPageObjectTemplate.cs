@@ -1,6 +1,6 @@
-﻿using Dfe.Testing.Pages.Contracts.PageObjectClient.Request;
+﻿using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Request;
 
-namespace Dfe.Testing.Pages.Contracts.PageObjectClient.Templates;
+namespace Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Templates;
 // TODO consider Target<T> as an extension of this. Then it registers its type than id reflecting the type
 public interface IPageObjectTemplate
 {

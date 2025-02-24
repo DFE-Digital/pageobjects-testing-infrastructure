@@ -1,6 +1,6 @@
-﻿using Dfe.Testing.Pages.Contracts.Extensions;
+﻿using Dfe.Testing.Pages.Public.PageObjects.Extensions;
 
-namespace Dfe.Testing.Pages.Contracts.PageObjectClient.Response;
+namespace Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Response;
 public record CreatedPageObjectModel
 {
     public string Id { get; init; } = string.Empty;

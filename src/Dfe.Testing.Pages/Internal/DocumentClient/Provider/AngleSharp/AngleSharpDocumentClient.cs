@@ -1,5 +1,6 @@
-﻿using Dfe.Testing.Pages.Contracts.Documents;
-using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler;
+﻿using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler;
+using Dfe.Testing.Pages.Public.PageObjects.Documents;
+using Dfe.Testing.Pages.Public.PageObjects.Selector;
 
 namespace Dfe.Testing.Pages.Internal.DocumentClient.Provider.AngleSharp;
 

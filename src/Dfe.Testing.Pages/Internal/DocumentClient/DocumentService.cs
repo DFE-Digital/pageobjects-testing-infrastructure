@@ -1,5 +1,5 @@
-﻿using Dfe.Testing.Pages.Contracts.Documents;
-using Dfe.Testing.Pages.Internal.DocumentClient.Provider;
+﻿using Dfe.Testing.Pages.Internal.DocumentClient.Provider;
+using Dfe.Testing.Pages.Public.PageObjects.Documents;
 
 namespace Dfe.Testing.Pages.Internal.DocumentClient;
 internal sealed class DocumentService : IDocumentService

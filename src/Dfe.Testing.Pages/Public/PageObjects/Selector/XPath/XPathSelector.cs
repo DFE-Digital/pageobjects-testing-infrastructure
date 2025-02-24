@@ -1,6 +1,4 @@
-﻿using Dfe.Testing.Pages.Contracts.Selector;
-
-namespace Dfe.Testing.Pages.Contracts.Selector.XPath;
+﻿namespace Dfe.Testing.Pages.Public.PageObjects.Selector.XPath;
 
 public sealed class XPathSelector : IElementSelector
 {

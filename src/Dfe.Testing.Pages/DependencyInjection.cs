@@ -7,12 +7,13 @@ using Dfe.Testing.Pages.Components.Form;
 using Dfe.Testing.Pages.Components.Input;
 using Dfe.Testing.Pages.Components.Phase;
 using Dfe.Testing.Pages.Components.Tab;
-using Dfe.Testing.Pages.Contracts.Documents;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Response;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Templates;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.AngleSharp;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.WebDriver;
 using Dfe.Testing.Pages.Public.AngleSharp.Options;
+using Dfe.Testing.Pages.Public.PageObjects;
+using Dfe.Testing.Pages.Public.PageObjects.Documents;
+using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Response;
+using Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Templates;
 using Microsoft.Extensions.Options;
 
 
@@ -96,10 +97,10 @@ public static class DependencyInjection
 
         // tabs
         services.AddSingleton<IPageObjectTemplate, GdsTabsComponentTemplate>();
+        services.AddSingleton<IPageObjectTemplateFactory, PageObjectTemplateFactory>();
         services.AddSingleton<GdsTabsOptions>();
         services.AddSingleton<GdsTabsComponentTemplate>();
 
-        services.AddContracts();
         return services;
     }
 

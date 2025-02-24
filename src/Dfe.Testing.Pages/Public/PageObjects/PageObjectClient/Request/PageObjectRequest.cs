@@ -1,4 +1,4 @@
-﻿namespace Dfe.Testing.Pages.Contracts.PageObjectClient.Request;
+﻿namespace Dfe.Testing.Pages.Public.PageObjects.PageObjectClient.Request;
 public class PageObjectRequest
 {
     public DocumentQueryOptions? Query { get; set; } = null;
