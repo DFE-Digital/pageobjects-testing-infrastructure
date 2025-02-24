@@ -1,8 +1,6 @@
 ﻿using Dfe.Testing.Pages.Components.AnchorLink;
-using Dfe.Testing.Pages.Components.Form;
 using Dfe.Testing.Pages.Contracts.PageObjectClient.Request;
 using Dfe.Testing.Pages.Contracts.PageObjectClient.Response;
-using Dfe.Testing.Pages.Contracts.PageObjectClient.Templates;
 
 namespace Dfe.Testing.Pages.Components.CookieChoiceBanner;
 
@@ -23,9 +21,9 @@ public sealed class CookieChoiceMadeBannerPropertyOptions
     }
 
     public string Banner => "Banner";
-    public string Content => "Content";
-    public string Form { get => _options.Form; }
-    public string ChangeCookiesLink => "ChangeCookiesLink";
+    public string Content => $"{ROOT}.Content";
+    public FormPageOptions Form { get => _options; }
+    public string ChangeCookiesLink => $"{ROOT}.ChangeCookiesLink";
 }
 
 public sealed class CookieChoiceMadeBannerMapper : IMapper<PageObjectResponse, CookieChoiceMadeBannerComponent>
@@ -62,7 +60,7 @@ public sealed class CookieChoiceMadeBannerMapper : IMapper<PageObjectResponse, C
                     .SingleOrDefault(),
             HideCookiesForm = _formMapper.Map(
                 banner.Children
-                    .Single(t => t.Id == _options.Form))
+                    .Single(t => t.Id == _options.Form.Form))
         };
     }
 }

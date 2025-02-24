@@ -40,7 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Dfe.Testing.Pages.Components\Dfe.Testing.Pages.Components.csproj" />
-    <ProjectReference Include="..\..\Dfe.Testing.Pages.Contracts\Dfe.Testing.Pages.Contracts.csproj" />
+    <ProjectReference Include="..\Dfe.Testing.Pages.Components\Dfe.Testing.Pages.Components.csproj" />
   </ItemGroup>
 </Project>
