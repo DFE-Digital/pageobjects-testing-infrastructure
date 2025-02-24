@@ -45,7 +45,7 @@ public record CookieChoiceAvailableBannerComponent
                 Value = "true"
             }
         ]
-    }
+    };
 }
 
 public sealed class CookieChoiceAvailableBannerPageObjectResponseMapper : IMapper<PageObjectResponse, CookieChoiceAvailableBannerComponent>
