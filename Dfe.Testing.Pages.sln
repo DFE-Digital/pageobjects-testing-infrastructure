@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfe.Testing.Pages", "src\Dfe.Testing.Pages\Dfe.Testing.Pages.csproj", "{1B4892D4-EFAE-4C07-B0EF-A76A451B87CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfe.Testing.Pages.Components", "src\Dfe.Testing.Pages.Components\Dfe.Testing.Pages.Components.csproj", "{925D42C6-BDAD-414E-A19F-054CAD5D341A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfe.Testing.Pages.Contracts", "src\Dfe.Testing.Pages.Contracts\Dfe.Testing.Pages.Contracts.csproj", "{5D1B4E33-F95A-443A-9097-D2848AD44330}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3F05624F-61B6-4510-830B-BD2C1785CE83}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -15,10 +19,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfe.Testing.Pages.TestWebApp", "tests\Dfe.Testing.Pages.TestWebApp\Dfe.Testing.Pages.TestWebApp.csproj", "{7D0DF421-D4ED-4110-A53C-3788894355DC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfe.Testing.Pages.UnitTests", "tests\Dfe.Testing.Pages.UnitTests\Dfe.Testing.Pages.UnitTests.csproj", "{4C1E0D14-E59D-42AD-984F-A3D7671975CD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfe.Testing.Pages.Components", "Dfe.Testing.Pages.Components\Dfe.Testing.Pages.Components.csproj", "{925D42C6-BDAD-414E-A19F-054CAD5D341A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfe.Testing.Pages.Contracts", "Dfe.Testing.Pages.Contracts\Dfe.Testing.Pages.Contracts.csproj", "{5D1B4E33-F95A-443A-9097-D2848AD44330}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
