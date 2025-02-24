@@ -1,4 +1,5 @@
 ﻿using Dfe.Testing.Pages.Internal.WebDriver.Provider.Factory;
+using OpenQA.Selenium;
 
 namespace Dfe.Testing.Pages.Internal.WebDriver.Provider.Adaptor;
 
@@ -132,4 +133,12 @@ internal class CachedWebDriverAdaptor : IWebDriverAdaptor, IDisposable, IAsyncDi
             WebDriverByLocatorHelpers.CreateLocator(selector));
 
     public Uri CurrentUri() => new(Driver.Url);
+
+    public TOut RunJavascript<TOut>(string script, Func<object, TOut> outputMapper, params object[] scriptArgs)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(script);
+        ArgumentNullException.ThrowIfNull(outputMapper);
+        ((IJavaScriptExecutor)Driver).ExecuteScript(script, scriptArgs ?? []);
+        return outputMapper.Invoke(Driver);
+    }
 }

@@ -32,6 +32,8 @@ using Dfe.Testing.Pages.Public.Components.Text;
 using Dfe.Testing.Pages.Public.Components.TextInput;
 using Dfe.Testing.Pages.Public.Templates;
 using Microsoft.Extensions.Options;
+using ButtonStyleType = Dfe.Testing.Pages.Public.Templates.ButtonStyleType;
+
 
 namespace Dfe.Testing.Pages;
 
@@ -85,17 +87,80 @@ public static class DependencyInjection
 
     internal static IServiceCollection AddPageObjectTemplates(this IServiceCollection services)
     {
-        services.AddSingleton<IMapper<CreatedPageObjectModel, PhaseBannerComponent>, PhaseBannerComponentMapper>();
-        services.AddSingleton<IMapper<CreatedPageObjectModel, CookieChoiceAvailableBannerComponent>, CookieChoiceAvailableBannerMapper>();
-        services.AddSingleton<IMapper<CreatedPageObjectModel, CookieChoiceMadeBannerComponent>, CookieChoiceMadeBannerMapper>();
-        services.AddSingleton<IMapper<CreatedPageObjectModel, IEnumerable<TabComponent>>, TabComponentMapper>();
 
+        // cookie choice
         services.AddSingleton<IPageObjectTemplate, CookieChoiceAvailableBannerPageObjectTemplate>();
         services.AddSingleton<IPageObjectTemplate, CookieChoiceMadeBannerPageObjectTemplate>();
-        services.AddSingleton<IPageObjectSchemaMerger, PageObjectSchemaMerger>();
+        services.AddSingleton<IMapper<PageObjectResponse, CookieChoiceAvailableBannerComponent>, CookieChoiceAvailableBannerPageObjectResponseMapper>();
+        services.AddSingleton<IMapper<PageObjectResponse, CookieChoiceMadeBannerComponent>, CookieChoiceMadeBannerMapper>();
+        services.AddSingleton<CookieChoiceAvailableBannerPropertyOptions>();
+        services.AddSingleton<CookieChoiceMadeBannerPropertyOptions>();
+
+        // phase banner
+        services.AddSingleton<IMapper<PageObjectResponse, PhaseBannerComponent>, PhaseBannerComponentMapper>();
+        services.AddSingleton<IPageObjectTemplate, PhaseBannerComponentTemplate>();
+        services.AddSingleton<PhaseBannerPageObjectPropertyOptions>();
+
+        // tabs
+        services.AddSingleton<IMapper<PageObjectResponse, GdsTabsComponent>, GdsTabMapper>();
+        services.AddSingleton<IMapper<CreatedPageObjectModel, ButtonComponent>, ButtonComponentMapper>();
+        services.AddSingleton<IMapper<CreatedPageObjectModel, AnchorLinkComponent>, AnchorLinkComponentMapper>();
+
+        // form
+        services.AddSingleton<IMapper<CreatedPageObjectModel, FormComponent>, FormNewMapper>();
+        services.AddSingleton<FormTemplate>();
+        services.AddSingleton<IPageObjectTemplate, FormTemplate>(sp => sp.GetRequiredService<FormTemplate>());
+        services.AddSingleton<FormPageOptions>();
+
+        services.AddSingleton<IMapper<CreatedPageObjectModel, Public.InputComponent>, InputMapper>();
+        services.AddSingleton<InputComponentOptions>();
+        services.AddSingleton<IPageObjectTemplate, InputComponentTemplate>();
+
+
+        services.AddSingleton<IPageObjectTemplate, GdsTabsComponentTemplate>();
+        services.AddSingleton<GdsTabsOptions>();
+        services.AddSingleton<GdsTabsComponentTemplate>();
+
         services.AddSingleton<IPageObjectTemplateFactory, PageObjectTemplateFactory>();
         return services;
     }
+
+    public sealed class AnchorLinkComponentMapper : IMapper<CreatedPageObjectModel, AnchorLinkComponent>
+    {
+        public AnchorLinkComponent Map(CreatedPageObjectModel input)
+        {
+            return new()
+            {
+                Link = input.GetAttribute("href"),
+                Text = input.GetAttribute("text"),
+                OpensInNewTab = input.GetAttribute("target") == "_blank",
+                Rel = input.GetAttribute("rel")
+            };
+        }
+    }
+
+    public sealed class ButtonComponentMapper : IMapper<CreatedPageObjectModel, ButtonComponent>
+    {
+        public ButtonComponent Map(CreatedPageObjectModel input)
+        {
+            return new ButtonComponent()
+            {
+                Text = input.GetAttribute("text") ?? string.Empty,
+                Type = input.GetAttribute("type"),
+                Name = input.GetAttribute("name"),
+                Value = input.GetAttribute("value"),
+                IsEnabled = input.GetAttribute("disabled") is null,
+                ButtonStyle = input.GetAttribute("class") switch
+                {
+                    null => ButtonStyleType.Primary,
+                    var s when s.Contains("govuk-button--secondary") => ButtonStyleType.Secondary,
+                    var s when s.Contains("govuk-button--warning") => ButtonStyleType.Warning,
+                    _ => ButtonStyleType.Primary
+                }
+            };
+        }
+    }
+
 
     internal static IServiceCollection AddComponents(this IServiceCollection services)
     {
@@ -210,7 +275,7 @@ public static class DependencyInjection
         // Mappers
         .AddDecoratedMapper<AnchorLinkMapper, AnchorLinkComponentOld>()
         .AddDecoratedMapper<LabelMapper, Public.Components.Label.LabelComponent>()
-        .AddDecoratedMapper<FormMapper, FormComponentOld>()
+        .AddDecoratedMapper<Dfe.Testing.Pages.Public.Components.Form.FormMapper, FormComponentOld>()
         .AddDecoratedMapper<TableHeadMapper, TableHeadComponent>()
         .AddDecoratedMapper<TableBodyMapper, TableBodyComponent>()
         .AddDecoratedMapper<TableRowMapper, TableRowComponent>()

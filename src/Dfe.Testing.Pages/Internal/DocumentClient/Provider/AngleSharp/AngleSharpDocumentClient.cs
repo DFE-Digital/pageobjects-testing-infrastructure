@@ -128,6 +128,16 @@ internal class AngleSharpDocumentClient : IDocumentClient
 
         public string Document => _wrappedElement.ToHtml();
 
+        public IEnumerable<KeyValuePair<string, string?>> Attributes
+        {
+            get
+            {
+                return
+                    _wrappedElement.Attributes
+                        .Select((attr) => new KeyValuePair<string, string?>(attr.Name, attr.Value));
+            }
+        }
+
         public void Click()
         {
             throw new NotImplementedException("Clicking is not available with an AngleSharp client");

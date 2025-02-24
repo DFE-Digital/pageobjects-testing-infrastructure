@@ -2,130 +2,125 @@
 
 namespace Dfe.Testing.Pages.Public.Templates;
 
-public record CookieChoiceAvailableBannerComponent
+public sealed class CookieChoiceAvailableBannerPropertyOptions
 {
-    public string Heading { get; set; } = string.Empty;
-    public string Content { get; set; } = string.Empty;
-    public AnchorLinkComponent ViewCookies { get; set; } = new();
-    public FormComponent ChoiceForm { get; set; } = new();
+    private const string Root = "CookieChoiceAvailableBanner";
+    private readonly FormPageOptions _formOptions;
+    public CookieChoiceAvailableBannerPropertyOptions(FormPageOptions formOptions)
+    {
+        _formOptions = formOptions;
+        CookieChoiceForm = _formOptions.Form;
+        CookieChoiceFormButtons = _formOptions.Buttons;
+    }
+
+    public string Banner { get; set; } = Root;
+    public string Heading { get; set; } = $"{Root}.Heading";
+    public string Content { get; set; } = $"{Root}.Content";
+    public string ViewCookiesLink { get; set; } = $"{Root}.ViewCookies";
+    public string CookieChoiceForm { get; set; }
+    public string CookieChoiceFormButtons { get; set; }
 }
 
-public sealed class CookieChoiceAvailableBannerMapper : IMapper<CreatedPageObjectModel, CookieChoiceAvailableBannerComponent>
+public record CookieChoiceAvailableBannerComponent
 {
-    public CookieChoiceAvailableBannerComponent Map(CreatedPageObjectModel input)
+    public string? Heading { get; set; }
+    public string? Content { get; set; }
+    public AnchorLinkComponent? ViewCookies { get; set; }
+    public FormComponent? ChoiceForm { get; set; }
+}
+
+public sealed class CookieChoiceAvailableBannerPageObjectResponseMapper : IMapper<PageObjectResponse, CookieChoiceAvailableBannerComponent>
+{
+    private readonly CookieChoiceAvailableBannerPropertyOptions _options;
+    private readonly IMapper<CreatedPageObjectModel, AnchorLinkComponent> _linkMapper;
+    private readonly IMapper<CreatedPageObjectModel, ButtonComponent> _buttonMapper;
+    private readonly IMapper<CreatedPageObjectModel, FormComponent> _formMapper;
+
+    public CookieChoiceAvailableBannerPageObjectResponseMapper(
+        CookieChoiceAvailableBannerPropertyOptions options,
+        IMapper<CreatedPageObjectModel, AnchorLinkComponent> linkMapper,
+        IMapper<CreatedPageObjectModel, ButtonComponent> buttonMapper,
+        IMapper<CreatedPageObjectModel, FormComponent> formMapper)
     {
-        // TODO derive the property keys from options on the templateschema so client can override
-        // cookie choice buttons
-        var acceptCookiesProperties = input.GetMappedProperty("AcceptCookiesButton").Single();
-        var rejectCookiesProperties = input.GetMappedProperty("RejectCookiesButton").Single();
-        var rejectCookiesStyles = rejectCookiesProperties.TryGetOrDefault("class");
-        var acceptCookiesStyles = acceptCookiesProperties.TryGetOrDefault("class");
+        _options = options;
+        _linkMapper = linkMapper;
+        _buttonMapper = buttonMapper;
+        _formMapper = formMapper;
+    }
 
-        // view cookies
-        var viewCookiesProperty = input.GetMappedProperty("ViewCookiesLink").Single();
+    public CookieChoiceAvailableBannerComponent Map(PageObjectResponse input)
+    {
+        CreatedPageObjectModel banner = input.Created.Single(t => t.Id == _options.Banner);
+
+        // heading
+        CreatedPageObjectModel heading = banner.Children.Single(t => t.Id == _options.Heading);
+
+        // content
+        CreatedPageObjectModel content = banner.Children.Single(t => t.Id == _options.Content);
+
+        // view cookies link
+        CreatedPageObjectModel viewCookies = banner.Children.Single(t => t.Id == _options.ViewCookiesLink);
+        AnchorLinkComponent? viewCookiesLink = _linkMapper.Map(viewCookies);
+
         // form
-        var formProperties = input.GetMappedProperty("Form").Single();
-        var formMethod = formProperties.TryGetOrDefault("method");
+        CreatedPageObjectModel form = banner.Children.Single(t => t.Id == _options.CookieChoiceForm);
+        FormComponent choiceForm = _formMapper.Map(form);
 
-        return new CookieChoiceAvailableBannerComponent()
+        return new()
         {
-            Heading = input.GetMappedProperty("Heading").Single().TryGetOrDefault("text") ?? string.Empty,
-            Content = input.GetMappedProperty("Content").Single().TryGetOrDefault("text") ?? string.Empty,
-            ViewCookies = new AnchorLinkComponent()
-            {
-                Link = viewCookiesProperty.TryGetOrDefault("href"),
-                Text = viewCookiesProperty.TryGetOrDefault("text"),
-                OpensInNewTab = viewCookiesProperty.TryGetOrDefault("target") == "_blank",
-                Rel = viewCookiesProperty.TryGetOrDefault("rel")
-            },
-            ChoiceForm = new FormComponent()
-            {
-                Method = formMethod is null ? null : HttpMethod.Parse(formMethod),
-                Action = formProperties.TryGetOrDefault("action"),
-                Buttons =
-                [
-                    new ButtonComponent()
-                    {
-                        Type = acceptCookiesProperties.TryGetOrDefault("type"),
-                        Name = acceptCookiesProperties.TryGetOrDefault("name"),
-                        Value = acceptCookiesProperties.TryGetOrDefault("value"),
-                        Text = acceptCookiesProperties.TryGetOrDefault("text") ?? string.Empty,
-                        IsEnabled = acceptCookiesProperties.TryGetOrDefault("disabled") is null,
-                        ButtonStyle = acceptCookiesStyles == null ? ButtonStyleType.Primary :
-                            acceptCookiesStyles.Contains("govuk-button--secondary") ? ButtonStyleType.Secondary :
-                            acceptCookiesStyles.Contains("govuk-button--warning") ? ButtonStyleType.Warning
-                                : ButtonStyleType.Primary
-                    },
-                    new ButtonComponent()
-                    {
-                        Type = rejectCookiesProperties["type"] ?? string.Empty,
-                        Name = rejectCookiesProperties["name"] ?? string.Empty,
-                        Value = rejectCookiesProperties["value"] ?? string.Empty,
-                        Text = rejectCookiesProperties["text"] ?? string.Empty,
-                        IsEnabled = rejectCookiesProperties["disabled"] == null,
-                        ButtonStyle = rejectCookiesStyles == null ? ButtonStyleType.Primary :
-                            rejectCookiesStyles.Contains("govuk-button--secondary") ? ButtonStyleType.Secondary :
-                            rejectCookiesStyles.Contains("govuk-button--warning") ? ButtonStyleType.Warning
-                                : ButtonStyleType.Primary
-                    }
-                ]
-            }
+            Heading = heading.GetAttribute("text"),
+            Content = content.GetAttribute("text"),
+            ViewCookies = viewCookiesLink,
+            ChoiceForm = choiceForm
         };
     }
 }
 
 public sealed class CookieChoiceAvailableBannerPageObjectTemplate : IPageObjectTemplate
 {
-    public string TemplateId => "CookieChoiceAvailableBanner";
+    private readonly CookieChoiceAvailableBannerPropertyOptions _options;
 
-    public QueryOptions? Query => new()
+    public CookieChoiceAvailableBannerPageObjectTemplate(CookieChoiceAvailableBannerPropertyOptions options)
     {
-        Find = ".govuk-cookie-banner",
-    };
+        _options = options;
+    }
 
-    public IEnumerable<PageObjectSchema> PageObjects =>
-        [
-            new PageObjectSchema()
+    public string Id => nameof(CookieChoiceAvailableBannerComponent);
+
+    public PageObjectSchema Schema =>
+            new()
             {
-                Id = "Banner",
-                Properties = [
-                    new PropertyMapping()
+                Id = _options.Banner,
+                Find = ".govuk-cookie-banner",
+                Children = [
+                    new PageObjectSchema()
                     {
-                        MappingEntrypoint = ".govuk-cookie-banner__heading",
-                        Attributes = ["text"],
-                        ToProperty = "Heading"
+                        Id = _options.Heading,
+                        Find = ".govuk-cookie-banner__heading",
                     },
-                    new PropertyMapping()
+                    new PageObjectSchema()
                     {
-                        MappingEntrypoint = ".govuk-cookie-banner__content",
-                        Attributes = ["text"],
-                        ToProperty = "Content"
+                        Id = _options.Content,
+                        Find = ".govuk-cookie-banner__content",
                     },
-                    new PropertyMapping(){
-                        MappingEntrypoint = "form",
-                        Attributes = ["method", "action"],
-                        ToProperty = "Form"
-                    },
-                    new PropertyMapping()
+                    new PageObjectSchema()
                     {
-                        MappingEntrypoint = "form button:nth-of-type(1)",
-                        Attributes = ["id", "class", "type", "value", "text", "name", "disabled"],
-                        ToProperty = "AcceptCookiesButton"
+                        Id = _options.CookieChoiceForm,
+                        Find = "form",
+                        Children = [
+                            new PageObjectSchema()
+                            {
+                                Id = _options.CookieChoiceFormButtons,
+                                Find = "button"
+                            }
+                        ]
                     },
-                    new PropertyMapping()
+                    new PageObjectSchema()
                     {
-                        MappingEntrypoint = "form button:nth-of-type(2)",
-                        Attributes = ["id", "class", "type", "value", "text", "name", "disabled"],
-                        ToProperty = "RejectCookiesButton"
-                    },
-                    new PropertyMapping()
-                    {
-                        MappingEntrypoint = "a",
-                        Attributes = ["href", "text", "target", "rel"],
-                        ToProperty = "ViewCookiesLink"
+                        Id = _options.ViewCookiesLink,
+                        Find = "a"
                     }
                 ]
-            }
-        ];
+            };
 }
 

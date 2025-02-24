@@ -1,145 +1,80 @@
 ﻿using Dfe.Testing.Pages.Internal.DocumentClient;
+using Dfe.Testing.Pages.Public.Templates;
+using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace Dfe.Testing.Pages.Public;
-// TODO register the "special keys" as configuration that the client can override, expose as defaults through an Options class.
-internal interface IPageObjectSchemaMerger
-{
-    void SetSeed(IEnumerable<PageObjectSchema> seed);
-    IEnumerable<PageObjectSchema> Merge(IEnumerable<PageObjectSchema> mergeIn);
-}
-
-internal sealed class PageObjectSchemaMerger : IPageObjectSchemaMerger
-{
-    private List<PageObjectSchema> _seed;
-    public PageObjectSchemaMerger(IEnumerable<PageObjectSchema>? seed = null)
-    {
-        _seed = seed?.ToList() ?? [];
-    }
-
-    public void SetSeed(IEnumerable<PageObjectSchema> seed)
-    {
-        ArgumentNullException.ThrowIfNull(seed);
-        _seed = seed.ToList();
-    }
-
-    // TODO options for
-    // - bool skip if merged is not in template, replace template mapping entirely?
-    // 
-    public IEnumerable<PageObjectSchema> Merge(IEnumerable<PageObjectSchema> merge)
-    {
-        List<PageObjectSchema> output = [];
-        ArgumentNullException.ThrowIfNull(merge);
-
-        // Where the seed has not had a pageobject.id overridden
-        var notInSchemaTemplatePageObjects = _seed
-            .Where(templatePageObject => !merge.Any(requestPageObject => requestPageObject.Id == templatePageObject.Id))
-            .ToList();
-
-        // Where the client has sent a pageobject.id that is in the template.
-        var overriddenToPropertiesForPageObjectInTemplate = merge
-            .Where(req => _seed.Any(templatePageObject => templatePageObject.Id == req.Id))
-            .Select(req => new PageObjectSchema
-            {
-                Id = req.Id,
-                // Merge mapping from request ontop of the template, if the client has not overridden the mapping, then retain those parts of the template mapping
-                Properties = _seed.First(templatePageObject => templatePageObject.Id == req.Id)
-                    .Properties
-                    .Select(templateMapping => req.Properties
-                        .FirstOrDefault(mapping => mapping.ToProperty == templateMapping.ToProperty) ?? templateMapping)
-                    .Union(req.Properties
-                        .Where(mapping => !_seed.First(templatePageObject => templatePageObject.Id == req.Id)
-                            .Properties
-                            .Any(templateMapping => templateMapping.ToProperty == mapping.ToProperty)))
-                    .ToList(),
-                Children = req.Children
-            })
-            .ToList();
-
-        var schemasThatAreNotPartOfTemplate = merge
-            .Where(req => !_seed.Any(templatePageObject => templatePageObject.Id == req.Id))
-            .ToList();
-
-        // Add non-overridden template page objects to the output
-        output.AddRange(notInSchemaTemplatePageObjects);
-
-        // Add overridden page objects to the output
-        output.AddRange(overriddenToPropertiesForPageObjectInTemplate);
-
-        // Add page objects that are not part of the template to the output
-        output.AddRange(schemasThatAreNotPartOfTemplate);
-
-        return output.AsEnumerable();
-    }
-}
 
 internal sealed class PageObjectClient : IPageObjectClient
 {
     private readonly IDocumentService _documentService;
-    private readonly IPageObjectTemplateFactory _pageObjectTemplateFactory;
-    private readonly IPageObjectSchemaMerger _pageObjectTemplateSchemaMerger;
 
-    public PageObjectClient(
-        IDocumentService documentService,
-        IPageObjectTemplateFactory pageObjectTemplateFactory,
-        IPageObjectSchemaMerger pageObjectTemplateSchemaMerger)
+    public PageObjectClient(IDocumentService documentService)
     {
         _documentService = documentService;
-        _pageObjectTemplateFactory = pageObjectTemplateFactory;
-        _pageObjectTemplateSchemaMerger = pageObjectTemplateSchemaMerger;
     }
 
     public PageObjectResponse Get(PageObjectRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        IPageObjectTemplate? template = null;
-        List<PageObjectSchema> outputMergedSchemas = [];
-
-        if (!string.IsNullOrEmpty(request.TemplateId))
-        {
-            template = _pageObjectTemplateFactory.GetTemplateById(request.TemplateId);
-
-            _pageObjectTemplateSchemaMerger.SetSeed(template.PageObjects);
-            var result = _pageObjectTemplateSchemaMerger.Merge(request.PageObjects);
-
-            outputMergedSchemas.AddRange(result);
-        }
-        else
-        {
-            outputMergedSchemas.AddRange(request.PageObjects);
-        }
-
-        CssElementSelector find = new CssElementSelector(template?.Query?.Find ?? request.Query!.Find ?? throw new ArgumentException("Unable to derive a Find locator"));
-        string? scope = template?.Query?.InScope ?? request.Query?.InScope ?? null;
-
-
+        string? scope = request.Query?.InScope ?? null;
         FindOptions mergedFindOptions = new()
         {
-            Find = find,
-            InScope = scope != null ? new CssElementSelector(scope) : null
+            Find = new CssElementSelector(request.Query?.Find ?? "html"),
+            InScope = scope == null ? null : new CssElementSelector(scope)
         };
-
 
         // Query
         IDocumentSection document = _documentService.ExecuteQuery(mergedFindOptions).Single()
             ?? throw new DocumentSectionNotFoundException(mergedFindOptions.Find, mergedFindOptions.InScope);
 
-        // Mapping
-        IList<CreatedPageObjectModel> createdPageModels = outputMergedSchemas?.Select(
-            (pageObjectSchema) => new PageObjectModelToCreatedPageObjectModelMapper(document).Map(pageObjectSchema)).ToList() ?? [];
+        ReadOnlyCollection<CreatedPageObjectModel> outputCreatedPageModels =
+            // Expand all Sections->Schema from PageObjectSchema.Find
+            request.MapSchemas
+                .Select(pageObjectSchema =>
+                    (document.FindAllDocumentSectionsForPageObjectSchema(pageObjectSchema), pageObjectSchema))
+                // Mapping
+                .SelectMany((sectionsToPageObjectSchema) =>
+                {
+                    (IEnumerable<IDocumentSection> sections, PageObjectSchema schema) = sectionsToPageObjectSchema;
+                    return sections.Select(section => new PageObjectModelToCreatedPageObjectModelMapper(section).Map(schema));
+                })
+                .ToList()
+                .AsReadOnly();
 
         PageObjectResponse response = new()
         {
-            Created = new ReadOnlyCollection<CreatedPageObjectModel>(createdPageModels)
+            Created = outputCreatedPageModels
         };
 
         return response;
     }
 }
 
-internal interface IPageObjectTemplateFactory
+public class PageObjectRequest
+{
+    public DocumentQueryOptions? Query { get; set; } = null;
+    public IEnumerable<PageObjectSchema> MapSchemas { get; set; } = [];
+}
+
+public class DocumentQueryOptions
+{
+    public string Find { get; set; } = string.Empty;
+    public string? InScope { get; set; } = null!;
+}
+
+public record PageObjectSchema
+{
+    public string Id { get; set; } = string.Empty;
+    public string Find { get; set; } = string.Empty;
+    public IEnumerable<PageObjectSchema> Children { get; set; } = [];
+}
+
+public interface IPageObjectTemplateFactory
 {
     IPageObjectTemplate GetTemplateById(string templateId);
+    IPageObjectTemplate GetTemplateForType<T>() where T : class;
+    IPageObjectTemplate GetTemplateForType(Type componentType);
 }
 
 internal sealed class PageObjectTemplateFactory : IPageObjectTemplateFactory
@@ -155,7 +90,7 @@ internal sealed class PageObjectTemplateFactory : IPageObjectTemplateFactory
     public IPageObjectTemplate GetTemplateById(string templateId)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(templateId);
-        IEnumerable<IPageObjectTemplate> templates = _pageObjectTemplates.Where(t => t.TemplateId == templateId);
+        IEnumerable<IPageObjectTemplate> templates = _pageObjectTemplates.Where(t => t.Id == templateId);
         if (!templates.Any())
         {
             throw new ArgumentException($"Unable to find template with id: {templateId}");
@@ -166,54 +101,18 @@ internal sealed class PageObjectTemplateFactory : IPageObjectTemplateFactory
         }
         return templates.Single();
     }
+
+    public IPageObjectTemplate GetTemplateForType<T>() where T : class => GetTemplateForType(typeof(T));
+
+    public IPageObjectTemplate GetTemplateForType(Type componentType) => GetTemplateById(componentType.Name);
 }
+
+// TODO consider Target<T> as an extension of this. Then it registers its type, and that's all handled via DI.
 
 public interface IPageObjectTemplate
 {
-    string TemplateId { get; }
-    QueryOptions? Query { get; }
-    IEnumerable<PageObjectSchema> PageObjects { get; }
-}
-
-public class PageObjectRequest
-{
-    public string? TemplateId { get; set; } = null;
-    public QueryOptions? Query { get; set; } = null;
-    public IEnumerable<PageObjectSchema> PageObjects { get; set; } = [];
-}
-
-public class QueryOptions
-{
-    public string Find { get; set; } = string.Empty;
-    public string? InScope { get; set; } = null!;
-}
-
-internal class AttributeResolver
-{
-    private readonly IDocumentSection _documentSection;
-
-    public AttributeResolver(IDocumentSection documentSection)
-    {
-        ArgumentNullException.ThrowIfNull(documentSection);
-        _documentSection = documentSection;
-    }
-
-    public IDictionary<string, string?> ResolveValues(IEnumerable<string> valuesToResolveOnSection)
-    {
-        return valuesToResolveOnSection.Where(t => !string.IsNullOrEmpty(t))
-            .Aggregate(seed: new Dictionary<string, string?>(), (acc, next) =>
-            {
-                // switch on what the client wants the from to be, if its a "special key" e.g tagname, text, map to the documentSection action. else assume it's an attribute
-                acc.Add(next, next switch
-                {
-                    "text" => _documentSection.Text,
-                    "tagname" => _documentSection.TagName,
-                    _ => _documentSection.GetAttribute(next),
-                });
-                return acc;
-            });
-    }
-
+    string Id { get; }
+    PageObjectSchema Schema { get; }
 }
 
 public sealed class PageObjectModelToCreatedPageObjectModelMapper : IMapper<PageObjectSchema, CreatedPageObjectModel>
@@ -228,80 +127,36 @@ public sealed class PageObjectModelToCreatedPageObjectModelMapper : IMapper<Page
 
     public CreatedPageObjectModel Map(PageObjectSchema input)
     {
-        if (input.Properties == null)
-        {
-            throw new ArgumentException("Mapping is null");
-        }
-
-        // output looks like [ "ToProperty": [ [ { "text": "value" } ], [{"text", "value2"}]]
-        Dictionary<string, IEnumerable<IDictionary<string, string?>>> attributes = [];
-        input.Properties.ToList().ForEach(options =>
-        {
-            // TODO infer if selector is a CssSelector or XPath? Put behind an extension so can be tested
-            IEnumerable<IDocumentSection> section =
-                !string.IsNullOrEmpty(options.MappingEntrypoint) ?
-                    _documentSection.FindDescendants(
-                        new CssElementSelector(options.MappingEntrypoint)) ?? throw new ArgumentException($"Unable to find mapping entrypoint with {options.MappingEntrypoint} from {_documentSection}")
-                    : [_documentSection];
-
-            section.Select((documentSection)
-                    => new AttributeResolver(documentSection).ResolveValues(options.Attributes))
-                .ToList()
-                .ForEach(resolvedValue =>
-                {
-                    if (attributes.TryGetValue(options.ToProperty, out IEnumerable<IDictionary<string, string?>>? value))
-                    {
-                        IEnumerable<IDictionary<string, string?>> mergedMappings = value.Append(resolvedValue);
-                        attributes[options.ToProperty] = mergedMappings;
-                    }
-                    else
-                    {
-                        attributes[options.ToProperty] = [resolvedValue];
-                    }
-                });
-        });
-
-        List<CreatedPageObjectModel> childPageModels = [];
-
         // recursively handle children
+        List<CreatedPageObjectModel> outputChildPageModels = [];
         IEnumerator<PageObjectSchema> childIterator = input.Children.GetEnumerator();
 
         while (childIterator.MoveNext())
         {
-            // recurse
-            CreatedPageObjectModel model =
-                new PageObjectModelToCreatedPageObjectModelMapper(_documentSection)
-                .Map(childIterator.Current);
+            IEnumerable<CreatedPageObjectModel> childModels =
+                _documentSection.FindAllDocumentSectionsForPageObjectSchema(childIterator.Current)
+                    .Select((section) =>
+                        new PageObjectModelToCreatedPageObjectModelMapper(section).Map(childIterator.Current));
 
-            childPageModels.Add(model);
+            outputChildPageModels.AddRange(childModels);
         }
+
+        IDictionary<string, string?> attributes = _documentSection.Attributes.ToDictionary();
+        attributes.TryAdd("text", _documentSection.Text);
 
         return new CreatedPageObjectModel()
         {
-            PageObjectId = input.Id ?? string.Empty,
-            Result = new MappingResult()
+            Id = input.Id ?? string.Empty,
+            Results = attributes,
+            // TODO this may not be successful
+            Status = new MappingResult()
             {
                 Status = MappingStatus.Success,
                 Message = "Mapping success"
             },
-            PropertyToResolvedAttributes = attributes,
-            Children = childPageModels
+            Children = outputChildPageModels
         };
     }
-}
-
-public record PageObjectSchema
-{
-    public string Id { get; init; } = string.Empty;
-    public IEnumerable<PropertyMapping> Properties { get; set; } = null!;
-    public IEnumerable<PageObjectSchema> Children { get; set; } = [];
-}
-
-public record PropertyMapping
-{
-    public IEnumerable<string> Attributes { get; set; } = [];
-    public string ToProperty { get; set; } = string.Empty;
-    public string? MappingEntrypoint { get; set; } = null;
 }
 
 // RESPONSE BELOW HERE
@@ -319,26 +174,12 @@ public record MappingResult
 
 public record CreatedPageObjectModel
 {
-    public string PageObjectId { get; init; } = string.Empty;
-    public required MappingResult Result { get; init; }
-    // [
-    //  "ToProperty" : [
-    //      { "text", "1stoutputtedtext" },
-    //      { "text",  "2ndoutputtedtext" }}
-    //  ]
-    public required IDictionary<string, IEnumerable<IDictionary<string, string?>>> PropertyToResolvedAttributes { get; init; }
+    public string Id { get; init; } = string.Empty;
+    public required MappingResult Status { get; init; } // query failed, mapping failed, mapping success
+    public IDictionary<string, string?> Results { get; init; } = new Dictionary<string, string?>();
     public IList<CreatedPageObjectModel> Children { get; init; } = [];
-    public IEnumerable<IReadOnlyDictionary<string, string?>> GetMappedProperty(string property)
-    {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(property);
-        if (PropertyToResolvedAttributes.TryGetValue(property, out var propertyValues))
-        {
-            return propertyValues.Select(t => new ReadOnlyDictionary<string, string?>(t));
-        }
-        return [];
-    }
+    public string? GetAttribute(string attribute) => Results.TryGetOrDefault(attribute);
 }
-
 
 internal sealed class DocumentSectionNotFoundException : Exception
 {
@@ -362,4 +203,155 @@ public static class CollectionExtensions
         input.TryGetValue(key, out TOut? value);
         return value ?? default;
     }
+}
+
+public record InputComponent
+{
+    public LabelComponent? Label { get; init; }
+    public string? Id { get; init; }
+    public string? Name { get; init; }
+    public string? Value { get; init; }
+    public string? Type { get; init; }
+}
+
+
+public sealed class InputMapper : IMapper<CreatedPageObjectModel, InputComponent>
+{
+    private readonly InputComponentOptions _inputOptions;
+
+    public InputMapper(InputComponentOptions inputOptions)
+    {
+        _inputOptions = inputOptions;
+    }
+    public InputComponent Map(CreatedPageObjectModel mapFrom)
+    {
+        CreatedPageObjectModel input = mapFrom.Children.Single(t => t.Id == _inputOptions.Input);
+        CreatedPageObjectModel label = mapFrom.Children.Single(t => t.Id == _inputOptions.Label);
+
+        return new InputComponent()
+        {
+
+            Label = new()
+            {
+                For = label.GetAttribute("for"),
+                Text = label.GetAttribute("text")
+            },
+            Id = input.GetAttribute("id"),
+            Name = input.GetAttribute("name"),
+            Type = input.GetAttribute("type"),
+            Value = input.GetAttribute("value")
+        };
+    }
+}
+
+public sealed class InputComponentTemplate : IPageObjectTemplate
+{
+    private readonly InputComponentOptions _options;
+
+    public InputComponentTemplate(
+        InputComponentOptions options)
+    {
+        _options = options;
+    }
+
+    public string Id => nameof(InputComponent);
+    public PageObjectSchema Schema => new()
+    {
+        Id = _options.Container,
+        Find = "div:has(input)",
+        Children = [
+            new PageObjectSchema()
+            {
+                Id = _options.Input,
+                Find = "input"
+            },
+            new PageObjectSchema()
+            {
+                Id = _options.Label,
+                Find = "label"
+            }
+        ]
+    };
+}
+
+public sealed class InputComponentOptions
+{
+    public string Container { get; set; } = "InputContainer";
+    public string Input { get; set; } = "InputContainer.Input";
+    public string Label { get; set; } = "InputContainer.Label";
+}
+
+public sealed class FormPageOptions
+{
+    private const string ROOT = "Form";
+    private readonly InputComponentOptions _inputOptions;
+
+    public FormPageOptions(
+        InputComponentOptions inputOptions)
+    {
+        _inputOptions = inputOptions;
+    }
+
+    public string Form => ROOT;
+    public string Buttons => $"{ROOT}.Buttons";
+    public InputComponentOptions Inputs { get => _inputOptions; }
+
+}
+
+
+public sealed class FormNewMapper : IMapper<CreatedPageObjectModel, FormComponent>
+{
+    private readonly FormPageOptions _options;
+    private readonly IMapper<CreatedPageObjectModel, ButtonComponent> _buttonMapper;
+    private readonly IMapper<CreatedPageObjectModel, Public.InputComponent> _inputMapper;
+
+    public FormNewMapper(
+        FormPageOptions options,
+        IMapper<CreatedPageObjectModel, ButtonComponent> buttonMapper,
+        IMapper<CreatedPageObjectModel, InputComponent> inputMapper)
+    {
+        _buttonMapper = buttonMapper;
+        _inputMapper = inputMapper;
+        _options = options;
+    }
+
+    public FormComponent Map(CreatedPageObjectModel input)
+    {
+        return new()
+        {
+            Action = input.GetAttribute("action"),
+            Method = input.GetAttribute("method") is null ? null : HttpMethod.Parse(input.GetAttribute("method")),
+            Buttons = input.Children.Where(t => t.Id == _options.Buttons).Select(_buttonMapper.Map),
+            Inputs = input.Children.Where(t => t.Id == _options.Inputs.Container).Select(_inputMapper.Map)
+        };
+    }
+}
+
+public sealed class FormTemplate : IPageObjectTemplate
+{
+    private readonly FormPageOptions _formOptions;
+    private readonly InputComponentOptions _inputOptions;
+
+    public FormTemplate(
+        FormPageOptions formOptions,
+        InputComponentOptions inputOptions)
+    {
+        _formOptions = formOptions;
+        _inputOptions = inputOptions;
+    }
+
+    public string Id => nameof(FormComponent);
+    public PageObjectSchema Schema => new()
+    {
+        Id = _formOptions.Form,
+        Find = "form",
+        Children = [
+            new InputComponentTemplate(_inputOptions).Schema,
+            new PageObjectSchema()
+            {
+                Id = _formOptions.Buttons,
+                Find = "button"
+            }
+        ]
+    };
 }

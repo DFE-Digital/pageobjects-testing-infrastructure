@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler;
+﻿using System.Security;
+using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler;
 using Dfe.Testing.Pages.Shared.Selector.XPath;
 
 namespace Dfe.Testing.Pages.Internal.DocumentClient.Provider.WebDriver;
@@ -58,14 +59,22 @@ internal sealed class WebDriverDocumentClient : IDocumentClient
                 .FindElements(
                     WebDriverByLocatorHelpers.CreateLocator(queryArgs.Find!));
 
-        return CreateDocumentSection(target, _textProcessingHandler).ToList();
+        return CreateDocumentSection(
+                _webDriverAdaptor,
+                target,
+                _textProcessingHandler)
+            .ToList();
     }
 
     private List<IDocumentSection> QueryManyGlobal(FindOptions args)
     {
         ValidateQueryOptions(args);
 
-        return CreateDocumentSection(_webDriverAdaptor.FindElements(args.Find!), _textProcessingHandler).ToList();
+        return CreateDocumentSection(
+                _webDriverAdaptor,
+                _webDriverAdaptor.FindElements(args.Find!),
+                _textProcessingHandler)
+            .ToList();
     }
 
     private static void ValidateQueryOptions(FindOptions args)
@@ -75,24 +84,28 @@ internal sealed class WebDriverDocumentClient : IDocumentClient
     }
 
     private static IDocumentSection CreateDocumentSection(
-        IWebElement element, IGetTextProcessingHandler handler)
-            => new WebDriverDocumentPart(element, handler);
+        IWebDriverAdaptor adaptor,
+        IWebElement element,
+        IGetTextProcessingHandler handler) => new WebDriverDocumentPart(adaptor, element, handler);
 
-    private static IEnumerable<IDocumentSection> CreateDocumentSection(IEnumerable<IWebElement> elements, IGetTextProcessingHandler handler)
+    private static IEnumerable<IDocumentSection> CreateDocumentSection(IWebDriverAdaptor adaptor, IEnumerable<IWebElement> elements, IGetTextProcessingHandler handler)
         => elements?.Select((section)
-            => CreateDocumentSection(section, handler)) ?? [];
+            => CreateDocumentSection(adaptor, section, handler)) ?? [];
 
     private sealed class WebDriverDocumentPart : IDocumentSection
     {
+        private readonly IWebDriverAdaptor _adaptor;
         private readonly IWebElement _wrappedElement;
         private readonly IGetTextProcessingHandler _textHandler;
 
         public WebDriverDocumentPart(
+            IWebDriverAdaptor adaptor,
             IWebElement element,
             IGetTextProcessingHandler textHandler)
         {
             ArgumentNullException.ThrowIfNull(element);
             ArgumentNullException.ThrowIfNull(textHandler);
+            _adaptor = adaptor;
             _wrappedElement = element;
             _textHandler = textHandler;
         }
@@ -105,6 +118,45 @@ internal sealed class WebDriverDocumentClient : IDocumentClient
         public string TagName => _wrappedElement.TagName;
         public string Document => _wrappedElement.GetAttribute("outerHTML"); // innerHTML for internal if needed
 
+        // WebDriver does not provide a way to access elements through the WebElement API or WebDriver API.
+        // Options are
+        // - pass in every known attribute; incurring a WebDriver network call each time
+        // - execute JavaScript to get all attributes
+        public IEnumerable<KeyValuePair<string, string?>> Attributes
+        {
+            get
+            {
+                string script =
+                    """
+                    var elementAttributes = arguments[0].attributes;
+                    var items = {};
+
+                    for (index = 0; index < elementAttributes.length; ++index)
+                    {
+                        var element = elementAttributes[index];
+                        items[element.name] = element.value;
+                    };
+
+                    return items;
+                    """;
+
+                return _adaptor.RunJavascript(script, attributeHandler, _wrappedElement);
+
+                static Dictionary<string, string?> attributeHandler(object scriptOutput)
+                {
+                    var attributesDictionary = new Dictionary<string, string?>();
+                    if (scriptOutput is IDictionary<string, object> attributesObject)
+                    {
+                        foreach (var attribute in attributesObject)
+                        {
+                            attributesDictionary.Add(attribute.Key, attribute.Value.ToString());
+                        }
+                    }
+                    return attributesDictionary;
+                }
+            }
+        }
+
         public bool HasAttribute(string attributeName) => GetAttribute(attributeName) != null;
         public string? GetAttribute(string attributeName)
         {
@@ -114,9 +166,7 @@ internal sealed class WebDriverDocumentClient : IDocumentClient
 
         public IEnumerable<IDocumentSection> GetChildren()
             => CreateDocumentSection(
-                    FindMany(
-                        WebDriverByLocatorHelpers.AsXPath(new ChildXPathSelector())),
-                        _textHandler)
+                    _adaptor, FindMany(WebDriverByLocatorHelpers.AsXPath(new ChildXPathSelector())), _textHandler)
                 .ToList();
 
         public IDocumentSection? FindDescendant(IElementSelector selector) => FindDocumentPart(selector);
@@ -124,15 +174,13 @@ internal sealed class WebDriverDocumentClient : IDocumentClient
         public IEnumerable<IDocumentSection> FindDescendants(IElementSelector selector)
             => FindMany(
                     WebDriverByLocatorHelpers.CreateLocator(selector))
-                .Select(section => CreateDocumentSection(section, _textHandler));
+                .Select(section => CreateDocumentSection(_adaptor, section, _textHandler));
 
         private IDocumentSection FindDocumentPart(IElementSelector selector)
             // TODO pass in an error message into the collection extensions?
             => CreateDocumentSection(
-                    FindMany(
-                        WebDriverByLocatorHelpers.CreateLocator(selector))
-                    .ThrowIfNullOrEmpty()
-                    .ThrowIfMultiple(),
+                    _adaptor,
+                    FindMany(WebDriverByLocatorHelpers.CreateLocator(selector)).ThrowIfNullOrEmpty().ThrowIfMultiple(),
                     _textHandler)
                 .Single();
 

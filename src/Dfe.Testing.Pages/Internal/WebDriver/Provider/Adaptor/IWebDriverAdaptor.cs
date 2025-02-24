@@ -10,5 +10,6 @@ public interface IWebDriverAdaptor : IApplicationNavigator
     // TODO extend to include FindOptions per request?
     internal IWebElement FindElement(IElementSelector selector);
     internal IReadOnlyCollection<IWebElement> FindElements(IElementSelector selector);
+    TOut RunJavascript<TOut>(string script, Func<object, TOut> handler, params object[] scriptArgs);
     //TODO something to mock a request?
 }

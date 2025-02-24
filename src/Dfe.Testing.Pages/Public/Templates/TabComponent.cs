@@ -1,23 +1,66 @@
 ﻿namespace Dfe.Testing.Pages.Public.Templates;
-public record TabComponent
+
+public record GdsTabsComponent
 {
-    public AnchorLinkComponent Tab { get; set; } = new();
+    public IEnumerable<AnchorLinkComponent> Tabs { get; init; } = [];
 }
 
-internal sealed class TabComponentMapper : IMapper<CreatedPageObjectModel, IEnumerable<TabComponent>>
+public sealed class GdsTabsOptions
 {
-    public IEnumerable<TabComponent> Map(CreatedPageObjectModel input)
+    private const string ROOT = "GDSTabs";
+    public string TabContainer { get; set; } = ROOT;
+    public string Tabs { get; set; } = $"{ROOT}.Tabs";
+}
+
+
+internal sealed class GdsTabMapper : IMapper<PageObjectResponse, GdsTabsComponent>
+{
+    private readonly GdsTabsOptions _options;
+    private readonly IMapper<CreatedPageObjectModel, AnchorLinkComponent> _linkMapper;
+
+    public GdsTabMapper(
+        GdsTabsOptions options,
+        IMapper<CreatedPageObjectModel, AnchorLinkComponent> linkMapper)
     {
-        return input.GetMappedProperty("Tabs").Select(resolvedTabProperties =>
-        {
-            return new TabComponent()
-            {
-                Tab = new AnchorLinkComponent()
-                {
-                    Link = resolvedTabProperties.TryGetOrDefault("href"),
-                    Text = resolvedTabProperties.TryGetOrDefault("text")
-                }
-            };
-        });
+        _options = options;
+        _linkMapper = linkMapper;
     }
+
+    public GdsTabsComponent Map(PageObjectResponse input)
+    {
+        return new GdsTabsComponent()
+        {
+            Tabs = input?.Created
+                .Single(t => t.Id == _options.TabContainer)
+                .Children
+                .Where(t => t.Id == _options.Tabs)
+                .Select(_linkMapper.Map) ?? []
+        };
+    }
+}
+
+internal sealed class GdsTabsComponentTemplate : IPageObjectTemplate
+{
+    private readonly GdsTabsOptions _options;
+
+    public GdsTabsComponentTemplate(GdsTabsOptions options)
+    {
+        _options = options;
+    }
+
+    public string Id => nameof(GdsTabsComponent);
+
+    public PageObjectSchema Schema =>
+        new()
+        {
+            Id = _options.TabContainer,
+            Find = ".govuk-tabs",
+            Children = [
+                new PageObjectSchema()
+                {
+                    Id = _options.Tabs,
+                    Find = ".govuk-tabs__tab"
+                }
+            ]
+        };
 }
