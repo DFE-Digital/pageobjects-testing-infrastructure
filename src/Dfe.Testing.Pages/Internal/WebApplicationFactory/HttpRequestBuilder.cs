@@ -1,5 +1,5 @@
-﻿using Cookie = System.Net.Cookie;
-using HttpMethod = System.Net.Http.HttpMethod;
+﻿using Dfe.Testing.Pages.Contracts.Documents;
+using Cookie = System.Net.Cookie;
 
 namespace Dfe.Testing.Pages.Internal.WebApplicationFactory;
 internal sealed class HttpRequestBuilder : IHttpRequestBuilder

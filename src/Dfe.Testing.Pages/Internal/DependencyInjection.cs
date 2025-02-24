@@ -1,11 +1,12 @@
-﻿using Dfe.Testing.Pages.Internal.Commands;
+﻿using Dfe.Testing.Pages.Contracts.Documents;
+using Dfe.Testing.Pages.Contracts.PageObjectClient;
+using Dfe.Testing.Pages.Internal.Commands;
 using Dfe.Testing.Pages.Internal.DocumentClient.Options;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler.Factory;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler.Options;
 using Dfe.Testing.Pages.Public.Commands;
-using Dfe.Testing.Pages.Public.Components;
 
 namespace Dfe.Testing.Pages.Internal;
 
@@ -13,7 +14,6 @@ internal static class DependencyInjection
 {
     internal static IServiceCollection AddDocumentClientProvider<TProvider>(this IServiceCollection services) where TProvider : class, IDocumentClientProvider
         => services
-            .AddSingleton<IMappingResultFactory, MappingResultFactory>()
             .AddSingleton<IMapper<DocumentClientOptions, TextProcessingOptions>, DocumentClientOptionsToTextProcessingOptionsMapper>()
             // Client API
             .AddScoped<IDocumentService, DocumentService>()

@@ -1,4 +1,5 @@
-﻿using Dfe.Testing.Pages.Internal.DocumentClient;
+﻿using Dfe.Testing.Pages.Contracts.Documents;
+using Dfe.Testing.Pages.Internal.DocumentClient;
 using Dfe.Testing.Pages.Public.Commands;
 
 namespace Dfe.Testing.Pages.Internal.Commands;

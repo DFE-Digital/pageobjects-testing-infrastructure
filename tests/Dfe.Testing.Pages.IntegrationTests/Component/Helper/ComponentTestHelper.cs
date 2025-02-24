@@ -1,4 +1,6 @@
-﻿namespace Dfe.Testing.Pages.IntegrationTests.Component.Helper;
+﻿using Dfe.Testing.Pages.Contracts.Documents;
+
+namespace Dfe.Testing.Pages.IntegrationTests.Component.Helper;
 internal static class ComponentTestHelper
 {
     internal static async Task<TPage> RequestPage<TPage>(string path) where TPage : class

@@ -1,6 +1,6 @@
-﻿using System.Security;
+﻿using Dfe.Testing.Pages.Contracts.Documents;
+using Dfe.Testing.Pages.Contracts.Selector.XPath;
 using Dfe.Testing.Pages.Internal.DocumentClient.Provider.GetTextHandler;
-using Dfe.Testing.Pages.Shared.Selector.XPath;
 
 namespace Dfe.Testing.Pages.Internal.DocumentClient.Provider.WebDriver;
 
