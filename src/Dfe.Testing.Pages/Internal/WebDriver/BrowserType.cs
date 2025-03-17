@@ -1,7 +1,7 @@
 ﻿namespace Dfe.Testing.Pages.Internal.WebDriver;
-internal enum BrowserType
+public enum BrowserType
 {
     Chrome,
-    Firefox,
-    Edge
+    Edge,
+    Firefox
 }

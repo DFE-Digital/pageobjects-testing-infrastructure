@@ -4,7 +4,7 @@
     <Company>Department for Education (DfE)</Company>
     <Copyright>Department for Education (DfE)</Copyright>
     <Authors>aahmed-dfe</Authors>
-    <PackageDescription>Testing library to support pageobject composition with querying and mapping</PackageDescription>
+    <PackageDescription>Testing library to support user interface tests</PackageDescription>
     <PackageProjectUrl>https://github.com/DFE-Digital/pageobjects-testing-infrastructure</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DFE-Digital/pageobjects-testing-infrastructure</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
