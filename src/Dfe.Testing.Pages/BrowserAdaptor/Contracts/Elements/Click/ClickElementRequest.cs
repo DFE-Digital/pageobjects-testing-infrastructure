@@ -10,6 +10,5 @@ public sealed class ClickElementRequest// Seperate action for PointOptions (x, y
     }
 
     public static ClickElementRequest Create(FindElementOptions findOptions) => new(findOptions);
-
     public FindElementOptions FindOptions { get; }
 }

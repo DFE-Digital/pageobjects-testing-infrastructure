@@ -27,18 +27,18 @@ internal sealed class WebDriverElementActions : IElementActions
         return MapToReadOnlyElements(_webDriver, elements, request.FindOptions);
     }
 
-    public void SendKeysTo(SendKeysToElementRequest request)
+    public void UpdateElement(UpdateElementRequest request)
     {
         IWebElement element = RequireFind(_webDriver, request.FindOptions).Single();
 
         if (request.Clear)
         {
-            // TODO extend only covers text inputs - handle other IWebElement types (clearing a radio, select)
+            // TODO only covers text inputs - extend to other Element types (clearing a radio, checkboxes, select)
             element.SendKeys(Keys.Control + 'a');
             element.SendKeys(Keys.Clear);
         }
 
-        request.GetKeysToSend()
+        request.KeysToSend
             .ToList()
             .ForEach(element.SendKeys);
     }

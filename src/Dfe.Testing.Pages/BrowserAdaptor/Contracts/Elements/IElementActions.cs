@@ -7,6 +7,6 @@ public interface IElementActions
 {
     IEnumerable<IReadOnlyElement> Find(FindElementRequest request);
     bool TryFind(FindElementRequest request, out IEnumerable<IReadOnlyElement> elements);
-    void SendKeysTo(SendKeysToElementRequest request);
+    void UpdateElement(UpdateElementRequest request);
     void Click(ClickElementRequest request);
 }
