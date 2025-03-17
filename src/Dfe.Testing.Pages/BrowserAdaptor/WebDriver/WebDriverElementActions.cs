@@ -1,4 +1,5 @@
 ﻿using Dfe.Testing.Pages.BrowserAdaptor.Contracts.Elements;
+using Dfe.Testing.Pages.BrowserAdaptor.Contracts.Elements.Click;
 using Dfe.Testing.Pages.BrowserAdaptor.Contracts.Elements.Find;
 using Dfe.Testing.Pages.BrowserAdaptor.Contracts.Elements.SendKeys;
 
@@ -16,7 +17,7 @@ internal sealed class WebDriverElementActions : IElementActions
     public IEnumerable<IReadOnlyElement> Find(FindElementRequest request)
     {
         IEnumerable<IWebElement> elements = FindInternal(_webDriver, request.FindOptions).ToList();
-        return MapToReadOnlyElements(elements, request.FindOptions);
+        return MapToReadOnlyElements(_webDriver, elements, request.FindOptions);
     }
 
     public void SendKeysTo(SendKeysToElementRequest request)
@@ -25,15 +26,16 @@ internal sealed class WebDriverElementActions : IElementActions
         request.GetKeysToSend().ToList().ForEach(element.SendKeys);
     }
 
-    public void Click()
+    public void Click(ClickElementRequest request)
     {
-        throw new NotImplementedException();
+        IWebElement element = RequireFind(_webDriver, request.FindOptions).Single();
+        element.Click();
     }
 
     public bool TryFind(FindElementRequest request, out IEnumerable<IReadOnlyElement> elements)
     {
         IEnumerable<IWebElement> webElements = FindInternal(_webDriver, request.FindOptions);
-        elements = MapToReadOnlyElements(webElements, request.FindOptions);
+        elements = MapToReadOnlyElements(_webDriver, webElements, request.FindOptions);
         return elements.Any();
     }
 
@@ -67,12 +69,12 @@ internal sealed class WebDriverElementActions : IElementActions
         };
     }
 
-    private IEnumerable<IReadOnlyElement> MapToReadOnlyElements(IEnumerable<IWebElement> elements, FindElementOptions options)
+    private static IEnumerable<IReadOnlyElement> MapToReadOnlyElements(IWebDriver webDriver, IEnumerable<IWebElement> elements, FindElementOptions options)
     {
         return elements?.Select(
                 (element) => options.ElementAttributeEvaluateMode switch
                 {
-                    ElementAttributeEvaluationMode.Eager => new WebDriverReadOnlyElementEagerLoad(_webDriver, element),
+                    ElementAttributeEvaluationMode.Eager => new WebDriverReadOnlyElementEagerLoad(webDriver, element),
                     _ => throw new NotImplementedException()
                 }) ?? [];
     }
