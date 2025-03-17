@@ -5,7 +5,6 @@ public sealed class ApplicationOptions
     public string SchemeProtocol { get; set; } = "https";
     public string Domain { get; set; } = "localhost";
     public int Port { get; set; } = DefaultHttpsPort;
-    public string Uri => $"{SchemeProtocol}://{Domain.TrimEnd('/')}:{PortAsUrl}";
+    public string Uri => $"{SchemeProtocol}://{Domain.TrimEnd('/')}{PortAsUrl}";
     private string PortAsUrl => Port == DefaultHttpsPort ? string.Empty : $":{Port}";
-
 }
