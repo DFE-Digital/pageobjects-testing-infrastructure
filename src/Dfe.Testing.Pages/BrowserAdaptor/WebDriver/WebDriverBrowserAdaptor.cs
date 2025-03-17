@@ -54,9 +54,10 @@ public sealed class WebDriverBrowserAdaptor : IBrowserAdaptor, IDisposable, IAsy
         {
             ChromeWebDriverFactory chromeDriverFactory = new();
             return await chromeDriverFactory.CreateDriverAsync(options);
-
         }
+
         throw new ArgumentException($"Unable to create BrowserType {options.Browser.Type}");
+
     }
 }
 

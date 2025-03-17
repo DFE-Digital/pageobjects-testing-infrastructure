@@ -9,6 +9,7 @@ public sealed class BrowserOptions
     public string DisplayWidth { get; set; } = "1920";
     public double? BrowserVersion { get; set; } = null;
     public bool EnableNetworkingMonitoring { get; set; } = false;
+    public IEnumerable<string> DriverFlags => _flags;
     public void AddDriverArgs(params string[] args)
     {
         ArgumentNullException.ThrowIfNull(args);
