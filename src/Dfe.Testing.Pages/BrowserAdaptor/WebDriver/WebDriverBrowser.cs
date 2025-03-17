@@ -1,4 +1,5 @@
 ﻿using Dfe.Testing.Pages.BrowserAdaptor.Contracts;
+using Dfe.Testing.Pages.BrowserAdaptor.Contracts.Elements;
 using Dfe.Testing.Pages.BrowserAdaptor.Contracts.Network;
 
 namespace Dfe.Testing.Pages.BrowserAdaptor.WebDriver;
@@ -17,9 +18,10 @@ public sealed class WebDriverBrowser : IBrowser
         _options = applicationOptions;
         Navigate = new WebDriverNavigation(webDriver, applicationOptions);
         Network = new WebDriverNetworking(webDriver.Manage().Network);
+        Elements = new WebDriverElementActions(webDriver);
     }
 
     public INetworking Network { get; }
-
     public Contracts.Navigate.INavigation Navigate { get; }
+    public IElementActions Elements { get; }
 }
