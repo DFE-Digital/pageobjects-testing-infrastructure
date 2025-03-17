@@ -13,14 +13,15 @@ public sealed class SendKeysToElementRequest
 
     public static SendKeysToElementRequest Create(FindElementOptions options) => new(options);
 
-    public void AddKeys(params string[] key)
+    public void AddInputKeys(params string[] key)
     {
+        ArgumentNullException.ThrowIfNull(key);
         key?.Where(t => !string.IsNullOrEmpty(t))
             .ToList()
             .ForEach(_keys.Add);
     }
 
     public IEnumerable<string> GetKeysToSend() => _keys;
-
+    public bool Clear { get; set; } = false;
     public FindElementOptions FindOptions { get; }
 }

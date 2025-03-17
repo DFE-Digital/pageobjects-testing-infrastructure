@@ -14,6 +14,13 @@ internal sealed class WebDriverElementActions : IElementActions
         _webDriver = webDriver;
     }
 
+    public bool TryFind(FindElementRequest request, out IEnumerable<IReadOnlyElement> elements)
+    {
+        IEnumerable<IWebElement> webElements = FindInternal(_webDriver, request.FindOptions);
+        elements = MapToReadOnlyElements(_webDriver, webElements, request.FindOptions);
+        return elements.Any();
+    }
+
     public IEnumerable<IReadOnlyElement> Find(FindElementRequest request)
     {
         IEnumerable<IWebElement> elements = FindInternal(_webDriver, request.FindOptions).ToList();
@@ -23,20 +30,23 @@ internal sealed class WebDriverElementActions : IElementActions
     public void SendKeysTo(SendKeysToElementRequest request)
     {
         IWebElement element = RequireFind(_webDriver, request.FindOptions).Single();
-        request.GetKeysToSend().ToList().ForEach(element.SendKeys);
+
+        if (request.Clear)
+        {
+            // TODO extend only covers text inputs - handle other IWebElement types (clearing a radio, select)
+            element.SendKeys(Keys.Control + 'a');
+            element.SendKeys(Keys.Clear);
+        }
+
+        request.GetKeysToSend()
+            .ToList()
+            .ForEach(element.SendKeys);
     }
 
     public void Click(ClickElementRequest request)
     {
         IWebElement element = RequireFind(_webDriver, request.FindOptions).Single();
         element.Click();
-    }
-
-    public bool TryFind(FindElementRequest request, out IEnumerable<IReadOnlyElement> elements)
-    {
-        IEnumerable<IWebElement> webElements = FindInternal(_webDriver, request.FindOptions);
-        elements = MapToReadOnlyElements(_webDriver, webElements, request.FindOptions);
-        return elements.Any();
     }
 
     private static IEnumerable<IWebElement> RequireFind(IWebDriver driver, FindElementOptions options)
