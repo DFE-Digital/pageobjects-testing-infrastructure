@@ -7,7 +7,7 @@ public sealed class WebDriverBrowserAdaptor : IBrowserAdaptor, IDisposable, IAsy
 {
     private IWebDriver? _webDriver = null;
 
-    public async Task<IBrowser> StartSessionAsync(BrowserStartSessionRequest? options) => await StartSessionInternalAsync(options);
+    public async Task<IBrowser> StartSessionAsync(BrowserStartSessionRequest? options = null) => await StartSessionInternalAsync(options);
     public async Task<IBrowser> StartSessionAsync(Action<BrowserStartSessionRequest> configureOptions)
     {
         BrowserStartSessionRequest options = new();
