@@ -15,22 +15,13 @@ internal sealed class WebDriverElementActions : IElementActions
 
     public IEnumerable<IReadOnlyElement> Find(FindElementRequest request)
     {
-        var elements =
-            FindElements(request.FindOptions)
-            .Select(
-                (element) => request.FindOptions.ElementAttributeEvaluateMode switch
-                {
-                    ElementAttributeEvaluationMode.Eager => new WebDriverReadOnlyElementEagerLoad(_webDriver, element),
-                    _ => throw new NotImplementedException()
-                })
-                .ToList();
-
-        return elements;
+        IEnumerable<IWebElement> elements = FindInternal(_webDriver, request.FindOptions).ToList();
+        return MapToReadOnlyElements(elements, request.FindOptions);
     }
 
     public void SendKeysTo(SendKeysToElementRequest request)
     {
-        var element = FindElements(request.FindOptions).Single();
+        IWebElement element = RequireFind(_webDriver, request.FindOptions).Single();
         request.GetKeysToSend().ToList().ForEach(element.SendKeys);
     }
 
@@ -39,24 +30,50 @@ internal sealed class WebDriverElementActions : IElementActions
         throw new NotImplementedException();
     }
 
-    private IEnumerable<IWebElement> FindElements(FindElementOptions options)
+    public bool TryFind(FindElementRequest request, out IEnumerable<IReadOnlyElement> elements)
+    {
+        IEnumerable<IWebElement> webElements = FindInternal(_webDriver, request.FindOptions);
+        elements = MapToReadOnlyElements(webElements, request.FindOptions);
+        return elements.Any();
+    }
+
+    private static IEnumerable<IWebElement> RequireFind(IWebDriver driver, FindElementOptions options)
+    {
+        IEnumerable<IWebElement> elements = FindInternal(driver, options);
+        if (elements is null || !elements.Any())
+        {
+            throw new ArgumentNullException($"Unable to find element with scope: {options.InScope} and selector: {options.FindWithSelector}");
+        }
+        return elements;
+    }
+
+    private static IEnumerable<IWebElement> FindInternal(IWebDriver driver, FindElementOptions options)
     {
         if (options.InScope == null)
         {
-            return _webDriver.FindElements(
+            return driver.FindElements(
                 By.CssSelector(options.FindWithSelector));
         }
 
         IWebElement? scope =
-            _webDriver.FindElement(
+            driver.FindElement(
                 By.CssSelector(options.InScope));
 
-        if (scope is null)
+        return scope switch
         {
-            throw new ArgumentNullException($"Unable to find scoped element with {options.InScope}");
-        }
+            null => [],
+            _ => scope.FindElements(
+                                By.CssSelector(options.FindWithSelector)),
+        };
+    }
 
-        return scope.FindElements(
-            By.CssSelector(options.FindWithSelector));
+    private IEnumerable<IReadOnlyElement> MapToReadOnlyElements(IEnumerable<IWebElement> elements, FindElementOptions options)
+    {
+        return elements?.Select(
+                (element) => options.ElementAttributeEvaluateMode switch
+                {
+                    ElementAttributeEvaluationMode.Eager => new WebDriverReadOnlyElementEagerLoad(_webDriver, element),
+                    _ => throw new NotImplementedException()
+                }) ?? [];
     }
 }

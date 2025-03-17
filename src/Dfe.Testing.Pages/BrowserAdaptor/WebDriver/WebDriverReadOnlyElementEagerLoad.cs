@@ -17,10 +17,12 @@ internal sealed class WebDriverReadOnlyElementEagerLoad : IReadOnlyElement
         _webDriver = webDriver;
         _webElement = webElement;
         Text = _webElement.Text;
+        Displayed = _webElement.Displayed;
         _attributes = GetAttributes(webElement);
     }
 
     public string Text { get; }
+    public bool Displayed { get; }
 
     public IEnumerable<string> GetAttributeValuesByName(string attributeName)
     {

@@ -7,4 +7,5 @@ public interface IElementActions
     void SendKeysTo(SendKeysToElementRequest request);
     void Click();
     IEnumerable<IReadOnlyElement> Find(FindElementRequest request);
+    bool TryFind(FindElementRequest request, out IEnumerable<IReadOnlyElement> elements);
 }
