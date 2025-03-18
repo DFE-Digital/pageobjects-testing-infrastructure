@@ -2,6 +2,7 @@
 public interface IReadOnlyElement
 {
     bool Displayed { get; }
+    bool Selected { get; }
     string Text { get; }
     IEnumerable<string> GetAttributeValuesByName(string attributeName);
 }

@@ -18,12 +18,13 @@ internal sealed class WebDriverReadOnlyElementEagerLoad : IReadOnlyElement
         _webElement = webElement;
         Text = _webElement.Text;
         Displayed = _webElement.Displayed;
+        Selected = _webElement.Selected;
         _attributes = GetAttributes(webElement);
     }
 
     public string Text { get; }
     public bool Displayed { get; }
-
+    public bool Selected { get; }
     public IEnumerable<string> GetAttributeValuesByName(string attributeName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(attributeName, nameof(attributeName));
