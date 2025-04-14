@@ -12,6 +12,10 @@ Goals include;
 
 ## Getting started
 
+To consume, Teams outside of DfE-Digital GitHub will need to create a PAT with `read:package` minimum. Inside of GitHub, if using GitHub Actions there is a special token `${{ secrets.GITHUB_TOKEN }}` which makes the package feed readable in CI.
+  See [here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry) for GitHub NuGet package registries
+Then, there is a need to make the user with PAT a collaborator in [https://github.com/DFE-Digital/pageobjects-testing-infrastructure/settings/access](the repository) so that the package is visible. Please message `public-pageobjects-testing-library` in slack, or raise an issue.
+
 1) Ensure your test project is using [dependency injection - DI](#setup-dependency-injection)
 
 2) Choose a [query library](#choosing-and-configuring-a-library-to-query-for-you) for your test project
